@@ -20,79 +20,54 @@
 */
 
 using System;
+using System.Globalization;
 
 namespace Cassowary
 {
-  public class ClDouble : ICloneable
-  {
-    public ClDouble(double val)
-    { 
-      _value = val;
-    }
-
-    public ClDouble() : this(0.0)
-    {}
-
-    public virtual object Clone()
-    { 
-      return new ClDouble(_value); 
-    }
-
-    public /*sealed*/ int IntValue
-    { 
-      get { return (int) _value; }
-    }
-
-    public /*sealed*/ long LongValue
-    { 
-      get { return (long) _value; }
-    }
-
-    public /*sealed*/ float FloatValue
-    { 
-      get { return (float) _value; }
-    }
-
-    public /*sealed*/ byte ByteValue
-    { 
-      get { return (byte) _value; }
-    }
-
-    public /*sealed*/ short ShortValue
+    public class ClDouble : ICloneable
     {
-      get { return (short) _value; }
-    }
+        #region Fields
 
-    public /*sealed*/ double Value
-    {
-      get { return _value; }
-      set { _value = value; }
-    }
+        private double value;
 
-    public override sealed String ToString()
-    { 
-      return Convert.ToString(_value); 
-    }
+        #endregion
 
-    public override sealed bool Equals(Object o)
-    { 
-      try 
-      {
-        return _value == ((ClDouble) o)._value;
-      } 
-      catch (Exception) 
-      {
-        return false;
-      } 
-    }
+        #region Constructors
 
-    public override sealed int GetHashCode()
-    {
-      Console.Error.WriteLine("ClDouble.GetHashCode() called!");
-      
-      return _value.GetHashCode();
-    }
+        public ClDouble(double value)
+        {
+            this.value = value;
+        }
 
-    private double _value;
-  }
+        public ClDouble()
+            : this(0d)
+        {
+        }
+
+        #endregion
+
+        #region Properties
+
+        public double Value
+        {
+            get { return value; }
+            set { this.value = value; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        object ICloneable.Clone()
+        {
+            return new ClDouble(value);
+        }
+
+        public override sealed string ToString()
+        {
+            return value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        #endregion
+    }
 }

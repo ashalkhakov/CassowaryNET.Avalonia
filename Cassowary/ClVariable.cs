@@ -23,105 +23,81 @@ using System.Collections;
 
 namespace Cassowary
 {
-  public class ClVariable : ClAbstractVariable
-  {
-    public ClVariable(string name, double value) : base(name)
+    public class ClVariable : ClAbstractVariable
     {
-      _value = value;
-      if (_ourVarMap != null) {
-        _ourVarMap.Add(name, this);
-      }
-    }
+        #region Fields
 
-    public ClVariable(string name) : base(name)
-    {
-      _value = 0.0;
-      if (_ourVarMap != null)
-      {
-        _ourVarMap.Add(name, this);
-      }
-    }
-  
-    public ClVariable(double value)
-    {
-      _value = value;
-    }
-  
-    public ClVariable()
-    {
-      _value = 0.0;
-    }
+        private double value;
 
-    public ClVariable(long number, string prefix, double value) : base(number, prefix)
-    {
-      _value = value;
-    }
-  
-    public ClVariable(long number, string prefix) : base(number, prefix)
-    {
-      _value = 0.0;
-    }
-  
-    public override bool IsDummy
-    {
-      get { return false; }
-    }
+        #endregion
 
-    public override bool IsExternal
-    {
-      get { return true; }
-    }
-  
-    public override bool IsPivotable
-    {
-      get { return false; }
-    }
+        #region Constructors
 
-    public override bool IsRestricted
-    {
-      get { return false; }
-    }
+        public ClVariable(string name, double value)
+            : base(name)
+        {
+            this.value = value;
+        }
 
-    public override string ToString()
-    {
-      return "[" + Name + ":" + _value + "]";
-    }
+        public ClVariable(string name)
+            : base(name)
+        {
+            value = 0.0;
+        }
 
-    /// <remarks>
-    /// Change the value held -- should *not* use this if the variable is 
-    /// in a solver -- instead use AddEditVar() and SuggestValue() interface
-    /// </remarks>
-    public /*sealed*/ double Value
-    {
-      get { return _value; }
-      set { _value = value; }
-    }
+        public ClVariable(double value)
+        {
+            this.value = value;
+        }
 
-    /// <remarks>
-    /// Permit overriding in subclasses in case something needs to be
-    /// done when the value is changed by the solver
-    /// may be called when the value hasn't actually changed -- just
-    /// means the solver is setting the external variable
-    /// </remarks>
-    public void ChangeValue(double value)
-    {
-      _value = value;
-    }
+        public ClVariable()
+        {
+            value = 0.0;
+        }
 
-    public object AttachedObject
-    {
-      get { return _attachedObject; }
-      set { _attachedObject = value; }
+        #endregion
+
+        #region Properties
+
+        /// <remarks>
+        /// Change the value held -- should *not* use this if the variable is 
+        /// in a solver -- instead use AddEditVar() and SuggestValue() interface
+        /// </remarks>
+        public double Value
+        {
+            get { return value; }
+            set { this.value = value; }
+        }
+
+        public override bool IsDummy
+        {
+            get { return false; }
+        }
+
+        public override bool IsExternal
+        {
+            get { return true; }
+        }
+
+        public override bool IsPivotable
+        {
+            get { return false; }
+        }
+
+        public override bool IsRestricted
+        {
+            get { return false; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override string ToString()
+        {
+            return string.Format("[{0}:{1}]", Name, value);
+        }
+
+        #endregion
     }
-  
-    public static Hashtable VarMap
-    {
-      get { return _ourVarMap; }
-      set { _ourVarMap = value; }
-    }
-  
-    private static Hashtable _ourVarMap;
-    private double _value;
-    private object _attachedObject;
-  }
 }

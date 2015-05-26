@@ -1,9 +1,15 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoLayoutPanel", "AutoLayoutPanel\AutoLayoutPanel.csproj", "{9113620D-6FBC-4FAB-BF5A-3A812C433DD4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoLayoutTest", "AutoLayoutTest\AutoLayoutTest.csproj", "{48CF3E07-4677-4849-8F38-B99240089992}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cassowary", "Cassowary\Cassowary.csproj", "{C6CBF386-082E-4B4F-A897-09F393D2E30A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cassowary.Tests", "Cassowary.Tests\Cassowary.Tests.csproj", "{C39B66CB-F285-4EE9-9109-7C4B2339AF3E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +41,26 @@ Global
 		{48CF3E07-4677-4849-8F38-B99240089992}.Release|Mixed Platforms.Build.0 = Release|x86
 		{48CF3E07-4677-4849-8F38-B99240089992}.Release|x86.ActiveCfg = Release|x86
 		{48CF3E07-4677-4849-8F38-B99240089992}.Release|x86.Build.0 = Release|x86
+		{C6CBF386-082E-4B4F-A897-09F393D2E30A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6CBF386-082E-4B4F-A897-09F393D2E30A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6CBF386-082E-4B4F-A897-09F393D2E30A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C6CBF386-082E-4B4F-A897-09F393D2E30A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C6CBF386-082E-4B4F-A897-09F393D2E30A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C6CBF386-082E-4B4F-A897-09F393D2E30A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6CBF386-082E-4B4F-A897-09F393D2E30A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6CBF386-082E-4B4F-A897-09F393D2E30A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C6CBF386-082E-4B4F-A897-09F393D2E30A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C6CBF386-082E-4B4F-A897-09F393D2E30A}.Release|x86.ActiveCfg = Release|Any CPU
+		{C39B66CB-F285-4EE9-9109-7C4B2339AF3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C39B66CB-F285-4EE9-9109-7C4B2339AF3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C39B66CB-F285-4EE9-9109-7C4B2339AF3E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C39B66CB-F285-4EE9-9109-7C4B2339AF3E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C39B66CB-F285-4EE9-9109-7C4B2339AF3E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C39B66CB-F285-4EE9-9109-7C4B2339AF3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C39B66CB-F285-4EE9-9109-7C4B2339AF3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C39B66CB-F285-4EE9-9109-7C4B2339AF3E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C39B66CB-F285-4EE9-9109-7C4B2339AF3E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C39B66CB-F285-4EE9-9109-7C4B2339AF3E}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

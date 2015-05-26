@@ -23,36 +23,52 @@ using System;
 
 namespace Cassowary
 {
-  public class ClLinearConstraint : ClConstraint
-  {
-    public ClLinearConstraint(ClLinearExpression cle,
-                              ClStrength strength, 
-                              double weight) : base(strength, weight)
+    public class ClLinearConstraint : ClConstraint
     {
-      _expression = cle;
-    }
+        #region Fields
+        
+        protected readonly ClLinearExpression expression;
 
-    public ClLinearConstraint(ClLinearExpression cle,
-                              ClStrength strength) : base(strength, 1.0)
-    {       
-      _expression = cle;
-    }
+        #endregion
 
-    public ClLinearConstraint(ClLinearExpression cle) : base(ClStrength.Required, 1.0)
-    {
-      _expression = cle;
-    }
+        #region Constructors
 
-    public override ClLinearExpression Expression
-    {
-      get { return _expression; }
-    }
+        protected ClLinearConstraint(
+            ClLinearExpression expression,
+            ClStrength strength,
+            double weight)
+            : base(strength, weight)
+        {
+            this.expression = expression;
+        }
 
-    protected void SetExpression(ClLinearExpression expr)
-    {
-      _expression = expr;
-    }
+        protected ClLinearConstraint(
+            ClLinearExpression expression,
+            ClStrength strength)
+            : base(strength, 1.0)
+        {
+            this.expression = expression;
+        }
 
-    protected ClLinearExpression _expression;
-  }
+        protected ClLinearConstraint(ClLinearExpression expression)
+            : base(ClStrength.Required, 1.0)
+        {
+            this.expression = expression;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public override ClLinearExpression Expression
+        {
+            get { return expression; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        #endregion
+    }
 }

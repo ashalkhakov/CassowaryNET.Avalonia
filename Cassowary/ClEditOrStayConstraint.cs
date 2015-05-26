@@ -23,43 +23,65 @@ using System;
 
 namespace Cassowary
 {
-  public abstract class ClEditOrStayConstraint : ClConstraint
-  {
-    public ClEditOrStayConstraint(ClVariable var, 
-                                  ClStrength strength, 
-                                  double weight) : base(strength, weight)
+    public abstract class ClEditOrStayConstraint : ClConstraint
     {
-      _variable = var;
-      _expression = new ClLinearExpression(_variable, -1.0, _variable.Value);
-    }
+        #region Fields
 
-    public ClEditOrStayConstraint(ClVariable var, 
-                                  ClStrength strength) : this(var, strength, 1.0)
-    {}
+        private readonly ClVariable variable;
+        // cache the expression
+        private readonly ClLinearExpression expression;
 
-    public ClEditOrStayConstraint(ClVariable var) : this(var, ClStrength.Required, 1.0)
-    {
-      _variable = var;
-    }
+        #endregion
 
-    public override string ToString()
-    {
-      // add missing bracket -> see ClConstraint#ToString(...)
-      return base.ToString() + ")";
-    }
-    
-    public ClVariable Variable
-    {
-      get { return _variable; }
-    }
+        #region Constructors
 
-    public override ClLinearExpression Expression
-    {
-      get { return _expression; }
+        protected ClEditOrStayConstraint(
+            ClVariable variable,
+            ClStrength strength,
+            double weight)
+            : base(strength, weight)
+        {
+            this.variable = variable;
+            expression = new ClLinearExpression(this.variable, -1.0, this.variable.Value);
+        }
+
+        protected ClEditOrStayConstraint(
+            ClVariable variable,
+            ClStrength strength)
+            : this(variable, strength, 1.0)
+        {
+        }
+
+        protected ClEditOrStayConstraint(ClVariable variable)
+            : this(variable, ClStrength.Required, 1.0)
+        {
+            this.variable = variable;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public ClVariable Variable
+        {
+            get { return variable; }
+        }
+
+        public override ClLinearExpression Expression
+        {
+            get { return expression; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override string ToString()
+        {
+            // add missing bracket -> see ClConstraint#ToString(...)
+            return base.ToString() + ")";
+        }
+
+        #endregion
     }
-    
-    protected ClVariable _variable;
-    // cache the expression
-    private ClLinearExpression _expression;
-  }
 }

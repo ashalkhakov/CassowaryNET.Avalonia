@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C6CBF386-082E-4B4F-A897-09F393D2E30A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Cassowary</RootNamespace>
+    <AssemblyName>Cassowary</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FSharp.Core, Version=4.3.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FSharp.Core.3.1.2.1\lib\net40\FSharp.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Cl.cs" />
+    <Compile Include="ClAbstractVariable.cs" />
+    <Compile Include="ClConstraint.cs" />
+    <Compile Include="ClDouble.cs" />
+    <Compile Include="ClDummyVariable.cs" />
+    <Compile Include="ClEditConstraint.cs" />
+    <Compile Include="ClEditInfo.cs" />
+    <Compile Include="ClEditOrStayConstraint.cs" />
+    <Compile Include="ClLinearConstraint.cs" />
+    <Compile Include="ClLinearEquation.cs" />
+    <Compile Include="ClLinearExpression.cs" />
+    <Compile Include="ClLinearInequality.cs" />
+    <Compile Include="ClObjectiveVariable.cs" />
+    <Compile Include="Utils\Cloneable.cs" />
+    <Compile Include="ClPoint.cs" />
+    <Compile Include="ClSimplexSolver.cs" />
+    <Compile Include="ClSlackVariable.cs" />
+    <Compile Include="ClStayConstraint.cs" />
+    <Compile Include="ClStrength.cs" />
+    <Compile Include="ClSymbolicWeight.cs" />
+    <Compile Include="ClTableau.cs" />
+    <Compile Include="ClVariable.cs" />
+    <Compile Include="ExClConstraintNotFound.cs" />
+    <Compile Include="ExClError.cs" />
+    <Compile Include="ExClInternalError.cs" />
+    <Compile Include="ExClNonlinearExpression.cs" />
+    <Compile Include="ExClNotEnoughStays.cs" />
+    <Compile Include="ExClRequiredFailure.cs" />
+    <Compile Include="ExClTooDifficult.cs" />
+    <Compile Include="Parsing\ClParser.cs" />
+    <Compile Include="Parsing\ExClParseError.cs" />
+    <Compile Include="Parsing\Parser.cs" />
+    <Compile Include="Parsing\Scanner.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\DictionaryEx.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

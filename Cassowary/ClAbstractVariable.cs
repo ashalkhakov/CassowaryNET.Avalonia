@@ -23,60 +23,55 @@ using System;
 
 namespace Cassowary
 {
-  public abstract class ClAbstractVariable
-  {
-    public ClAbstractVariable(string name)
+    public abstract class ClAbstractVariable
     {
-      _name = name;
-      iVariableNumber++;
-    }
+        #region Fields
 
-    public ClAbstractVariable()
-    {
-      _name = "v" + iVariableNumber;
-      iVariableNumber++;
-    }
+        private static int iVariableNumber;
 
-    public ClAbstractVariable(long varnumber, string prefix)
-    {
-      _name = prefix + varnumber;
-      iVariableNumber++;
-    }
+        private readonly string name;
 
-    public string Name
-    {
-      get { return _name; }
-      set { _name = value; }
-    }
+        #endregion
 
-    public virtual bool IsDummy
-    {
-      get { return false; }
-    }
+        #region Constructors
 
-    public abstract bool IsExternal
-    {
-      get;
-    }
+        protected ClAbstractVariable(string name)
+        {
+            this.name = name;
+            iVariableNumber++;
+        }
 
-    public abstract bool IsPivotable
-    {
-      get;
-    }
+        protected ClAbstractVariable()
+            : this("v" + iVariableNumber)
+        {
+        }
 
-    public abstract bool IsRestricted
-    {
-      get;
-    }
+        #endregion
 
-    public override abstract string ToString();
-    
-    public static int NumCreated
-    {
-      get { return iVariableNumber; }
-    }
+        #region Properties
 
-    private string _name;
-    private static int iVariableNumber;
-  }
+        public string Name
+        {
+            get { return name; }
+        }
+
+        public virtual bool IsDummy
+        {
+            get { return false; }
+        }
+
+        public abstract bool IsExternal { get; }
+
+        public abstract bool IsPivotable { get; }
+
+        public abstract bool IsRestricted { get; }
+        
+        #endregion
+
+        #region Methods
+
+        public abstract override string ToString();
+
+        #endregion
+    }
 }

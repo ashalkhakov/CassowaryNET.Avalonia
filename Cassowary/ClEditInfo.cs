@@ -23,57 +23,76 @@ using System;
 
 namespace Cassowary
 {
-  /// <summary>
-  /// ClEditInfo is privately-used class
-  /// that just wraps a constraint, its positive and negative
-  /// error variables, and its prior edit constant.
-  /// It is used as values in _editVarMap, and replaces
-  /// the parallel vectors of error variables and previous edit
-  /// constants from the Smalltalk version of the code.
-  /// </summary>
-  class ClEditInfo
-  {
-    public ClEditInfo(ClConstraint cn, ClSlackVariable eplus, 
-                      ClSlackVariable eminus, double prevEditConstant,
-                      int i)
+    /// <summary>
+    /// ClEditInfo is privately-used class
+    /// that just wraps a constraint, its positive and negative
+    /// error variables, and its prior edit constant.
+    /// It is used as values in _editVarMap, and replaces
+    /// the parallel vectors of error variables and previous edit
+    /// constants from the Smalltalk version of the code.
+    /// </summary>
+    internal class ClEditInfo
     {
-      _cn = cn;
-      _clvEditPlus = eplus;
-      _clvEditMinus = eminus;
-      _prevEditConstant = prevEditConstant;
-      _i = i;
-    }
+        #region Fields
 
-    public int Index
-    {
-      get { return _i; }
-    }
+        private readonly ClConstraint constraint;
+        private readonly ClSlackVariable clvEditPlus;
+        private readonly ClSlackVariable clvEditMinus;
+        private double prevEditConstant;
+        private readonly int index;
 
-    public ClConstraint Constraint
-    {
-      get { return _cn; }
-    }
+        #endregion
 
-    public ClSlackVariable ClvEditPlus
-    {
-      get { return _clvEditPlus; }
-    }
+        #region Constructors
 
-    public ClSlackVariable ClvEditMinus
-    {
-      get { return _clvEditMinus; }
-    }
+        public ClEditInfo(
+            ClConstraint constraint,
+            ClSlackVariable eplus,
+            ClSlackVariable eminus,
+            double prevEditConstant,
+            int index)
+        {
+            this.constraint = constraint;
+            this.clvEditPlus = eplus;
+            this.clvEditMinus = eminus;
+            this.prevEditConstant = prevEditConstant;
+            this.index = index;
+        }
 
-    public double PrevEditConstant
-    {
-      get { return _prevEditConstant; }
-      set { _prevEditConstant = value; }
-    }
+        #endregion
 
-    private ClConstraint _cn;
-    private ClSlackVariable _clvEditPlus;
-    private ClSlackVariable _clvEditMinus;
-    private double _prevEditConstant;
-    private int _i;
-  }
+        #region Properties
+
+        public int Index
+        {
+            get { return index; }
+        }
+
+        public ClConstraint Constraint
+        {
+            get { return constraint; }
+        }
+
+        public ClSlackVariable ClvEditPlus
+        {
+            get { return clvEditPlus; }
+        }
+
+        public ClSlackVariable ClvEditMinus
+        {
+            get { return clvEditMinus; }
+        }
+
+        public double PrevEditConstant
+        {
+            get { return prevEditConstant; }
+            set { prevEditConstant = value; }
+        }
+
+        #endregion
+
+        #region Methods
+        
+        #endregion
+    }
 }

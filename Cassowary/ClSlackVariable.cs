@@ -23,35 +23,53 @@ using System;
 
 namespace Cassowary
 {
-  class ClSlackVariable : ClAbstractVariable
-  {
-    public ClSlackVariable(string name) : base(name)
-    {}
-
-    public ClSlackVariable()
-    {}
-
-    public ClSlackVariable(long number, string prefix) : base(number, prefix)
-    {}
-
-    public override string ToString()
+    internal class ClSlackVariable : ClAbstractVariable
     {
-      return string.Format("[{0}:slack]", Name);
-    }
+        #region Fields
 
-    public override bool IsExternal
-    {
-      get { return false; }
-    }
+        private static long slackCounter = 0;
 
-    public override bool IsPivotable
-    {
-      get { return true; }
-    }
+        #endregion
 
-    public override bool IsRestricted
-    {
-      get { return true; }
+        #region Constructors
+
+        public ClSlackVariable(string name)
+            : base(name + (++slackCounter))
+        {
+        }
+
+        public ClSlackVariable()
+        {
+        }
+
+        #endregion
+
+        #region Properties
+
+        public override bool IsExternal
+        {
+            get { return false; }
+        }
+
+        public override bool IsPivotable
+        {
+            get { return true; }
+        }
+
+        public override bool IsRestricted
+        {
+            get { return true; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override string ToString()
+        {
+            return string.Format("[{0}:slack]", Name);
+        }
+
+        #endregion
     }
-  }
 }

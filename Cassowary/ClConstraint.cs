@@ -23,81 +23,81 @@ using System;
 
 namespace Cassowary
 {
-  public abstract class ClConstraint
-  {
-    public ClConstraint(ClStrength strength, double weight)
+    public abstract class ClConstraint
     {
-      _strength = strength;
-      _weight = weight;
-    }
+        #region Fields
 
-    public ClConstraint(ClStrength strength)
-    {
-      _strength = strength;
-      _weight = 1.0;
-    }
+        private readonly ClStrength strength;
+        private readonly double weight;
 
-    public ClConstraint()
-    {
-      _strength = ClStrength.Required; 
-      _weight = 1.0;
-    }
+        #endregion
 
-    public abstract ClLinearExpression Expression
-    {
-      get;
-    }
+        #region Constructors
 
-    public virtual bool IsEditConstraint
-    {
-      get { return false; }
-    }
+        protected ClConstraint(ClStrength strength, double weight)
+        {
+            this.strength = strength;
+            this.weight = weight;
+        }
 
-    public virtual bool IsInequality
-    {
-      get { return false; }
-    }
+        protected ClConstraint(ClStrength strength)
+        {
+            this.strength = strength;
+            weight = 1.0;
+        }
 
-    public virtual bool IsRequired
-    {
-      get { return _strength.IsRequired; } 
-    }
+        protected ClConstraint()
+        {
+            strength = ClStrength.Required;
+            weight = 1.0;
+        }
 
-    public virtual bool IsStayConstraint
-    {
-      get { return false; }
-    }
+        #endregion
 
-    public ClStrength Strength
-    {
-      get { return _strength; }
-      set { _strength = value; }
-    }
+        #region Properties
 
-    public double Weight
-    {
-      get { return _weight; }
-      set { _weight = value; }
-    }
+        public abstract ClLinearExpression Expression { get; }
 
-    public object AttachedObject
-    {
-      get { return _attachedObject; }
-      set { _attachedObject = value; } 
-    }
-    
-    public override string ToString()
-    {
-      // two curly brackets escape the format, so use three to surround
-      // a format expression in brackets!
-      //
-      // example output: weak:[0,0,1] {1} (23 + -1*[update.height:23]
-      return string.Format("{0} {{{1}}} ({2}", Strength, Weight, Expression);
-    }
+        public virtual bool IsEditConstraint
+        {
+            get { return false; }
+        }
 
-    private ClStrength _strength;
-    private double _weight;
+        public virtual bool IsInequality
+        {
+            get { return false; }
+        }
 
-    private object _attachedObject;
-  }
+        public virtual bool IsStayConstraint
+        {
+            get { return false; }
+        }
+
+        public ClStrength Strength
+        {
+            get { return strength; }
+        }
+
+        public double Weight
+        {
+            get { return weight; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override string ToString()
+        {
+            // example output:
+            // weak:[0,0,1] {1} (23 + -1*[update.height:23]
+            return string.Format(
+                "{0} {{{1}}} ({2}",
+                Strength,
+                Weight,
+                Expression);
+        }
+
+        #endregion
+    }
 }

@@ -23,24 +23,24 @@ using Cassowary;
 
 namespace Cassowary.Parsing
 {
-  public class ExClParseError : ExClError
-  {
-    private string _rule;
-
-    public ExClParseError(string rule)
+    public class ExClParseError : ExClError
     {
-      Rule = rule;
-    }
+        private string _rule;
 
-    public override string Description()
-    {
-      return string.Format("[ExClParseError] Parse error in \"{0}\"", Rule);
-    }
+        public ExClParseError(string rule)
+        {
+            Rule = rule;
+        }
 
-    public string Rule
-    {
-      get { return _rule; }
-      set { _rule = value; }
+        public override string Description()
+        {
+            return string.Format("[ExClParseError] Parse error in \"{0}\"", Rule);
+        }
+
+        public string Rule
+        {
+            get { return _rule; }
+            set { _rule = value; }
+        }
     }
-  }
 }

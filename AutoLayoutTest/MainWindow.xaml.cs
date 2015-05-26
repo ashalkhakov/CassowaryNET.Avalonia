@@ -22,16 +22,36 @@ namespace AutoLayoutTest
         public MainWindow()
         {
             InitializeComponent();
-            AutoLayoutPanel.AutoLayoutPanel panel = new AutoLayoutPanel.AutoLayoutPanel();
+            var panel = new AutoLayoutPanel.AutoLayoutPanel();
             this.Content = panel;
-            Button button = new Button();
-            button.Content = "Foo";
-            panel.Children.Add(button);
-            panel.AddLayoutConstraint(button, "Middle", "=", panel, "Middle", 1, 0);
-            panel.AddLayoutConstraint(button, "Center", "=", panel, "Center", 1, 0);
-            //panel.AddLayoutConstraint(button, "Top", "=", panel, "Height", 0.5,  5);
-            //panel.AddLayoutConstraint(button, "Left", "=", panel, "Width", 0.25, 5);
-            //panel.AddLayoutConstraint(button, "Right", "=", panel, "Width", 0.75,0);
+
+            var button1 = new Button
+            {
+                Content = "Foo"
+            };
+            var button2 = new Button
+            {
+                Content = "Bar"
+            };
+
+            panel.Children.Add(button1);
+            panel.Children.Add(button2);
+
+            //button1.Width = 50;
+            panel.AddLayoutConstraint(button1, "Width", "=", panel, "Width", 0.5, 0);
+
+            // center button 1 in panel (horiz + vert)
+            panel.AddLayoutConstraint(button1, "Middle", "=", panel, "Middle", 1, 0);
+            panel.AddLayoutConstraint(button1, "Center", "=", panel, "Center", 1, 0);
+
+            // button2.center = button1.center
+            panel.AddLayoutConstraint(button2, "Left", "=", button1, "Left", 1, 0);
+
+            // button2.width = 2 * button1.width
+            panel.AddLayoutConstraint(button2, "Width", "=", button1, "Width", 0.5, 0);
+
+            // button2.top = button1.bottom + 20
+            panel.AddLayoutConstraint(button2, "Top", "=", button1, "Bottom", 1, 20);
         }
     }
 }

@@ -23,40 +23,58 @@ using System;
 
 namespace Cassowary
 {
-  class ClDummyVariable : ClAbstractVariable
-  {
-    public ClDummyVariable(string name) : base(name)
-    {}
-
-    public ClDummyVariable()
-    {}
-
-    public ClDummyVariable(long number, string prefix) : base(number, prefix)
-    {}
-
-    public override string ToString()
+    internal class ClDummyVariable : ClAbstractVariable
     {
-      return "[" + Name + ":dummy]";
-    }
+        #region Fields
 
-    public override bool IsDummy
-    {
-      get { return true; }
-    }
+        private static long dummyCounter = 0;
 
-    public override bool IsExternal
-    {
-      get { return false; }
-    }
+        #endregion
 
-    public override bool IsPivotable
-    {
-      get{ return false; }
-    }
+        #region Constructors
 
-    public override bool IsRestricted
-    {
-      get { return true; }
+        public ClDummyVariable(string name)
+            : base(name + (++dummyCounter))
+        {
+        }
+
+        public ClDummyVariable()
+        {
+        }
+
+        #endregion
+
+        #region Properties
+
+        public override bool IsDummy
+        {
+            get { return true; }
+        }
+
+        public override bool IsExternal
+        {
+            get { return false; }
+        }
+
+        public override bool IsPivotable
+        {
+            get { return false; }
+        }
+
+        public override bool IsRestricted
+        {
+            get { return true; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override string ToString()
+        {
+            return "[" + Name + ":dummy]";
+        }
+
+        #endregion
     }
-  }
 }

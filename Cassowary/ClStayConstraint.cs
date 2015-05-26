@@ -23,28 +23,47 @@ using System;
 
 namespace Cassowary
 {
-  public class ClStayConstraint : ClEditOrStayConstraint
-  {
-    public ClStayConstraint(ClVariable var, ClStrength strength, double weight) 
-      : base(var, strength, weight)
-    {}
-
-    public ClStayConstraint(ClVariable var, ClStrength strength)
-      : base(var, strength, 1.0)
-    {}
-
-    public ClStayConstraint(ClVariable var)
-      : base(var, ClStrength.Weak, 1.0)
-    {}
-
-    public override bool IsStayConstraint
+    public class ClStayConstraint : ClEditOrStayConstraint
     {
-      get { return true; }
-    }
+        #region Fields
 
-    public override string ToString()
-    {
-      return "stay" + base.ToString();
+        #endregion
+
+        #region Constructors
+
+        public ClStayConstraint(ClVariable variable, ClStrength strength, double weight)
+            : base(variable, strength, weight)
+        {
+        }
+
+        public ClStayConstraint(ClVariable variable, ClStrength strength)
+            : base(variable, strength, 1.0)
+        {
+        }
+
+        public ClStayConstraint(ClVariable variable)
+            : base(variable, ClStrength.Weak, 1.0)
+        {
+        }
+
+        #endregion
+
+        #region Properties
+
+        public override bool IsStayConstraint
+        {
+            get { return true; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override string ToString()
+        {
+            return "stay" + base.ToString();
+        }
+
+        #endregion
     }
-  }
 }

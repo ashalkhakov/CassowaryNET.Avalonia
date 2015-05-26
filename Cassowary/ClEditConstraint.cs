@@ -23,28 +23,52 @@ using System;
 
 namespace Cassowary
 {
-  public class ClEditConstraint : ClEditOrStayConstraint
-  {
-    public ClEditConstraint(ClVariable clv,
-                            ClStrength strength,
-                            double weight) : base(clv, strength, weight)
-    {}
-
-    public ClEditConstraint(ClVariable clv, 
-                            ClStrength strength) : base(clv, strength)
-    {}
-
-    public ClEditConstraint(ClVariable clv) : base(clv)
-    {}
-
-    public override bool IsEditConstraint
+    public class ClEditConstraint : ClEditOrStayConstraint
     {
-      get { return true; }
-    }
+        #region Fields
+        
+        #endregion
 
-    public override string ToString()
-    {
-      return "edit" + base.ToString();
+        #region Constructors
+
+        public ClEditConstraint(
+            ClVariable variable,
+            ClStrength strength,
+            double weight)
+            : base(variable, strength, weight)
+        {
+        }
+
+        public ClEditConstraint(
+            ClVariable variable,
+            ClStrength strength)
+            : base(variable, strength)
+        {
+        }
+
+        public ClEditConstraint(ClVariable variable)
+            : base(variable)
+        {
+        }
+
+        #endregion
+
+        #region Properties
+
+        public override bool IsEditConstraint
+        {
+            get { return true; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override string ToString()
+        {
+            return "edit" + base.ToString();
+        }
+
+        #endregion
     }
-  }
 }

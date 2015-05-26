@@ -23,32 +23,47 @@ using System;
 
 namespace Cassowary
 {
-  public class ClObjectiveVariable : ClAbstractVariable
-  {
-    public ClObjectiveVariable(string name) : base(name)
-    {}
-
-    public ClObjectiveVariable(long number, string prefix) : base(number, prefix)
-    {}
-
-    public override string ToString()
+    public class ClObjectiveVariable : ClAbstractVariable
     {
-      return string.Format("[{0}:obj]", Name);
-    }
+        #region Fields
 
-    public override bool IsExternal
-    {
-      get { return false; }
-    }
+        #endregion
 
-    public override bool IsPivotable
-    {
-      get { return false; }
-    }
+        #region Constructors
 
-    public override bool IsRestricted
-    {
-      get { return false; }
+        public ClObjectiveVariable(string name)
+            : base(name)
+        {
+        }
+
+        #endregion
+
+        #region Properties
+
+        public override bool IsExternal
+        {
+            get { return false; }
+        }
+
+        public override bool IsPivotable
+        {
+            get { return false; }
+        }
+
+        public override bool IsRestricted
+        {
+            get { return false; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override string ToString()
+        {
+            return string.Format("[{0}:obj]", Name);
+        }
+
+        #endregion
     }
-  }
 }

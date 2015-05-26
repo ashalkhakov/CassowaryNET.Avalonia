@@ -46,40 +46,11 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Set.cs" />
     <Compile Include="AutoLayoutPanel.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cl.cs" />
-    <Compile Include="ClAbstractVariable.cs" />
-    <Compile Include="ClConstraint.cs" />
-    <Compile Include="ClDouble.cs" />
-    <Compile Include="ClDummyVariable.cs" />
-    <Compile Include="ClEditConstraint.cs" />
-    <Compile Include="ClEditInfo.cs" />
-    <Compile Include="ClEditOrStayConstraint.cs" />
-    <Compile Include="ClLinearConstraint.cs" />
-    <Compile Include="ClLinearEquation.cs" />
-    <Compile Include="ClLinearExpression.cs" />
-    <Compile Include="ClLinearInequality.cs" />
-    <Compile Include="ClObjectiveVariable.cs" />
-    <Compile Include="ClPoint.cs" />
-    <Compile Include="ClSimplexSolver.cs" />
-    <Compile Include="ClSlackVariable.cs" />
-    <Compile Include="ClStayConstraint.cs" />
-    <Compile Include="ClStrength.cs" />
-    <Compile Include="ClSymbolicWeight.cs" />
-    <Compile Include="ClTableau.cs" />
-    <Compile Include="ClVariable.cs" />
-    <Compile Include="ExClConstraintNotFound.cs" />
-    <Compile Include="ExClError.cs" />
-    <Compile Include="ExClInternalError.cs" />
-    <Compile Include="ExClNonlinearExpression.cs" />
-    <Compile Include="ExClNotEnoughStays.cs" />
-    <Compile Include="ExClRequiredFailure.cs" />
-    <Compile Include="ExClTooDifficult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -102,6 +73,12 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Cassowary\Cassowary.csproj">
+      <Project>{c6cbf386-082e-4b4f-a897-09f393d2e30a}</Project>
+      <Name>Cassowary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
