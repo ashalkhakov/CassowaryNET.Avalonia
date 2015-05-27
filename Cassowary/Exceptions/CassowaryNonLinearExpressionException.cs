@@ -21,18 +21,16 @@
 
 using System;
 
-namespace Cassowary
+namespace Cassowary.Exceptions
 {
-    public class ExClError : Exception
+    public class CassowaryNonLinearExpressionException : CassowaryException
     {
-        public virtual string Description()
+        public override string Description
         {
-            return "(ExClError) An error has occured in CL";
-        }
-
-        public override string ToString()
-        {
-            return Description();
+            get
+            {
+                return "(ExClNonlinearExpression) The resulting expression would be nonlinear";
+            }
         }
     }
 }

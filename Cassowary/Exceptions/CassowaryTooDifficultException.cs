@@ -21,13 +21,13 @@
 
 using System;
 
-namespace Cassowary
+namespace Cassowary.Exceptions
 {
-    public class ExClNonlinearExpression : ExClError
+    public class CassowaryTooDifficultException : CassowaryException
     {
-        public override string Description()
+        public override string Description
         {
-            return "(ExClNonlinearExpression) The resulting expression would be nonlinear";
+            get { return "(ExCLTooDifficult) The constraints are too difficult to solve"; }
         }
     }
 }

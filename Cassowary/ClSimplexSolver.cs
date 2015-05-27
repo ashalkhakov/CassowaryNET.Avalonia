@@ -22,6 +22,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cassowary.Exceptions;
 using Cassowary.Utils;
 
 namespace Cassowary
@@ -246,7 +247,7 @@ namespace Cassowary
                 AddConstraint(cn);
                 return true;
             }
-            catch (ExClRequiredFailure)
+            catch (CassowaryRequiredConstraintFailureException)
             {
                 return false;
             }
@@ -265,10 +266,10 @@ namespace Cassowary
                 var cnEdit = new ClEditConstraint(v, strength);
                 return AddConstraint(cnEdit);
             }
-            catch (ExClRequiredFailure)
+            catch (CassowaryRequiredConstraintFailureException)
             {
                 // should not get this
-                throw new ExClInternalError(
+                throw new CassowaryInternalException(
                     "Required failure when adding an edit variable");
             }
         }
@@ -377,10 +378,10 @@ namespace Cassowary
 
                 return this;
             }
-            catch (ExClConstraintNotFound)
+            catch (CassowaryConstraintNotFoundException)
             {
                 // should not get this
-                throw new ExClInternalError("Constraint not found in RemoveEditVarsTo");
+                throw new CassowaryInternalException("Constraint not found in RemoveEditVarsTo");
             }
         }
 
@@ -548,7 +549,7 @@ namespace Cassowary
 
             if (markerVarsCount == markerVars.Count) // key was not found
             {
-                throw new ExClConstraintNotFound();
+                throw new CassowaryConstraintNotFoundException();
             }
 
             if (Trace)
@@ -699,7 +700,7 @@ namespace Cassowary
         {
             if (Trace)
                 FnEnterPrint("Reset");
-            throw new ExClInternalError("Reset not implemented");
+            throw new CassowaryInternalException("Reset not implemented");
         }
 
         /// <summary>
@@ -731,9 +732,9 @@ namespace Cassowary
                         SuggestValue(v, newEditConstants[i].Value);
                     }
                 }
-                catch (ExClError)
+                catch (CassowaryException)
                 {
-                    throw new ExClInternalError("Error during resolve");
+                    throw new CassowaryInternalException("Error during resolve");
                 }
             }
             Resolve();
@@ -790,7 +791,7 @@ namespace Cassowary
                     "SuggestValue for variable " + v +
                     ", but var is not an edit variable\n");
 
-                throw new ExClError();
+                throw new CassowaryException();
             }
 
             ClSlackVariable clvEditPlus = cei.ClvEditPlus;
@@ -831,10 +832,10 @@ namespace Cassowary
                 {
                     SuggestValue(v, n);
                 }
-                catch (ExClError)
+                catch (CassowaryException)
                 {
                     // just added it above, so we shouldn't get an error
-                    throw new ExClInternalError("Error in SetEditedValue");
+                    throw new CassowaryInternalException("Error in SetEditedValue");
                 }
                 EndEdit();
             }
@@ -857,10 +858,10 @@ namespace Cassowary
                 {
                     AddStay(v);
                 }
-                catch (ExClRequiredFailure)
+                catch (CassowaryRequiredConstraintFailureException)
                 {
                     // cannot have a required failure, since we add w/ weak
-                    throw new ExClInternalError(
+                    throw new CassowaryInternalException(
                         "Error in AddVar -- required failure is impossible");
                 }
 
@@ -956,7 +957,7 @@ namespace Cassowary
             {
                 RemoveRow(az);
                 RemoveColumn(av);
-                throw new ExClRequiredFailure();
+                throw new CassowaryRequiredConstraintFailureException();
             }
 
             // see if av is a basic variable
@@ -1104,7 +1105,7 @@ namespace Cassowary
 
             if (!Cl.Approx(expr.Constant, 0.0))
             {
-                throw new ExClRequiredFailure();
+                throw new CassowaryRequiredConstraintFailureException();
             }
             if (coeff > 0.0)
             {
@@ -1286,7 +1287,7 @@ namespace Cassowary
                 }
                 if (minRatio == Double.MaxValue)
                 {
-                    throw new ExClInternalError(
+                    throw new CassowaryInternalException(
                         "Objective function is unbounded in Optimize");
                 }
                 Pivot(entryVar, exitVar);
@@ -1409,7 +1410,7 @@ namespace Cassowary
                         }
                         if (ratio == Double.MaxValue)
                         {
-                            throw new ExClInternalError(
+                            throw new CassowaryInternalException(
                                 "ratio == nil (Double.MaxValue) in DualOptimize");
                         }
                         Pivot(entryVar, exitVar);

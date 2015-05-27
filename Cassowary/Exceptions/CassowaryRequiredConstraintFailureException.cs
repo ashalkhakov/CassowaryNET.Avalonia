@@ -21,14 +21,13 @@
 
 using System;
 
-namespace Cassowary
+namespace Cassowary.Exceptions
 {
-    public class ExClNotEnoughStays : ExClError
+    public class CassowaryRequiredConstraintFailureException : CassowaryException
     {
-        public override string Description()
+        public override string Description
         {
-            return
-                "(ExCLNotEnoughStays) There are not enough stays to give specific values to every variable";
+            get { return "(ExCLRequiredFailure) A required constraint cannot be satisfied"; }
         }
     }
 }

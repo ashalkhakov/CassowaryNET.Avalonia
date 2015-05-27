@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Cassowary.Exceptions;
 using NUnit.Framework;
 
 namespace Cassowary.Tests
@@ -443,7 +444,7 @@ namespace Cassowary.Tests
 
             Assert.That(
                 () => target.AddConstraint(new ClLinearEquation(x, 5d)),
-                Throws.TypeOf<ExClRequiredFailure>());
+                Throws.TypeOf<CassowaryRequiredConstraintFailureException>());
         }
 
         [Test]
@@ -457,7 +458,7 @@ namespace Cassowary.Tests
             Assert.That(
                 () => target.AddConstraint(
                     new ClLinearInequality(x, InequalityType.LEQ, 5d)),
-                Throws.TypeOf<ExClRequiredFailure>());
+                Throws.TypeOf<CassowaryRequiredConstraintFailureException>());
         }
 
         [Test]
@@ -478,7 +479,7 @@ namespace Cassowary.Tests
             Assert.That(
                 () => target.AddConstraint(
                     new ClLinearInequality(z, InequalityType.LEQ, 4d)),
-                Throws.TypeOf<ExClRequiredFailure>());
+                Throws.TypeOf<CassowaryRequiredConstraintFailureException>());
         }
 
         [Test]
@@ -494,7 +495,7 @@ namespace Cassowary.Tests
             Assert.That(
                 () => target.AddConstraint(
                     new ClLinearEquation(y, 5d)),
-                Throws.TypeOf<ExClRequiredFailure>());
+                Throws.TypeOf<CassowaryRequiredConstraintFailureException>());
         }
 
         [Test]

@@ -27,8 +27,8 @@ namespace Cassowary
     {
         #region Fields
 
-        private ClVariable _clv_x;
-        private ClVariable _clv_y;
+        private readonly ClVariable x;
+        private readonly ClVariable y;
 
         #endregion
 
@@ -36,20 +36,14 @@ namespace Cassowary
 
         public ClPoint(double x, double y)
         {
-            _clv_x = new ClVariable(x);
-            _clv_y = new ClVariable(y);
+            this.x = new ClVariable(x);
+            this.y = new ClVariable(y);
         }
 
-        public ClPoint(double x, double y, int a)
+        public ClPoint(ClVariable x, ClVariable y)
         {
-            _clv_x = new ClVariable("x" + a, x);
-            _clv_y = new ClVariable("y" + a, y);
-        }
-
-        public ClPoint(ClVariable clv_x, ClVariable clv_y)
-        {
-            _clv_x = clv_x;
-            _clv_y = clv_y;
+            this.x = x;
+            this.y = y;
         }
 
         #endregion
@@ -58,50 +52,21 @@ namespace Cassowary
 
         public ClVariable X
         {
-            get { return _clv_x; }
-            set { _clv_x = value; }
+            get { return x; }
         }
 
         public ClVariable Y
         {
-            get { return _clv_y; }
-            set { _clv_y = value; }
+            get { return y; }
         }
 
         #endregion
 
         #region Methods
 
-        ///// <remarks>
-        ///// Use only before adding into the solver
-        ///// </remarks>
-        //public void SetXY(double x, double y)
-        //{
-        //    _clv_x.Value = x;
-        //    _clv_y.Value = y;
-        //}
-
-        //public void SetXY(ClVariable clv_x, ClVariable clv_y)
-        //{
-        //    _clv_x = clv_x;
-        //    _clv_y = clv_y;
-        //}
-
-        //public double XValue
-        //{
-        //    get { return X.Value; }
-        //    set { X.Value = value; }
-        //}
-
-        //public double YValue
-        //{
-        //    get { return Y.Value; }
-        //    set { Y.Value = value; }
-        //}
-
         public override string ToString()
         {
-            return "(" + _clv_x.ToString() + ", " + _clv_y.ToString() + ")";
+            return string.Format("({0}, {1})", x, y);
         }
 
         #endregion

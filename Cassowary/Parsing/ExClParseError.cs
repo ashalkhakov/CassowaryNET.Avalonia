@@ -20,10 +20,11 @@
 */
 
 using Cassowary;
+using Cassowary.Exceptions;
 
 namespace Cassowary.Parsing
 {
-    public class ExClParseError : ExClError
+    public class ExClParseError : CassowaryException
     {
         private string _rule;
 
@@ -32,9 +33,9 @@ namespace Cassowary.Parsing
             Rule = rule;
         }
 
-        public override string Description()
+        public override string Description
         {
-            return string.Format("[ExClParseError] Parse error in \"{0}\"", Rule);
+            get { return string.Format("[ExClParseError] Parse error in \"{0}\"", Rule); }
         }
 
         public string Rule

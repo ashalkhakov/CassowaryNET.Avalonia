@@ -20,6 +20,7 @@
 */
 
 using System;
+using Cassowary.Exceptions;
 
 namespace Cassowary
 {
@@ -74,7 +75,7 @@ namespace Cassowary
         {
             if (!f)
             {
-                throw new ExClInternalError(
+                throw new CassowaryInternalException(
                     string.Format("Assertion failed: {0}", description));
             }
         }
@@ -83,7 +84,7 @@ namespace Cassowary
         {
             if (!f)
             {
-                throw new ExClInternalError("Assertion failed");
+                throw new CassowaryInternalException("Assertion failed");
             }
         }
 

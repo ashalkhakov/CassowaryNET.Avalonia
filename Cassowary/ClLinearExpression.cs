@@ -22,6 +22,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cassowary.Exceptions;
 using Cassowary.Utils;
 
 namespace Cassowary
@@ -146,7 +147,7 @@ namespace Cassowary
             }
             else if (!expr.IsConstant)
             {
-                throw new ExClNonlinearExpression();
+                throw new CassowaryNonLinearExpressionException();
             }
 
             return Times(expr.constant.Value);
@@ -187,7 +188,7 @@ namespace Cassowary
         {
             if (Approx(x, 0.0))
             {
-                throw new ExClNonlinearExpression();
+                throw new CassowaryNonLinearExpressionException();
             }
 
             return Times(1.0/x);
@@ -198,7 +199,7 @@ namespace Cassowary
         {
             if (!expr.IsConstant)
             {
-                throw new ExClNonlinearExpression();
+                throw new CassowaryNonLinearExpressionException();
             }
 
             return Divide(expr.constant.Value);
@@ -209,7 +210,7 @@ namespace Cassowary
         {
             if (!IsConstant || Approx(constant.Value, 0.0))
             {
-                throw new ExClNonlinearExpression();
+                throw new CassowaryNonLinearExpressionException();
             }
 
             return expr.Divide(constant.Value);
@@ -376,7 +377,7 @@ namespace Cassowary
         {
             if (IsConstant)
             {
-                throw new ExClInternalError("anyPivotableVariable called on a constant");
+                throw new CassowaryInternalException("anyPivotableVariable called on a constant");
             }
 
             foreach (ClAbstractVariable clv in terms.Keys)

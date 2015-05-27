@@ -21,13 +21,18 @@
 
 using System;
 
-namespace Cassowary
+namespace Cassowary.Exceptions
 {
-    public class ExClRequiredFailure : ExClError
+    public class CassowaryException : Exception
     {
-        public override string Description()
+        public virtual string Description
         {
-            return "(ExCLRequiredFailure) A required constraint cannot be satisfied";
+            get { return "(ExClError) An error has occured in CL"; }
+        }
+
+        public override string ToString()
+        {
+            return Description;
         }
     }
 }

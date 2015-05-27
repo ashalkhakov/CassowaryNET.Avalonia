@@ -21,20 +21,17 @@
 
 using System;
 
-namespace Cassowary
+namespace Cassowary.Exceptions
 {
-    public class ExClInternalError : ExClError
+    public class CassowaryConstraintNotFoundException : CassowaryException
     {
-        public ExClInternalError(string s)
+        public override string Description
         {
-            description_ = s;
+            get
+            {
+                return
+                    "(ExCLConstraintNotFound) Tried to remove a constraint never added to the tableau";
+            }
         }
-
-        public override string Description()
-        {
-            return string.Format("(ExClInternalError) ", description_);
-        }
-
-        private String description_;
     }
 }

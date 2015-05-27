@@ -20,6 +20,7 @@
 */
 
 using System;
+using Cassowary.Exceptions;
 using Cassowary.Utils;
 
 namespace Cassowary
@@ -91,7 +92,7 @@ namespace Cassowary
                     break;
                 default:
                     // invalid operator
-                    throw new ExClInternalError(
+                    throw new CassowaryInternalException(
                         "Invalid operator in ClLinearInequality constructor");
             }
         }
@@ -116,7 +117,7 @@ namespace Cassowary
                     break;
                 default:
                     // invalid operator
-                    throw new ExClInternalError(
+                    throw new CassowaryInternalException(
                         "Invalid operator in ClLinearInequality constructor");
             }
         }
@@ -217,7 +218,7 @@ namespace Cassowary
                     break;
                 default:
                     // invalid operator
-                    throw new ExClInternalError(
+                    throw new CassowaryInternalException(
                         "Invalid operator in ClLinearInequality constructor");
             }
         }
@@ -242,7 +243,7 @@ namespace Cassowary
                     break;
                 default:
                     // invalid operator
-                    throw new ExClInternalError(
+                    throw new CassowaryInternalException(
                         "Invalid operator in ClLinearInequality constructor");
             }
         }
@@ -267,7 +268,7 @@ namespace Cassowary
                     break;
                 default:
                     // invalid operator
-                    throw new ExClInternalError(
+                    throw new CassowaryInternalException(
                         "Invalid operator in ClLinearInequality constructor");
             }
         }

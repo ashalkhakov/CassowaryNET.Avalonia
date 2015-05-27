@@ -21,14 +21,17 @@
 
 using System;
 
-namespace Cassowary
+namespace Cassowary.Exceptions
 {
-    public class ExClConstraintNotFound : ExClError
+    public class CassowaryNotEnoughStaysException : CassowaryException
     {
-        public override string Description()
+        public override string Description
         {
-            return
-                "(ExCLConstraintNotFound) Tried to remove a constraint never added to the tableau";
+            get
+            {
+                return
+                    "(ExCLNotEnoughStays) There are not enough stays to give specific values to every variable";
+            }
         }
     }
 }

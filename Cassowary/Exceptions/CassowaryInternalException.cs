@@ -21,13 +21,20 @@
 
 using System;
 
-namespace Cassowary
+namespace Cassowary.Exceptions
 {
-    public class ExClTooDifficult : ExClError
+    public class CassowaryInternalException : CassowaryException
     {
-        public override string Description()
+        public CassowaryInternalException(string s)
         {
-            return "(ExCLTooDifficult) The constraints are too difficult to solve";
+            description_ = s;
         }
+
+        public override string Description
+        {
+            get { return string.Format("(ExClInternalError) ", description_); }
+        }
+
+        private String description_;
     }
 }
