@@ -99,6 +99,11 @@ namespace Cassowary
             return (new ClLinearExpression(e1)).Plus(e2);
         }
 
+        public static ClLinearExpression Plus(ClVariable e1, ClVariable e2)
+        {
+            return (new ClLinearExpression(e1)).Plus(new ClLinearExpression(e2));
+        }
+
         public static ClLinearExpression Plus(ClVariable e1, ClLinearExpression e2)
         {
             return (new ClLinearExpression(e1)).Plus(e2);
@@ -186,6 +191,14 @@ namespace Cassowary
             /*throws ExCLNonlinearExpression*/
         {
             return e1.Divide(e2);
+        }
+
+        public static ClLinearExpression Divide(
+            ClLinearExpression e1,
+            double v)
+            /*throws ExCLNonlinearExpression*/
+        {
+            return e1.Divide(new ClLinearExpression(v));
         }
 
         public static bool Approx(double a, double b)

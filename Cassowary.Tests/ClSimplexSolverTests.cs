@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using NUnit.Framework;
 using Moq;
 
@@ -12,6 +13,8 @@ namespace Cassowary.Tests
 
         public abstract class TestBase
         {
+            internal static readonly Random random = new Random();
+
             [SetUp]
             public virtual void SetUp()
             {
@@ -342,9 +345,7 @@ namespace Cassowary.Tests
             {
                 var x1 = new ClVariable(10d);
                 var width1 = new ClVariable(10d);
-                var right1 = ClLinearExpression.Plus(
-                    new ClLinearExpression(x1),
-                    new ClLinearExpression(width1));
+                var right1 = Cl.Plus(x1, width1);
 
                 var x2 = new ClVariable(100d);
                 var width2 = new ClVariable(10d);
@@ -366,52 +367,38 @@ namespace Cassowary.Tests
 
                 Assert.That(x1.Value, IsX.Approx(100d));
             }
-
             
-
-
-
-
             [Test]
             public void add_and_remove()
             {
                 var x = new ClVariable("x");
                 var target = GetTarget();
 
-                target.AddConstraint(new ClLinearEquation(x, 100, ClStrength.Weak));
+                var c100Weak = new ClLinearEquation(x, 100d, ClStrength.Weak);
+                target.AddConstraint(c100Weak);
 
-                InequalityType leq = InequalityType.LEQ;
-                var c10 = new ClLinearInequality(x, leq, 10.0);
-                var c20 = new ClLinearInequality(x, leq, 20.0);
-
-                target
-                    .AddConstraint(c10)
-                    .AddConstraint(c20);
+                var c10 = new ClLinearInequality(x, InequalityType.LEQ, 10d);
+                var c20 = new ClLinearInequality(x, InequalityType.LEQ, 20d);
+                target.AddConstraint(c10);
+                target.AddConstraint(c20);
 
                 Assert.That(x.Value, IsX.Approx(10d));
 
                 target.RemoveConstraint(c10);
-
                 Assert.That(x.Value, IsX.Approx(20d));
 
                 target.RemoveConstraint(c20);
-
                 Assert.That(x.Value, IsX.Approx(100d));
 
-                var c10Again = new ClLinearInequality(x, leq, 10.0);
-
-                target
-                    .AddConstraint(c10)
-                    .AddConstraint(c10Again);
-
+                var c10Again = new ClLinearInequality(x, InequalityType.LEQ, 10d);
+                target.AddConstraint(c10);
+                target.AddConstraint(c10Again);
                 Assert.That(x.Value, IsX.Approx(10d));
 
                 target.RemoveConstraint(c10);
-
                 Assert.That(x.Value, IsX.Approx(10d));
 
                 target.RemoveConstraint(c10Again);
-
                 Assert.That(x.Value, IsX.Approx(100d));
             }
 
@@ -422,40 +409,32 @@ namespace Cassowary.Tests
                 var y = new ClVariable("y");
                 var target = GetTarget();
 
-                target
-                    .AddConstraint(new ClLinearEquation(x, 100.0, ClStrength.Weak))
-                    .AddConstraint(new ClLinearEquation(y, 120.0, ClStrength.Strong));
+                var cx100Weak = new ClLinearEquation(x, 100d, ClStrength.Weak);
+                target.AddConstraint(cx100Weak);
+                var cy120Strong = new ClLinearEquation(y, 120d, ClStrength.Strong);
+                target.AddConstraint(cy120Strong);
 
-                InequalityType leq = InequalityType.LEQ;
-                var c10 = new ClLinearInequality(x, leq, 10.0);
-                var c20 = new ClLinearInequality(x, leq, 20.0);
-
-                target
-                    .AddConstraint(c10)
-                    .AddConstraint(c20);
-
+                var c10 = new ClLinearInequality(x, InequalityType.LEQ, 10d);
+                var c20 = new ClLinearInequality(x, InequalityType.LEQ, 20d);
+                target.AddConstraint(c10);
+                target.AddConstraint(c20);
                 Assert.That(x.Value, IsX.Approx(10d));
                 Assert.That(y.Value, IsX.Approx(120d));
 
                 target.RemoveConstraint(c10);
-
                 Assert.That(x.Value, IsX.Approx(20d));
                 Assert.That(y.Value, IsX.Approx(120d));
 
-                var cxy = new ClLinearEquation(Cl.Times(2.0, x), y);
-
+                var cxy = new ClLinearEquation(Cl.Times(2d, x), y);
                 target.AddConstraint(cxy);
-
                 Assert.That(x.Value, IsX.Approx(20d));
                 Assert.That(y.Value, IsX.Approx(40d));
 
                 target.RemoveConstraint(c20);
-
                 Assert.That(x.Value, IsX.Approx(60d));
                 Assert.That(y.Value, IsX.Approx(120d));
 
                 target.RemoveConstraint(cxy);
-
                 Assert.That(x.Value, IsX.Approx(100d));
                 Assert.That(y.Value, IsX.Approx(120d));
             }
@@ -470,11 +449,10 @@ namespace Cassowary.Tests
                 // has to break one of the constraints!
                 // either solution is ok
 
-                target
-                    .AddConstraint(new ClLinearInequality(x, InequalityType.LEQ, y))
-                    .AddConstraint(new ClLinearEquation(y, Cl.Plus(x, 3.0)))
-                    .AddConstraint(new ClLinearEquation(x, 10.0, ClStrength.Weak))
-                    .AddConstraint(new ClLinearEquation(y, 10.0, ClStrength.Weak));
+                target.AddConstraint(new ClLinearInequality(x, InequalityType.LEQ, y));
+                target.AddConstraint(new ClLinearEquation(y, Cl.Plus(x, 3d)));
+                target.AddConstraint(new ClLinearEquation(x, 10d, ClStrength.Weak));
+                target.AddConstraint(new ClLinearEquation(y, 10d, ClStrength.Weak));
 
                 if (IsX.Approx(10d).Matches(x.Value))
                 {
@@ -491,62 +469,64 @@ namespace Cassowary.Tests
             [Test]
             public void inconsistent1()
             {
-                TestDelegate action = () =>
-                {
-                    var x = new ClVariable("x");
-                    var target = GetTarget();
+                var x = new ClVariable("x");
+                var target = GetTarget();
 
-                    target
-                        .AddConstraint(new ClLinearEquation(x, 10.0))
-                        .AddConstraint(new ClLinearEquation(x, 5.0));
-                };
+                target.AddConstraint(new ClLinearEquation(x, 10d));
 
                 Assert.That(
-                    action,
+                    () => target.AddConstraint(new ClLinearEquation(x, 5d)),
                     Throws.TypeOf<ExClRequiredFailure>());
             }
 
             [Test]
             public void inconsistent2()
             {
-                TestDelegate action = () =>
-                {
-                    var x = new ClVariable("x");
-                    var target = GetTarget();
+                var x = new ClVariable("x");
+                var target = GetTarget();
 
-                    target
-                        .AddConstraint(new ClLinearInequality(x, InequalityType.GEQ, 10.0))
-                        .AddConstraint(new ClLinearInequality(x, InequalityType.LEQ, 5.0));
-                };
+                target.AddConstraint(new ClLinearInequality(x, InequalityType.GEQ, 10d));
 
                 Assert.That(
-                    action,
+                    () => target.AddConstraint(
+                        new ClLinearInequality(x, InequalityType.LEQ, 5d)),
                     Throws.TypeOf<ExClRequiredFailure>());
             }
 
             [Test]
             public void inconsistent3()
             {
-                TestDelegate action = () =>
-                {
-                    var w = new ClVariable("w");
-                    var x = new ClVariable("x");
-                    var y = new ClVariable("y");
-                    var z = new ClVariable("z");
-                    var target = GetTarget();
+                var w = new ClVariable("w");
+                var x = new ClVariable("x");
+                var y = new ClVariable("y");
+                var z = new ClVariable("z");
+                var target = GetTarget();
 
-                    InequalityType geq = InequalityType.GEQ;
-                    target
-                        .AddConstraint(new ClLinearInequality(w, geq, 10.0))
-                        .AddConstraint(new ClLinearInequality(x, geq, w))
-                        .AddConstraint(new ClLinearInequality(y, geq, x))
-                        .AddConstraint(new ClLinearInequality(z, geq, y))
-                        .AddConstraint(new ClLinearInequality(z, geq, 8.0))
-                        .AddConstraint(new ClLinearInequality(z, InequalityType.LEQ, 4.0));
-                };
+                target.AddConstraint(new ClLinearInequality(w, InequalityType.GEQ, 10d));
+                target.AddConstraint(new ClLinearInequality(x, InequalityType.GEQ, w));
+                target.AddConstraint(new ClLinearInequality(y, InequalityType.GEQ, x));
+                target.AddConstraint(new ClLinearInequality(z, InequalityType.GEQ, y));
+                target.AddConstraint(new ClLinearInequality(z, InequalityType.GEQ, 8d));
 
                 Assert.That(
-                    action,
+                    () => target.AddConstraint(
+                        new ClLinearInequality(z, InequalityType.LEQ, 4d)),
+                    Throws.TypeOf<ExClRequiredFailure>());
+            }
+
+            [Test]
+            public void inconsistent4()
+            {
+                var x = new ClVariable("x");
+                var y = new ClVariable("y");
+                var target = GetTarget();
+
+                target.AddConstraint(new ClLinearEquation(x, 10d));
+                target.AddConstraint(new ClLinearEquation(x, new ClLinearExpression(y)));
+
+                Assert.That(
+                    () => target.AddConstraint(
+                        new ClLinearEquation(y, 5d)),
                     Throws.TypeOf<ExClRequiredFailure>());
             }
 
@@ -560,51 +540,461 @@ namespace Cassowary.Tests
 
                 var target = GetTarget();
 
-                target
-                    .AddStay(x)
-                    .AddStay(y)
-                    .AddStay(w)
-                    .AddStay(h);
+                target.AddStay(x);
+                target.AddStay(y);
+                target.AddStay(w);
+                target.AddStay(h);
 
-                target
-                    .AddEditVar(x)
-                    .AddEditVar(y)
-                    .BeginEdit();
+                // start an editing session
+                target.AddEditVar(x);
+                target.AddEditVar(y);
 
-                target
-                    .SuggestValue(x, 10)
-                    .SuggestValue(y, 20)
-                    .Resolve();
+                // ////////
+                target.BeginEdit();
+
+                target.SuggestValue(x, 10);
+                target.SuggestValue(y, 20);
+
+                // force the system to resolve
+                target.Resolve();
 
                 Assert.That(x.Value, IsX.Approx(10d));
                 Assert.That(y.Value, IsX.Approx(20d));
                 Assert.That(w.Value, IsX.Approx(0d));
                 Assert.That(h.Value, IsX.Approx(0d));
 
-                target
-                    .AddEditVar(w)
-                    .AddEditVar(h)
-                    .BeginEdit();
+                // open a second set of variables for editing
+                target.AddEditVar(w);
+                target.AddEditVar(h);
 
-                target
-                    .SuggestValue(w, 30)
-                    .SuggestValue(h, 40)
-                    .EndEdit();
+                // // ////////
+                target.BeginEdit();
+                target.SuggestValue(w, 30);
+                target.SuggestValue(h, 40);
+                target.EndEdit();
+                // // ////////
 
                 Assert.That(x.Value, IsX.Approx(10d));
                 Assert.That(y.Value, IsX.Approx(20d));
                 Assert.That(w.Value, IsX.Approx(30d));
                 Assert.That(h.Value, IsX.Approx(40d));
 
-                target
-                    .SuggestValue(x, 50)
-                    .SuggestValue(y, 60)
-                    .EndEdit();
+                // make sure the first set can still be edited
+                target.SuggestValue(x, 50);
+                target.SuggestValue(y, 60);
+
+                target.EndEdit();
+                // ////////
 
                 Assert.That(x.Value, IsX.Approx(50d));
                 Assert.That(y.Value, IsX.Approx(60d));
                 Assert.That(w.Value, IsX.Approx(30d));
                 Assert.That(h.Value, IsX.Approx(40d));
+            }
+
+            [Test]
+            public void multi_edit2()
+            {
+                var x = new ClVariable("x");
+                var y = new ClVariable("y");
+                var w = new ClVariable("w");
+                var h = new ClVariable("h");
+
+                var target = GetTarget();
+
+                target.AddStay(x);
+                target.AddStay(y);
+                target.AddStay(w);
+                target.AddStay(h);
+
+                target.AddEditVar(x);
+                target.AddEditVar(y);
+
+
+                // ////////
+                target.BeginEdit();
+                target.SuggestValue(x, 10);
+                target.SuggestValue(y, 20);
+                target.Resolve();
+                target.EndEdit();
+                // ////////
+
+                Assert.That(x.Value, IsX.Approx(10d));
+                Assert.That(y.Value, IsX.Approx(20d));
+                Assert.That(w.Value, IsX.Approx(0d));
+                Assert.That(h.Value, IsX.Approx(0d));
+
+
+                target.AddEditVar(w);
+                target.AddEditVar(h);
+
+                // // ////////
+                target.BeginEdit();
+                target.SuggestValue(w, 30);
+                target.SuggestValue(h, 40);
+                target.EndEdit();
+                // // ////////
+
+                Assert.That(x.Value, IsX.Approx(10d));
+                Assert.That(y.Value, IsX.Approx(20d));
+                Assert.That(w.Value, IsX.Approx(30d));
+                Assert.That(h.Value, IsX.Approx(40d));
+
+
+                target.AddEditVar(x);
+                target.AddEditVar(y);
+
+                // // // ////////
+                target.BeginEdit();
+                target.SuggestValue(x, 50);
+                target.SuggestValue(y, 60);
+                target.EndEdit();
+                // // // ////////
+
+                Assert.That(x.Value, IsX.Approx(50d));
+                Assert.That(y.Value, IsX.Approx(60d));
+                Assert.That(w.Value, IsX.Approx(30d));
+                Assert.That(h.Value, IsX.Approx(40d));
+            }
+
+            private static double RandomIn(double min, double max)
+            {
+                var r = random.NextDouble();
+                return min + (max - min)*r;
+            }
+
+            [Test]
+            public void multi_edit3()
+            {
+                const double Min = 100d;
+                const double Max = 500d;
+
+                var width = new ClVariable("width");
+                var height = new ClVariable("height");
+                var top = new ClVariable("top");
+                var bottom = new ClVariable("bottom");
+                var left = new ClVariable("left");
+                var right = new ClVariable("right");
+
+                var target = GetTarget();
+
+                var iw = new ClVariable("window_innerWidth", RandomIn(Min, Max));
+                var ih = new ClVariable("window_innerHeight", RandomIn(Min, Max));
+
+                target.AddConstraint(
+                    new ClLinearEquation(
+                        width,
+                        new ClLinearExpression(iw),
+                        ClStrength.Strong,
+                        0d));
+                target.AddConstraint(
+                    new ClLinearEquation(
+                        height,
+                        new ClLinearExpression(ih),
+                        ClStrength.Strong,
+                        0d));
+
+                target.AddConstraint(
+                    new ClLinearEquation(
+                        top,
+                        0d,
+                        ClStrength.Weak,
+                        0d));
+                target.AddConstraint(
+                    new ClLinearEquation(
+                        left,
+                        0d,
+                        ClStrength.Weak,
+                        0d));
+
+                // right is at least left + width
+                target.AddConstraint(
+                    new ClLinearEquation(
+                        bottom,
+                        Cl.Plus(top, height),
+                        ClStrength.Medium,
+                        0d));
+                target.AddConstraint(
+                    new ClLinearEquation(
+                        right,
+                        Cl.Plus(left, width),
+                        ClStrength.Medium,
+                        0d));
+
+                target.AddStay(iw);
+                target.AddStay(ih);
+
+                for (int i = 0; i < 30; i++)
+                {
+                    var iwv = RandomIn(Min, Max);
+                    var ihv = RandomIn(Min, Max);
+
+                    target.AddEditVar(iw);
+                    target.AddEditVar(ih);
+
+                    target.BeginEdit();
+                    target.SuggestValue(iw, iwv);
+                    target.SuggestValue(ih, ihv);
+                    target.EndEdit();
+
+                    Assert.That(top.Value, IsX.Approx(0d));
+                    Assert.That(left.Value, IsX.Approx(0d));
+
+                    Assert.That(bottom.Value, Is.LessThanOrEqualTo(Max));
+                    Assert.That(bottom.Value, Is.GreaterThanOrEqualTo(Min));
+                    Assert.That(right.Value, Is.LessThanOrEqualTo(Max));
+                    Assert.That(right.Value, Is.GreaterThanOrEqualTo(Min));
+                }
+            }
+
+            [Test]
+            public void test_error_weights()
+            {
+                var x = new ClVariable("x", 100d);
+                var y = new ClVariable("y", 200d);
+                var z = new ClVariable("z", 50d);
+
+                var target = GetTarget();
+
+                Assert.That(x.Value, IsX.Approx(100d));
+                Assert.That(y.Value, IsX.Approx(200d));
+                Assert.That(z.Value, IsX.Approx(50d));
+
+                target.AddConstraint(
+                    new ClLinearEquation(z, new ClLinearExpression(x), ClStrength.Weak));
+                target.AddConstraint(new ClLinearEquation(x, 20d, ClStrength.Weak));
+                target.AddConstraint(new ClLinearEquation(y, 200d, ClStrength.Strong));
+
+                Assert.That(x.Value, IsX.Approx(20d));
+                Assert.That(y.Value, IsX.Approx(200d));
+                Assert.That(z.Value, IsX.Approx(20d));
+
+                // z + 150 <= y
+                target.AddConstraint(
+                    new ClLinearInequality(
+                        Cl.Plus(z, 150d),
+                        InequalityType.LEQ,
+                        y,
+                        ClStrength.Medium));
+
+                Assert.That(x.Value, IsX.Approx(20d));
+                Assert.That(y.Value, IsX.Approx(200d));
+                Assert.That(z.Value, IsX.Approx(20d));
+            }
+
+            private struct Point
+            {
+                private readonly string id;
+                private readonly ClVariable x;
+                private readonly ClVariable y;
+
+                public Point(string id, double x, double y)
+                {
+                    this.id = id;
+                    this.x = new ClVariable(x);
+                    this.y = new ClVariable(y);
+                }
+
+                public ClVariable X
+                {
+                    get { return x; }
+                }
+
+                public ClVariable Y
+                {
+                    get { return y; }
+                }
+            }
+
+            [Test]
+            public void test_quadrilateral()
+            {
+                var allPoints = new[]
+                {
+                    new Point("0", 10d, 10d),
+                    new Point("1", 10d, 200d),
+                    new Point("2", 200d, 200d),
+                    new Point("3", 200d, 10d),
+
+                    new Point("m0", 0d, 0d),
+                    new Point("m1", 0d, 0d),
+                    new Point("m2", 0d, 0d),
+                    new Point("m3", 0d, 0d),
+                };
+                var points = allPoints.Take(4).ToArray();
+                var midpoints = allPoints.Skip(4).ToArray();
+
+                var target = GetTarget();
+
+                var weight = 1d;
+                foreach (var point in points)
+                {
+                    target.AddStay(point.X, ClStrength.Weak, weight);
+                    target.AddStay(point.Y, ClStrength.Weak, weight);
+                    weight *= 2d;
+                }
+
+                for (int start = 0; start < 4; start++)
+                {
+                    var end = (start + 1) % 4;
+
+                    // (points[start].X + points[end].X) / 2
+                    var cleX = Cl.Divide(
+                        Cl.Plus(points[start].X, points[end].X),
+                        2d);
+                    var cleXq = new ClLinearEquation(midpoints[start].X, cleX);
+                    target.AddConstraint(cleXq);
+
+                    var cleY = Cl.Divide(
+                        Cl.Plus(points[start].Y, points[end].Y),
+                        2d);
+                    var cleYq = new ClLinearEquation(midpoints[start].Y, cleY);
+                    target.AddConstraint(cleYq);
+                }
+
+                var clex0 = Cl.Plus(points[0].X, 20d);
+                var clex02 = new ClLinearInequality(clex0, InequalityType.LEQ, points[2].X);
+                var clex03 = new ClLinearInequality(clex0, InequalityType.LEQ, points[3].X);
+                target.AddConstraint(clex02);
+                target.AddConstraint(clex03);
+
+                var clex1 = Cl.Plus(points[1].X, 20d);
+                var clex12 = new ClLinearInequality(clex1, InequalityType.LEQ, points[2].X);
+                var clex13 = new ClLinearInequality(clex1, InequalityType.LEQ, points[3].X);
+                target.AddConstraint(clex12);
+                target.AddConstraint(clex13);
+
+                var cley0 = Cl.Plus(points[0].Y, 20d);
+                var cley01 = new ClLinearInequality(cley0, InequalityType.LEQ, points[1].Y);
+                var cley02 = new ClLinearInequality(cley0, InequalityType.LEQ, points[2].Y);
+                target.AddConstraint(cley01);
+                target.AddConstraint(cley02);
+
+                var cley3 = Cl.Plus(points[3].Y, 20d);
+                var cley31 = new ClLinearInequality(cley3, InequalityType.LEQ, points[1].Y);
+                var cley32 = new ClLinearInequality(cley3, InequalityType.LEQ, points[2].Y);
+                target.AddConstraint(cley31);
+                target.AddConstraint(cley32);
+
+                foreach (var point in allPoints)
+                {
+                    target.AddConstraint(
+                        new ClLinearInequality(point.X, InequalityType.GEQ, 0d));
+                    target.AddConstraint(
+                        new ClLinearInequality(point.Y, InequalityType.GEQ, 0d));
+                    target.AddConstraint(
+                        new ClLinearInequality(point.X, InequalityType.LEQ, 500d));
+                    target.AddConstraint(
+                        new ClLinearInequality(point.Y, InequalityType.LEQ, 500d));
+                }
+
+                // check the initial answers
+                Assert.That(allPoints[0].X.Value, IsX.Approx(10d));
+                Assert.That(allPoints[0].Y.Value, IsX.Approx(10d));
+                Assert.That(allPoints[1].X.Value, IsX.Approx(10d));
+                Assert.That(allPoints[1].Y.Value, IsX.Approx(200d));
+                Assert.That(allPoints[2].X.Value, IsX.Approx(200d));
+                Assert.That(allPoints[2].Y.Value, IsX.Approx(200d));
+                Assert.That(allPoints[3].X.Value, IsX.Approx(200d));
+                Assert.That(allPoints[3].Y.Value, IsX.Approx(10d));
+
+                Assert.That(allPoints[4].X.Value, IsX.Approx(10d));
+                Assert.That(allPoints[4].Y.Value, IsX.Approx(105d));
+                Assert.That(allPoints[5].X.Value, IsX.Approx(105d));
+                Assert.That(allPoints[5].Y.Value, IsX.Approx(200d));
+                Assert.That(allPoints[6].X.Value, IsX.Approx(200d));
+                Assert.That(allPoints[6].Y.Value, IsX.Approx(105d));
+                Assert.That(allPoints[7].X.Value, IsX.Approx(105d));
+                Assert.That(allPoints[7].Y.Value, IsX.Approx(10d));
+
+                // now move point 2 to  a new location
+
+                target.AddEditVar(points[2].X);
+                target.AddEditVar(points[2].Y);
+
+                target.BeginEdit();
+                target.SuggestValue(points[2].X, 300d);
+                target.SuggestValue(points[2].Y, 400d);
+                target.EndEdit();
+
+                // check that the other points have been moved
+                Assert.That(allPoints[0].X.Value, IsX.Approx(10d));
+                Assert.That(allPoints[0].Y.Value, IsX.Approx(10d));
+                Assert.That(allPoints[1].X.Value, IsX.Approx(10d));
+                Assert.That(allPoints[1].Y.Value, IsX.Approx(200d));
+                Assert.That(allPoints[2].X.Value, IsX.Approx(300d));
+                Assert.That(allPoints[2].Y.Value, IsX.Approx(400d));
+                Assert.That(allPoints[3].X.Value, IsX.Approx(200d));
+                Assert.That(allPoints[3].Y.Value, IsX.Approx(10d));
+
+                Assert.That(allPoints[4].X.Value, IsX.Approx(10d));
+                Assert.That(allPoints[4].Y.Value, IsX.Approx(105d));
+                Assert.That(allPoints[5].X.Value, IsX.Approx(155d));
+                Assert.That(allPoints[5].Y.Value, IsX.Approx(300d));
+                Assert.That(allPoints[6].X.Value, IsX.Approx(250d));
+                Assert.That(allPoints[6].Y.Value, IsX.Approx(205d));
+                Assert.That(allPoints[7].X.Value, IsX.Approx(105d));
+                Assert.That(allPoints[7].Y.Value, IsX.Approx(10d));
+            }
+
+            //[Test]
+            //public void test_buttons()
+            //{
+            //}
+
+            [Test]
+            public void test_paper_example()
+            {
+                var left = new ClVariable("left");
+                var middle = new ClVariable("middle");
+                var right = new ClVariable("right");
+
+                var target = GetTarget();
+
+                // middle == (left + right) / 2
+                target.AddConstraint(
+                    new ClLinearEquation(
+                        middle,
+                        Cl.Divide(Cl.Plus(left, right), 2d)));
+                // right == left + 10
+                target.AddConstraint(
+                    new ClLinearEquation(
+                        right,
+                        Cl.Plus(left, 10d)));
+                // right <= 100
+                target.AddConstraint(
+                    new ClLinearInequality(
+                        right,
+                        InequalityType.LEQ,
+                        100d));
+                // left >= 0
+                target.AddConstraint(
+                    new ClLinearInequality(
+                        left,
+                        InequalityType.GEQ,
+                        0d));
+
+                // check that all the required constraints are true
+                Assert.That(middle.Value, IsX.Approx((left.Value + right.Value)/2d));
+                Assert.That(right.Value, IsX.Approx(left.Value + 10d));
+                Assert.That(right.Value, Is.LessThanOrEqualTo(100d));
+                Assert.That(left.Value, Is.GreaterThanOrEqualTo(0d));
+
+                // set the middle value to a stay
+                middle.Value = 45d;
+                target.AddStay(middle);
+
+                // check that all the required constraints are true
+                Assert.That(middle.Value, IsX.Approx((left.Value + right.Value)/2d));
+                Assert.That(right.Value, IsX.Approx(left.Value + 10d));
+                Assert.That(right.Value, Is.LessThanOrEqualTo(100d));
+                Assert.That(left.Value, Is.GreaterThanOrEqualTo(0d));
+
+                // but more than that - since we gave a position for middle, we know
+                // where all the points should be.
+                Assert.That(left.Value, IsX.Approx(40d));
+                Assert.That(middle.Value, IsX.Approx(45d));
+                Assert.That(right.Value, IsX.Approx(50d));
             }
 
             [Test]
