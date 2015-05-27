@@ -937,10 +937,150 @@ namespace Cassowary.Tests
                 Assert.That(allPoints[7].Y.Value, IsX.Approx(10d));
             }
 
-            //[Test]
-            //public void test_buttons()
-            //{
-            //}
+            private struct Button
+            {
+                private readonly string id;
+                private readonly ClVariable left;
+                private readonly ClVariable width;
+
+                public Button(string id)
+                {
+                    this.id = id;
+                    this.left = new ClVariable("left" + id, 0d);
+                    this.width = new ClVariable("width" + id, 0d);
+                }
+
+                public ClVariable Left
+                {
+                    get { return left; }
+                }
+
+                public ClVariable Width
+                {
+                    get { return width; }
+                }
+            }
+
+            [Test]
+            public void test_buttons()
+            {
+                var b1 = new Button("b1");
+                var b2 = new Button("b2");
+
+                var leftLimit = new ClVariable("left", 0d);
+                var rightLimit = new ClVariable("right", 0d);
+
+                var target = GetTarget();
+
+                target.AddStay(leftLimit, ClStrength.Required);
+                target.AddStay(rightLimit, ClStrength.Weak);
+
+                // The two buttons are the same width
+                //solver.add_constraint(b1.width == b2.width)
+                target.AddConstraint(
+                    new ClLinearEquation(
+                        b1.Width,
+                        new ClLinearExpression(b2.Width)));
+
+                // b1 starts 50 from the left margin.
+                //solver.add_constraint(b1.left == left_limit + 50)
+                target.AddConstraint(
+                    new ClLinearEquation(
+                        b1.Left,
+                        Cl.Plus(leftLimit, 50d)));
+
+                // b2 ends 50 from the right margin
+                //solver.add_constraint(left_limit + right_limit == b2.left + b2.width + 50)
+                target.AddConstraint(
+                    new ClLinearEquation(
+                        Cl.Plus(leftLimit, rightLimit),
+                        Cl.Plus(
+                            Cl.Plus(b2.Left, b2.Width),
+                            50d)));
+
+                // b2 starts at least 100 from the end of b1
+                //solver.add_constraint(b2.left >= (b1.left + b1.width + 100))
+                target.AddConstraint(
+                    new ClLinearInequality(
+                        b2.Left,
+                        InequalityType.GEQ, 
+                        Cl.Plus(
+                            Cl.Plus(b1.Left, b1.Width),
+                            100d)));
+
+                // b1 has a minimum width of 87
+                //solver.add_constraint(b1.width >= 87)
+                target.AddConstraint(
+                    new ClLinearInequality(
+                        b1.Width,
+                        InequalityType.GEQ,
+                        87d));
+
+                // b1's preferred width is 87
+                //solver.add_constraint(b1.width == 87, STRONG)
+                target.AddConstraint(
+                    new ClLinearEquation(b1.Width, 87d, ClStrength.Strong));
+
+                // b2's minimum width is 113
+                //solver.add_constraint(b2.width >= 113)
+                target.AddConstraint(
+                    new ClLinearInequality(
+                        b2.Width,
+                        InequalityType.GEQ,
+                        113d));
+
+                // b2's preferred width is 113
+                //solver.add_constraint(b2.width == 113, STRONG)
+                target.AddConstraint(
+                    new ClLinearEquation(b2.Width, 113d, ClStrength.Strong));
+
+                // Without imposign a stay on the right, 
+                // right_limit will be the minimum width for the layout
+                Assert.That(b1.Left.Value, IsX.Approx(50d));
+                Assert.That(b1.Width.Value, IsX.Approx(113d));
+                Assert.That(b2.Left.Value, IsX.Approx(263d));
+                Assert.That(b2.Width.Value, IsX.Approx(113d));
+                Assert.That(rightLimit.Value, IsX.Approx(426d));
+
+                // The window is 500 pixels wide.
+                rightLimit.Value = 500d;
+                var stay1 = new ClStayConstraint(rightLimit, ClStrength.Required);
+                target.AddConstraint(stay1);
+
+                Assert.That(b1.Left.Value, IsX.Approx(50d));
+                Assert.That(b1.Width.Value, IsX.Approx(113d));
+                Assert.That(b2.Left.Value, IsX.Approx(337d));
+                Assert.That(b2.Width.Value, IsX.Approx(113d));
+                Assert.That(rightLimit.Value, IsX.Approx(500d));
+
+                target.RemoveConstraint(stay1);
+
+                // Expand to 700 pixels
+                rightLimit.Value = 700d;
+                var stay2 = new ClStayConstraint(rightLimit, ClStrength.Required);
+                target.AddConstraint(stay2);
+
+                Assert.That(b1.Left.Value, IsX.Approx(50d));
+                Assert.That(b1.Width.Value, IsX.Approx(113d));
+                Assert.That(b2.Left.Value, IsX.Approx(537d));
+                Assert.That(b2.Width.Value, IsX.Approx(113d));
+                Assert.That(rightLimit.Value, IsX.Approx(700d));
+
+                target.RemoveConstraint(stay2);
+
+                // Contract to 600 pixels
+                rightLimit.Value = 600d;
+                var stay3 = new ClStayConstraint(rightLimit, ClStrength.Required);
+                target.AddConstraint(stay3);
+
+                Assert.That(b1.Left.Value, IsX.Approx(50d));
+                Assert.That(b1.Width.Value, IsX.Approx(113d));
+                Assert.That(b2.Left.Value, IsX.Approx(437d));
+                Assert.That(b2.Width.Value, IsX.Approx(113d));
+                Assert.That(rightLimit.Value, IsX.Approx(600d));
+
+                target.RemoveConstraint(stay3);
+            }
 
             [Test]
             public void test_paper_example()

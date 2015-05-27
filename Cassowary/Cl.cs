@@ -94,6 +94,10 @@ namespace Cassowary
             return e1.Plus(e2);
         }
 
+        public static ClLinearExpression Plus(ClLinearExpression e1, double e2)
+        {
+            return e1.Plus(new ClLinearExpression(e2));
+        }
         public static ClLinearExpression Plus(double e1, ClLinearExpression e2)
         {
             return (new ClLinearExpression(e1)).Plus(e2);
