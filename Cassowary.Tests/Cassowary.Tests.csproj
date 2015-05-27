@@ -49,10 +49,15 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClObjectiveVariableTests.cs" />
+    <Compile Include="ClSlackVariableTests.cs" />
     <Compile Include="ClSimplexSolverTests.cs" />
+    <Compile Include="ClDummyVariableTests.cs" />
+    <Compile Include="EndToEndTests.cs" />
     <Compile Include="IsX.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ClTests.cs" />
+    <Compile Include="ClVariableTests.cs" />
     <Compile Include="_Class1Tests.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -33,26 +33,26 @@ namespace Cassowary
 
         #region Constructors
 
-        public ClVariable(string name, double value)
-            : base(name)
+        public ClVariable()
+            : this(0d)
+        {
+        }
+
+        public ClVariable(double value)
+            : base()
         {
             this.value = value;
         }
 
         public ClVariable(string name)
+            : this(name, 0d)
+        {
+        }
+
+        public ClVariable(string name, double value)
             : base(name)
         {
-            value = 0.0;
-        }
-
-        public ClVariable(double value)
-        {
             this.value = value;
-        }
-
-        public ClVariable()
-        {
-            value = 0.0;
         }
 
         #endregion
