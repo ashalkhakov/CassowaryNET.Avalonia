@@ -20,7 +20,6 @@
 */
 
 using System;
-using System.Collections;
 
 namespace Cassowary
 {
@@ -32,17 +31,14 @@ namespace Cassowary
     {
         #region Fields
 
-        public const byte GEQ = 1;
-        public const byte LEQ = 2;
+        #endregion
+
+        #region Constructors
 
         static Cl()
         {
             Trace = false;
         }
-
-        #endregion
-
-        #region Constructors
 
         #endregion
 

@@ -147,7 +147,7 @@ namespace Cassowary
         {
             var cn = new ClLinearInequality(
                 v,
-                Cl.GEQ,
+                InequalityType.GEQ,
                 new ClLinearExpression(lower));
             return AddConstraint(cn);
         }
@@ -160,7 +160,7 @@ namespace Cassowary
         {
             var cn = new ClLinearInequality(
                 v,
-                Cl.LEQ,
+                InequalityType.LEQ,
                 new ClLinearExpression(upper));
             return AddConstraint(cn);
         }

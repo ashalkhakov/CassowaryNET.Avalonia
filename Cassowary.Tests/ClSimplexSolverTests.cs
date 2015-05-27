@@ -79,8 +79,9 @@ namespace Cassowary.Tests
 
                 target.AddConstraint(new ClLinearEquation(x, 100, ClStrength.Weak));
 
-                var c10 = new ClLinearInequality(x, Cl.LEQ, 10.0);
-                var c20 = new ClLinearInequality(x, Cl.LEQ, 20.0);
+                InequalityType leq = InequalityType.LEQ;
+                var c10 = new ClLinearInequality(x, leq, 10.0);
+                var c20 = new ClLinearInequality(x, leq, 20.0);
 
                 target
                     .AddConstraint(c10)
@@ -96,7 +97,7 @@ namespace Cassowary.Tests
 
                 Assert.That(x.Value, IsX.Approx(100d));
 
-                var c10Again = new ClLinearInequality(x, Cl.LEQ, 10.0);
+                var c10Again = new ClLinearInequality(x, leq, 10.0);
 
                 target
                     .AddConstraint(c10)
@@ -124,8 +125,9 @@ namespace Cassowary.Tests
                     .AddConstraint(new ClLinearEquation(x, 100.0, ClStrength.Weak))
                     .AddConstraint(new ClLinearEquation(y, 120.0, ClStrength.Strong));
 
-                var c10 = new ClLinearInequality(x, Cl.LEQ, 10.0);
-                var c20 = new ClLinearInequality(x, Cl.LEQ, 20.0);
+                InequalityType leq = InequalityType.LEQ;
+                var c10 = new ClLinearInequality(x, leq, 10.0);
+                var c20 = new ClLinearInequality(x, leq, 20.0);
 
                 target
                     .AddConstraint(c10)
@@ -168,7 +170,7 @@ namespace Cassowary.Tests
                 // either solution is ok
 
                 target
-                    .AddConstraint(new ClLinearInequality(x, Cl.LEQ, y))
+                    .AddConstraint(new ClLinearInequality(x, InequalityType.LEQ, y))
                     .AddConstraint(new ClLinearEquation(y, Cl.Plus(x, 3.0)))
                     .AddConstraint(new ClLinearEquation(x, 10.0, ClStrength.Weak))
                     .AddConstraint(new ClLinearEquation(y, 10.0, ClStrength.Weak));
@@ -212,8 +214,8 @@ namespace Cassowary.Tests
                     var target = GetTarget();
 
                     target
-                        .AddConstraint(new ClLinearInequality(x, Cl.GEQ, 10.0))
-                        .AddConstraint(new ClLinearInequality(x, Cl.LEQ, 5.0));
+                        .AddConstraint(new ClLinearInequality(x, InequalityType.GEQ, 10.0))
+                        .AddConstraint(new ClLinearInequality(x, InequalityType.LEQ, 5.0));
                 };
 
                 Assert.That(
@@ -232,13 +234,14 @@ namespace Cassowary.Tests
                     var z = new ClVariable("z");
                     var target = GetTarget();
 
+                    InequalityType geq = InequalityType.GEQ;
                     target
-                        .AddConstraint(new ClLinearInequality(w, Cl.GEQ, 10.0))
-                        .AddConstraint(new ClLinearInequality(x, Cl.GEQ, w))
-                        .AddConstraint(new ClLinearInequality(y, Cl.GEQ, x))
-                        .AddConstraint(new ClLinearInequality(z, Cl.GEQ, y))
-                        .AddConstraint(new ClLinearInequality(z, Cl.GEQ, 8.0))
-                        .AddConstraint(new ClLinearInequality(z, Cl.LEQ, 4.0));
+                        .AddConstraint(new ClLinearInequality(w, geq, 10.0))
+                        .AddConstraint(new ClLinearInequality(x, geq, w))
+                        .AddConstraint(new ClLinearInequality(y, geq, x))
+                        .AddConstraint(new ClLinearInequality(z, geq, y))
+                        .AddConstraint(new ClLinearInequality(z, geq, 8.0))
+                        .AddConstraint(new ClLinearInequality(z, InequalityType.LEQ, 4.0));
                 };
 
                 Assert.That(
@@ -483,28 +486,29 @@ namespace Cassowary.Tests
                             bottomRight_left),
                         new ClLinearExpression(bottomRight_right),
                         ClStrength.Required));
+                InequalityType geq = InequalityType.GEQ;
                 target.AddConstraint(
                     new ClLinearInequality(
                         bottomRight_top,
-                        Cl.GEQ,
+                        geq,
                         0,
                         ClStrength.Required));
                 target.AddConstraint(
                     new ClLinearInequality(
                         bottomRight_bottom,
-                        Cl.GEQ,
+                        geq,
                         0,
                         ClStrength.Required));
                 target.AddConstraint(
                     new ClLinearInequality(
                         bottomRight_left,
-                        Cl.GEQ,
+                        geq,
                         0,
                         ClStrength.Required));
                 target.AddConstraint(
                     new ClLinearInequality(
                         bottomRight_right,
-                        Cl.GEQ,
+                        geq,
                         0,
                         ClStrength.Required));
 
@@ -519,19 +523,20 @@ namespace Cassowary.Tests
                         new ClLinearExpression(update_right),
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(update_top, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(update_top, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(update_bottom, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(update_bottom, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(update_left, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(update_left, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(update_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(update_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(update_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(update_right, geq, 0, ClStrength.Required));
+                InequalityType leq = InequalityType.LEQ;
                 target.AddConstraint(
-                    new ClLinearInequality(update_bottom, Cl.LEQ, bottomRight_height));
+                    new ClLinearInequality(update_bottom, leq, bottomRight_height));
                 target.AddConstraint(
-                    new ClLinearInequality(update_right, Cl.LEQ, bottomRight_width));
+                    new ClLinearInequality(update_right, leq, bottomRight_width));
 
                 target.AddConstraint(
                     new ClLinearEquation(
@@ -544,19 +549,19 @@ namespace Cassowary.Tests
                         new ClLinearExpression(newpost_right),
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(newpost_top, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(newpost_top, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(newpost_bottom, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(newpost_bottom, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(newpost_left, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(newpost_left, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(newpost_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(newpost_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(newpost_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(newpost_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(newpost_bottom, Cl.LEQ, bottomRight_height));
+                    new ClLinearInequality(newpost_bottom, leq, bottomRight_height));
                 target.AddConstraint(
-                    new ClLinearInequality(newpost_right, Cl.LEQ, bottomRight_width));
+                    new ClLinearInequality(newpost_right, leq, bottomRight_width));
 
                 target.AddConstraint(
                     new ClLinearEquation(
@@ -569,19 +574,19 @@ namespace Cassowary.Tests
                         new ClLinearExpression(quit_right),
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(quit_top, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(quit_top, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(quit_bottom, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(quit_bottom, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(quit_left, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(quit_left, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(quit_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(quit_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(quit_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(quit_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(quit_bottom, Cl.LEQ, bottomRight_height));
+                    new ClLinearInequality(quit_bottom, leq, bottomRight_height));
                 target.AddConstraint(
-                    new ClLinearInequality(quit_right, Cl.LEQ, bottomRight_width));
+                    new ClLinearInequality(quit_right, leq, bottomRight_width));
 
                 target.AddConstraint(
                     new ClLinearEquation(
@@ -594,19 +599,19 @@ namespace Cassowary.Tests
                         new ClLinearExpression(topRight_right),
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(topRight_top, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(topRight_top, geq, 0, ClStrength.Required));
                 target.AddConstraint(
                     new ClLinearInequality(
                         topRight_bottom,
-                        Cl.GEQ,
+                        geq,
                         0,
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(topRight_left, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(topRight_left, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(topRight_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(topRight_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(topRight_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(topRight_right, geq, 0, ClStrength.Required));
 
                 target.AddConstraint(
                     new ClLinearEquation(
@@ -619,19 +624,19 @@ namespace Cassowary.Tests
                         new ClLinearExpression(l_title_right),
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(l_title_top, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(l_title_top, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(l_title_bottom, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(l_title_bottom, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(l_title_left, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(l_title_left, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(l_title_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(l_title_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(l_title_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(l_title_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(l_title_bottom, Cl.LEQ, topRight_height));
+                    new ClLinearInequality(l_title_bottom, leq, topRight_height));
                 target.AddConstraint(
-                    new ClLinearInequality(l_title_right, Cl.LEQ, topRight_width));
+                    new ClLinearInequality(l_title_right, leq, topRight_width));
 
                 target.AddConstraint(
                     new ClLinearEquation(
@@ -644,19 +649,19 @@ namespace Cassowary.Tests
                         new ClLinearExpression(title_right),
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(title_top, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(title_top, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(title_bottom, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(title_bottom, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(title_left, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(title_left, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(title_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(title_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(title_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(title_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(title_bottom, Cl.LEQ, topRight_height));
+                    new ClLinearInequality(title_bottom, leq, topRight_height));
                 target.AddConstraint(
-                    new ClLinearInequality(title_right, Cl.LEQ, topRight_width));
+                    new ClLinearInequality(title_right, leq, topRight_width));
 
                 target.AddConstraint(
                     new ClLinearEquation(
@@ -669,19 +674,19 @@ namespace Cassowary.Tests
                         new ClLinearExpression(l_body_right),
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(l_body_top, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(l_body_top, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(l_body_bottom, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(l_body_bottom, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(l_body_left, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(l_body_left, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(l_body_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(l_body_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(l_body_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(l_body_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(l_body_bottom, Cl.LEQ, topRight_height));
+                    new ClLinearInequality(l_body_bottom, leq, topRight_height));
                 target.AddConstraint(
-                    new ClLinearInequality(l_body_right, Cl.LEQ, topRight_width));
+                    new ClLinearInequality(l_body_right, leq, topRight_width));
 
                 target.AddConstraint(
                     new ClLinearEquation(
@@ -694,31 +699,31 @@ namespace Cassowary.Tests
                         new ClLinearExpression(blogentry_right),
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(blogentry_top, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(blogentry_top, geq, 0, ClStrength.Required));
                 target.AddConstraint(
                     new ClLinearInequality(
                         blogentry_bottom,
-                        Cl.GEQ,
+                        geq,
                         0,
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(blogentry_left, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(blogentry_left, geq, 0, ClStrength.Required));
                 target.AddConstraint(
                     new ClLinearInequality(
                         blogentry_right,
-                        Cl.GEQ,
+                        geq,
                         0,
                         ClStrength.Required));
                 target.AddConstraint(
                     new ClLinearInequality(
                         blogentry_right,
-                        Cl.GEQ,
+                        geq,
                         0,
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(blogentry_bottom, Cl.LEQ, topRight_height));
+                    new ClLinearInequality(blogentry_bottom, leq, topRight_height));
                 target.AddConstraint(
-                    new ClLinearInequality(blogentry_right, Cl.LEQ, topRight_width));
+                    new ClLinearInequality(blogentry_right, leq, topRight_width));
 
                 target.AddConstraint(
                     new ClLinearEquation(
@@ -731,15 +736,15 @@ namespace Cassowary.Tests
                         new ClLinearExpression(left_right),
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(left_top, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(left_top, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(left_bottom, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(left_bottom, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(left_left, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(left_left, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(left_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(left_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(left_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(left_right, geq, 0, ClStrength.Required));
 
                 target.AddConstraint(
                     new ClLinearEquation(
@@ -752,23 +757,23 @@ namespace Cassowary.Tests
                         new ClLinearExpression(l_recent_right),
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(l_recent_top, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(l_recent_top, geq, 0, ClStrength.Required));
                 target.AddConstraint(
                     new ClLinearInequality(
                         l_recent_bottom,
-                        Cl.GEQ,
+                        geq,
                         0,
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(l_recent_left, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(l_recent_left, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(l_recent_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(l_recent_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(l_recent_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(l_recent_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(l_recent_bottom, Cl.LEQ, left_height));
+                    new ClLinearInequality(l_recent_bottom, leq, left_height));
                 target.AddConstraint(
-                    new ClLinearInequality(l_recent_right, Cl.LEQ, left_width));
+                    new ClLinearInequality(l_recent_right, leq, left_width));
 
                 target.AddConstraint(
                     new ClLinearEquation(
@@ -781,23 +786,23 @@ namespace Cassowary.Tests
                         new ClLinearExpression(articles_right),
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(articles_top, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(articles_top, geq, 0, ClStrength.Required));
                 target.AddConstraint(
                     new ClLinearInequality(
                         articles_bottom,
-                        Cl.GEQ,
+                        geq,
                         0,
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(articles_left, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(articles_left, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(articles_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(articles_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(articles_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(articles_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(articles_bottom, Cl.LEQ, left_height));
+                    new ClLinearInequality(articles_bottom, leq, left_height));
                 target.AddConstraint(
-                    new ClLinearInequality(articles_right, Cl.LEQ, left_width));
+                    new ClLinearInequality(articles_right, leq, left_width));
 
                 target.AddConstraint(
                     new ClLinearEquation(
@@ -810,15 +815,15 @@ namespace Cassowary.Tests
                         new ClLinearExpression(left_right),
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(left_top, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(left_top, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(left_bottom, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(left_bottom, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(left_left, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(left_left, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(left_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(left_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(left_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(left_right, geq, 0, ClStrength.Required));
 
                 target.AddConstraint(
                     new ClLinearEquation(
@@ -831,25 +836,25 @@ namespace Cassowary.Tests
                         new ClLinearExpression(right_right),
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(right_top, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(right_top, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(right_bottom, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(right_bottom, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(right_left, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(right_left, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(right_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(right_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(right_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(right_right, geq, 0, ClStrength.Required));
 
                 target.AddConstraint(
-                    new ClLinearInequality(topRight_bottom, Cl.LEQ, right_height));
+                    new ClLinearInequality(topRight_bottom, leq, right_height));
                 target.AddConstraint(
-                    new ClLinearInequality(topRight_right, Cl.LEQ, right_width));
+                    new ClLinearInequality(topRight_right, leq, right_width));
 
                 target.AddConstraint(
-                    new ClLinearInequality(bottomRight_bottom, Cl.LEQ, right_height));
+                    new ClLinearInequality(bottomRight_bottom, leq, right_height));
                 target.AddConstraint(
-                    new ClLinearInequality(bottomRight_right, Cl.LEQ, right_width));
+                    new ClLinearInequality(bottomRight_right, leq, right_width));
 
                 target.AddConstraint(
                     new ClLinearEquation(
@@ -862,24 +867,24 @@ namespace Cassowary.Tests
                         new ClLinearExpression(fr_right),
                         ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(fr_top, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(fr_top, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(fr_bottom, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(fr_bottom, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(fr_left, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(fr_left, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(fr_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(fr_right, geq, 0, ClStrength.Required));
                 target.AddConstraint(
-                    new ClLinearInequality(fr_right, Cl.GEQ, 0, ClStrength.Required));
+                    new ClLinearInequality(fr_right, geq, 0, ClStrength.Required));
 
                 target.AddConstraint(
-                    new ClLinearInequality(left_bottom, Cl.LEQ, fr_height));
+                    new ClLinearInequality(left_bottom, leq, fr_height));
                 target.AddConstraint(
-                    new ClLinearInequality(left_right, Cl.LEQ, fr_width));
+                    new ClLinearInequality(left_right, leq, fr_width));
                 target.AddConstraint(
-                    new ClLinearInequality(right_bottom, Cl.LEQ, fr_height));
+                    new ClLinearInequality(right_bottom, leq, fr_height));
                 target.AddConstraint(
-                    new ClLinearInequality(right_right, Cl.LEQ, fr_width));
+                    new ClLinearInequality(right_right, leq, fr_width));
 
                 #endregion
 
@@ -888,13 +893,13 @@ namespace Cassowary.Tests
                 target.AddConstraint(
                     new ClLinearInequality(
                         update_right,
-                        Cl.LEQ,
+                        leq,
                         newpost_left,
                         ClStrength.Strong));
                 target.AddConstraint(
                     new ClLinearInequality(
                         newpost_right,
-                        Cl.LEQ,
+                        leq,
                         quit_left,
                         ClStrength.Strong));
                 //_solver.AddConstraint(new ClLinearEquation(bottomRight_width, new ClLinearExpression(topRight_width), ClStrength.Strong));
@@ -928,19 +933,19 @@ namespace Cassowary.Tests
                 target.AddConstraint(
                     new ClLinearInequality(
                         l_title_bottom,
-                        Cl.LEQ,
+                        leq,
                         title_top,
                         ClStrength.Strong));
                 target.AddConstraint(
                     new ClLinearInequality(
                         title_bottom,
-                        Cl.LEQ,
+                        leq,
                         l_body_top,
                         ClStrength.Strong));
                 target.AddConstraint(
                     new ClLinearInequality(
                         l_body_bottom,
-                        Cl.LEQ,
+                        leq,
                         blogentry_top,
                         ClStrength.Strong));
 
@@ -953,20 +958,20 @@ namespace Cassowary.Tests
                 target.AddConstraint(
                     new ClLinearInequality(
                         l_recent_bottom,
-                        Cl.LEQ,
+                        leq,
                         articles_top,
                         ClStrength.Strong));
 
                 target.AddConstraint(
                     new ClLinearInequality(
                         topRight_bottom,
-                        Cl.LEQ,
+                        leq,
                         bottomRight_top,
                         ClStrength.Strong));
                 target.AddConstraint(
                     new ClLinearInequality(
                         left_right,
-                        Cl.LEQ,
+                        leq,
                         right_left,
                         ClStrength.Strong));
                 //_solver.AddConstraint(new ClLinearEquation(left_height, new ClLinearExpression(right_height), ClStrength.Strong));

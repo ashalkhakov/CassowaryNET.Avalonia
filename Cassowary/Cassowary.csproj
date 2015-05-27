@@ -60,6 +60,7 @@
     <Compile Include="ClLinearExpression.cs" />
     <Compile Include="ClLinearInequality.cs" />
     <Compile Include="ClObjectiveVariable.cs" />
+    <Compile Include="InequalityType.cs" />
     <Compile Include="Utils\Cloneable.cs" />
     <Compile Include="ClPoint.cs" />
     <Compile Include="ClSimplexSolver.cs" />

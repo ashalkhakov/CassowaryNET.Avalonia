@@ -151,9 +151,11 @@ namespace AutoLayoutPanel
                 FindClVariableByUIElementAndProperty(controlFirst, propertyFirst);
 
             int ndx = Constraints.Count;
-            byte equality =
-                (byte)
-                    (relatedBy.Equals("<") ? Cl.LEQ : relatedBy.Equals(">") ? Cl.GEQ : 0);
+            var equality = relatedBy.Equals("<")
+                ? InequalityType.LEQ
+                : relatedBy.Equals(">")
+                    ? InequalityType.GEQ
+                    : 0;
 
             if (controlSecond == null)
             {
