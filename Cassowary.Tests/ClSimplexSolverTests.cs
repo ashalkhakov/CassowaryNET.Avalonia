@@ -47,8 +47,8 @@ namespace Cassowary.Tests
             [Test]
             public void can_solve_simple_constraint()
             {
-                var x = new ClVariable(167);
-                var y = new ClVariable(2);
+                var x = new ClVariable(167d);
+                var y = new ClVariable(2d);
                 var target = GetTarget();
 
                 var equation = new ClLinearEquation(x, new ClLinearExpression(y));
@@ -60,8 +60,8 @@ namespace Cassowary.Tests
             [Test]
             public void can_solve_stays()
             {
-                var x = new ClVariable(5);
-                var y = new ClVariable(10);
+                var x = new ClVariable(5d);
+                var y = new ClVariable(10d);
                 var target = GetTarget();
 
                 target.AddStay(x);
@@ -70,6 +70,307 @@ namespace Cassowary.Tests
                 Assert.That(x.Value, IsX.Approx(5d));
                 Assert.That(y.Value, IsX.Approx(10d));
             }
+
+            [Test]
+            public void can_solve_variable_greater_than_constant()
+            {
+                var x = new ClVariable(5d);
+                var target = GetTarget();
+
+                var constraint = new ClLinearInequality(
+                    x,
+                    InequalityType.GEQ,
+                    new ClLinearExpression(10d));
+                target.AddConstraint(constraint);
+
+                Assert.That(x.Value, IsX.Approx(10d));
+            }
+
+            [Test]
+            public void can_solve_variable_less_than_constant()
+            {
+                var x = new ClVariable(10d);
+                var target = GetTarget();
+
+                var constraint = new ClLinearInequality(
+                    x,
+                    InequalityType.LEQ,
+                    new ClLinearExpression(5d));
+                target.AddConstraint(constraint);
+                
+                Assert.That(x.Value, IsX.Approx(5d));
+            }
+
+            [Test]
+            public void can_solve_variable_equal_to_constant()
+            {
+                var x = new ClVariable(5d);
+                var target = GetTarget();
+
+                target.AddConstraint(new ClLinearEquation(x, 10d));
+
+                Assert.That(x.Value, IsX.Approx(10d));
+            }
+
+            [Test]
+            public void can_solve_constant_greater_than_variable()
+            {
+                var x = new ClVariable(10d);
+                var target = GetTarget();
+
+                var constraint = new ClLinearInequality(
+                    new ClLinearExpression(5d),
+                    InequalityType.GEQ,
+                    x);
+                target.AddConstraint(constraint);
+
+                Assert.That(x.Value, IsX.Approx(5d));
+            }
+
+            [Test]
+            public void can_solve_constant_less_than_variable()
+            {
+                var x = new ClVariable(5d);
+                var target = GetTarget();
+
+                var constraint = new ClLinearInequality(
+                    new ClLinearExpression(10d),
+                    InequalityType.LEQ,
+                    x);
+                target.AddConstraint(constraint);
+
+                Assert.That(x.Value, IsX.Approx(10d));
+            }
+
+            [Test]
+            public void can_solve_greater_than_with_stay()
+            {
+                var x = new ClVariable(10d);
+                var width = new ClVariable(10d);
+                var rightMin = new ClVariable(100d);
+
+                var right = ClLinearExpression.Plus(
+                    new ClLinearExpression(x),
+                    new ClLinearExpression(width));
+
+                var target = GetTarget();
+
+                // right >= 100
+                var constraint = new ClLinearInequality(
+                    right,
+                    InequalityType.GEQ,
+                    rightMin);
+
+                target.AddStay(width);
+                target.AddStay(rightMin);
+                target.AddConstraint(constraint);
+
+                Assert.That(x.Value, IsX.Approx(90d));
+                Assert.That(width.Value, IsX.Approx(10d));
+            }
+
+            [Test]
+            public void can_solve_less_than_with_stay()
+            {
+                var x = new ClVariable(200d);
+                var width = new ClVariable(10d);
+                var rightMin = new ClVariable(100d);
+
+                var right = ClLinearExpression.Plus(
+                    new ClLinearExpression(x),
+                    new ClLinearExpression(width));
+
+                var target = GetTarget();
+
+                // right <= 100
+                var constraint = new ClLinearInequality(
+                    right,
+                    InequalityType.LEQ,
+                    rightMin);
+
+                target.AddStay(width);
+                target.AddStay(rightMin);
+                target.AddConstraint(constraint);
+
+                Assert.That(x.Value, IsX.Approx(90d));
+                Assert.That(width.Value, IsX.Approx(10d));
+            }
+
+            [Test]
+            public void can_solve_equal_to_with_stay()
+            {
+                var x = new ClVariable(10d);
+                var width = new ClVariable(10d);
+                var rightMin = new ClVariable(100d);
+
+                var right = ClLinearExpression.Plus(
+                    new ClLinearExpression(x),
+                    new ClLinearExpression(width));
+
+                var target = GetTarget();
+
+                var constraint = new ClLinearEquation(
+                    right,
+                    rightMin);
+
+                target.AddStay(width);
+                target.AddStay(rightMin);
+                target.AddConstraint(constraint);
+
+                Assert.That(x.Value, IsX.Approx(90d));
+                Assert.That(width.Value, IsX.Approx(10d));
+            }
+
+            [Test]
+            public void can_solve_greater_than_with_variable()
+            {
+                var x = new ClVariable(10d);
+                var width = new ClVariable(10d);
+                var rightMin = new ClVariable(100d);
+
+                var right = ClLinearExpression.Plus(
+                    new ClLinearExpression(x),
+                    new ClLinearExpression(width));
+
+                var target = GetTarget();
+
+                // right >= 100
+                var constraint = new ClLinearInequality(
+                    right,
+                    InequalityType.GEQ,
+                    rightMin);
+
+                target.AddStay(width);
+                target.AddStay(rightMin);
+                target.AddConstraint(constraint);
+
+                Assert.That(x.Value, IsX.Approx(90d));
+                Assert.That(width.Value, IsX.Approx(10d));
+            }
+
+            [Test]
+            public void can_solve_less_than_with_variable()
+            {
+                var x = new ClVariable(200d);
+                var width = new ClVariable(10d);
+                var rightMin = new ClVariable(100d);
+
+                var right = ClLinearExpression.Plus(
+                    new ClLinearExpression(x),
+                    new ClLinearExpression(width));
+
+                var target = GetTarget();
+
+                // right <= 100
+                var constraint = new ClLinearInequality(
+                    right,
+                    InequalityType.LEQ,
+                    rightMin);
+
+                target.AddStay(width);
+                target.AddStay(rightMin);
+                target.AddConstraint(constraint);
+
+                Assert.That(x.Value, IsX.Approx(90d));
+                Assert.That(width.Value, IsX.Approx(10d));
+            }
+
+            [Test]
+            public void can_solve_equal_to_with_expression()
+            {
+                var x1 = new ClVariable(10d);
+                var width1 = new ClVariable(10d);
+                var right1 = ClLinearExpression.Plus(
+                    new ClLinearExpression(x1),
+                    new ClLinearExpression(width1));
+
+                var x2 = new ClVariable(100d);
+                var width2 = new ClVariable(10d);
+                var right2 = ClLinearExpression.Plus(
+                    new ClLinearExpression(x2),
+                    new ClLinearExpression(width2));
+
+                var target = GetTarget();
+
+                var constraint = new ClLinearEquation(
+                    right1,
+                    right2);
+
+                target.AddStay(width1);
+                target.AddStay(width2);
+                target.AddStay(x2);
+                target.AddConstraint(constraint);
+
+                Assert.That(x1.Value, IsX.Approx(100d));
+                Assert.That(x2.Value, IsX.Approx(100d));
+                Assert.That(width1.Value, IsX.Approx(10d));
+                Assert.That(width2.Value, IsX.Approx(10d));
+            }
+
+            [Test]
+            public void can_solve_greater_than_with_expression()
+            {
+                var x1 = new ClVariable(10d);
+                var width1 = new ClVariable(10d);
+                var right1 = ClLinearExpression.Plus(
+                    new ClLinearExpression(x1),
+                    new ClLinearExpression(width1));
+
+                var x2 = new ClVariable(100d);
+                var width2 = new ClVariable(10d);
+                var right2 = ClLinearExpression.Plus(
+                    new ClLinearExpression(x2),
+                    new ClLinearExpression(width2));
+
+                var target = GetTarget();
+
+                var constraint = new ClLinearInequality(
+                    right1,
+                    InequalityType.GEQ,
+                    right2);
+
+                target.AddStay(width1);
+                target.AddStay(width2);
+                target.AddStay(x2);
+                target.AddConstraint(constraint);
+
+                Assert.That(x1.Value, IsX.Approx(100d));
+            }
+
+            [Test]
+            public void can_solve_less_than_with_expression()
+            {
+                var x1 = new ClVariable(10d);
+                var width1 = new ClVariable(10d);
+                var right1 = ClLinearExpression.Plus(
+                    new ClLinearExpression(x1),
+                    new ClLinearExpression(width1));
+
+                var x2 = new ClVariable(100d);
+                var width2 = new ClVariable(10d);
+                var right2 = ClLinearExpression.Plus(
+                    new ClLinearExpression(x2),
+                    new ClLinearExpression(width2));
+
+                var target = GetTarget();
+
+                var constraint = new ClLinearInequality(
+                    right2,
+                    InequalityType.LEQ,
+                    right1);
+
+                target.AddStay(width1);
+                target.AddStay(width2);
+                target.AddStay(x2);
+                target.AddConstraint(constraint);
+
+                Assert.That(x1.Value, IsX.Approx(100d));
+            }
+
+            
+
+
+
 
             [Test]
             public void add_and_remove()

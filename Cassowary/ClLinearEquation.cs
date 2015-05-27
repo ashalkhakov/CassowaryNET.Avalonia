@@ -26,6 +26,12 @@ namespace Cassowary
 {
     public class ClLinearEquation : ClLinearConstraint
     {
+        #region Fields
+
+        #endregion
+
+        #region Constructors
+
         public ClLinearEquation(
             ClLinearExpression expression,
             ClStrength strength,
@@ -144,9 +150,19 @@ namespace Cassowary
         {
         }
 
+        #endregion
+
+        #region Properties
+
+        #endregion
+        
+        #region Methods
+
         public override string ToString()
         {
             return base.ToString() + " = 0)";
         }
+
+        #endregion
     }
 }
