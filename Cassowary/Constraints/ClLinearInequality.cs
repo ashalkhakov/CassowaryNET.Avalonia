@@ -26,7 +26,7 @@ using Cassowary.Variables;
 
 namespace Cassowary.Constraints
 {
-    public class ClLinearInequality : ClLinearConstraint
+    public sealed class ClLinearInequality : ClLinearConstraint
     {
         #region Fields
 
@@ -286,6 +286,16 @@ namespace Cassowary.Constraints
         #endregion
 
         #region Methods
+
+        public ClLinearInequality WithStrength(ClStrength strength)
+        {
+            return new ClLinearInequality(Expression, strength, Weight);
+        }
+
+        public ClLinearInequality WithWeight(double weight)
+        {
+            return new ClLinearInequality(Expression, Strength, weight);
+        }
 
         public override sealed string ToString()
         {

@@ -19,9 +19,15 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+using System;
+using Cassowary.Constraints;
+
 namespace Cassowary.Variables
 {
+#pragma warning disable 660,661
+    // We are heavily using operator overloading here
     public sealed class ClVariable : ClAbstractVariable
+#pragma warning restore 660,661
     {
         #region Fields
 
@@ -175,6 +181,106 @@ namespace Cassowary.Variables
             double b)
         {
             return new ClLinearExpression(a) / b;
+        }
+
+        #endregion
+
+        #region ==
+
+        public static ClLinearEquation operator ==(
+            ClVariable a,
+            ClVariable b)
+        {
+            var aExpression = new ClLinearExpression(a);
+            var bExpression = new ClLinearExpression(b);
+            return new ClLinearEquation(aExpression, bExpression);
+        }
+
+        public static ClLinearEquation operator !=(
+            ClVariable a,
+            ClVariable b)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static ClLinearEquation operator ==(
+            ClVariable a,
+            double b)
+        {
+            var bExpression = new ClLinearExpression(b);
+            return new ClLinearEquation(a, bExpression);
+        }
+
+        public static ClLinearEquation operator !=(
+            ClVariable a,
+            double b)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static ClLinearEquation operator ==(
+            double a,
+            ClVariable b)
+        {
+            var aExpression = new ClLinearExpression(a);
+            return new ClLinearEquation(aExpression, b);
+        }
+
+        public static ClLinearEquation operator !=(
+            double a,
+            ClVariable b)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region <= and >=
+
+        public static ClLinearInequality operator <=(
+            ClVariable a,
+            ClVariable b)
+        {
+            return new ClLinearInequality(a, InequalityType.LessThanOrEqual, b);
+        }
+
+        public static ClLinearInequality operator >=(
+            ClVariable a,
+            ClVariable b)
+        {
+            return new ClLinearInequality(a, InequalityType.GreaterThanOrEqual, b);
+        }
+
+        public static ClLinearInequality operator <=(
+            ClVariable a,
+            double b)
+        {
+            var bExpression = new ClLinearExpression(b);
+            return new ClLinearInequality(a, InequalityType.LessThanOrEqual, bExpression);
+        }
+
+        public static ClLinearInequality operator >=(
+            ClVariable a,
+            double b)
+        {
+            var bExpression = new ClLinearExpression(b);
+            return new ClLinearInequality(a, InequalityType.GreaterThanOrEqual, bExpression);
+        }
+
+        public static ClLinearInequality operator <=(
+            double a,
+            ClVariable b)
+        {
+            var aExpression = new ClLinearExpression(a);
+            return new ClLinearInequality(aExpression, InequalityType.LessThanOrEqual, b);
+        }
+
+        public static ClLinearInequality operator >=(
+            double a,
+            ClVariable b)
+        {
+            var aExpression = new ClLinearExpression(a);
+            return new ClLinearInequality(aExpression, InequalityType.GreaterThanOrEqual, b);
         }
 
         #endregion

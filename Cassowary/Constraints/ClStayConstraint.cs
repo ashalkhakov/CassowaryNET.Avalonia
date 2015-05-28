@@ -24,7 +24,7 @@ using Cassowary.Variables;
 
 namespace Cassowary.Constraints
 {
-    public class ClStayConstraint : ClEditOrStayConstraint
+    public sealed class ClStayConstraint : ClEditOrStayConstraint
     {
         #region Fields
 

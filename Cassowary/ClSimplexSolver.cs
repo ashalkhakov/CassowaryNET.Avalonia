@@ -37,6 +37,8 @@ namespace Cassowary
 
         private const double Epsilon = 1e-8;
 
+        private readonly ClObjectiveVariable objective;
+
         /// <summary>
         /// The array of negative error vars for the stay constraints
         /// (need both positive and negative since they have only non-negative
@@ -80,8 +82,7 @@ namespace Cassowary
         /// </remarks>
         private readonly Dictionary<ClVariable, ClEditInfo> editVarMap;
 
-        private readonly ClObjectiveVariable objective;
-        private readonly Stack<int> stkCedcns;
+        private readonly Stack<int> editVariablesCountStack;
 
         private bool needsSolving = false;
 
@@ -94,21 +95,19 @@ namespace Cassowary
         /// </remarks>
         public ClSimplexSolver()
         {
-            AutoSolve = true;
+            objective = new ClObjectiveVariable("Z");
+            Rows.Add(objective, new ClLinearExpression(0d));
 
             stayMinusErrorVars = new List<ClSlackVariable>();
             stayPlusErrorVars = new List<ClSlackVariable>();
             errorVariables = new Dictionary<ClConstraint, HashSet<ClSlackVariable>>();
             markerVariables = new Dictionary<ClConstraint, ClAbstractVariable>();
-
-            objective = new ClObjectiveVariable("Z");
-
             editVarMap = new Dictionary<ClVariable, ClEditInfo>();
 
-            var expression = new ClLinearExpression(0d);
-            Rows.Add(objective, expression);
-            stkCedcns = new Stack<int>();
-            stkCedcns.Push(0);
+            AutoSolve = true;
+
+            editVariablesCountStack = new Stack<int>();
+            editVariablesCountStack.Push(0);
         }
 
         #endregion
@@ -200,7 +199,7 @@ namespace Cassowary
             if (constraint.IsEditConstraint)
             {
                 int i = editVarMap.Count;
-                var cnEdit = (ClEditConstraint)constraint;
+                var cnEdit = (ClEditConstraint) constraint;
 
                 editVarMap.Add(
                     cnEdit.Variable,
@@ -212,11 +211,7 @@ namespace Cassowary
                         i));
             }
 
-            if (AutoSolve)
-            {
-                Optimize(objective);
-                SetExternalVariables();
-            }
+            MaybeAutoSolve();
         }
 
         /// <summary>
@@ -286,7 +281,7 @@ namespace Cassowary
             // may later want to do more in here
             InfeasibleRows.Clear();
             ResetStayConstants();
-            stkCedcns.Push(editVarMap.Count);
+            editVariablesCountStack.Push(editVarMap.Count);
         }
 
         /// <summary>
@@ -302,20 +297,11 @@ namespace Cassowary
             Debug.Assert(editVarMap.Count > 0, "_editVarMap.Count > 0");
             Resolve();
 
-            stkCedcns.Pop();
-            var n = stkCedcns.Peek();
+            editVariablesCountStack.Pop();
+            var n = editVariablesCountStack.Peek();
 
             RemoveEditVarsTo(n);
             // may later want to do more in hore
-        }
-
-        /// <summary>
-        /// Eliminates all the edit constraints that were added.
-        /// </summary>
-        public void RemoveAllEditVars()
-            /* throws ExClInternalError */
-        {
-            RemoveEditVarsTo(0);
         }
 
         /// <summary>
@@ -325,7 +311,7 @@ namespace Cassowary
         /// Number of edit variables to keep.
         /// </param>
         /// </summary>
-        public void RemoveEditVarsTo(int n)
+        private void RemoveEditVarsTo(int n)
             /* throws ExClInternalError */
         {
             var toRemove = new List<ClVariable>();
@@ -350,7 +336,8 @@ namespace Cassowary
             catch (CassowaryConstraintNotFoundException)
             {
                 // should not get this
-                throw new CassowaryInternalException("Constraint not found in RemoveEditVarsTo");
+                throw new CassowaryInternalException(
+                    "Constraint not found in RemoveEditVarsTo");
             }
         }
 
@@ -473,7 +460,7 @@ namespace Cassowary
                         -constraint.Weight*constraint.Strength.SymbolicWeight.AsDouble();
 
                     var rowExpression = RowExpression(variable);
-                    if (rowExpression == null)
+                    if (Equals(rowExpression, null))
                     {
                         objectiveRowExpression.AddVariable(
                             variable,
@@ -497,8 +484,8 @@ namespace Cassowary
                 throw new CassowaryConstraintNotFoundException();
 
             markerVariables.Remove(constraint);
-            
-            if (RowExpression(marker) == null)
+
+            if (Equals(RowExpression(marker), null))
             {
                 // not in the basis, so need to do some more work
                 var markerColumn = Columns[marker];
@@ -514,7 +501,7 @@ namespace Cassowary
                         var rowExpression = RowExpression(variable);
                         var coefficient = rowExpression.CoefficientFor(marker);
 
-                        if (coefficient >= 0d) 
+                        if (coefficient >= 0d)
                             continue;
 
                         var ratio = -rowExpression.Constant/coefficient;
@@ -565,7 +552,7 @@ namespace Cassowary
                 }
             }
 
-            if (RowExpression(marker) != null)
+            if (!Equals(RowExpression(marker), null))
             {
                 RemoveRow(marker);
             }
@@ -604,11 +591,16 @@ namespace Cassowary
                 editVarMap.Remove(variable);
             }
 
-            if (AutoSolve)
-            {
-                Optimize(objective);
-                SetExternalVariables();
-            }
+            MaybeAutoSolve();
+        }
+
+        private void MaybeAutoSolve()
+        {
+            if (!AutoSolve)
+                return;
+
+            Optimize(objective);
+            SetExternalVariables();
         }
 
         /// <summary>
@@ -687,7 +679,7 @@ namespace Cassowary
                 //return;
             }
 
-            if (CMath.Approx(value, variable.Value)) 
+            if (CMath.Approx(value, variable.Value))
                 return;
 
             AddEditVar(variable);
@@ -707,13 +699,13 @@ namespace Cassowary
         public bool ContainsVariable(ClVariable v)
             /* throws ExClInternalError */
         {
-            return ColumnsHasKey(v) || (RowExpression(v) != null);
+            return ColumnsHasKey(v) || !Equals(RowExpression(v), null);
         }
 
         public void AddVar(ClVariable v)
             /* throws ExClInternalError */
         {
-            if (ContainsVariable(v)) 
+            if (ContainsVariable(v))
                 return;
 
             try
@@ -764,7 +756,7 @@ namespace Cassowary
 
             return result;
         }
-        
+
         /// <summary>
         /// Add the constraint expr=0 to the inequality tableau using an
         /// artificial variable.
@@ -799,7 +791,7 @@ namespace Cassowary
             // see if av is a basic variable
             var avRowExpression = RowExpression(av);
 
-            if (avRowExpression != null)
+            if (!Equals(avRowExpression, null))
             {
                 // find another variable in this row and pivot,
                 // so that av becomes parametric
@@ -817,7 +809,7 @@ namespace Cassowary
                 Pivot(entryVar, av);
             }
 
-            Debug.Assert(RowExpression(av) == null, "RowExpression(av) == null)");
+            Debug.Assert(Equals(RowExpression(av), null), "RowExpression(av) == null)");
 
             RemoveColumn(av);
             RemoveRow(az);
@@ -966,7 +958,7 @@ namespace Cassowary
             {
                 double c = cnTerms[v].Value;
                 ClLinearExpression e = RowExpression(v);
-                if (e == null)
+                if (Equals(e, null))
                     expr.AddVariable(v, c);
                 else
                     expr.AddExpression(e, c);
@@ -983,7 +975,7 @@ namespace Cassowary
                     var eminus = new ClSlackVariable("em");
                     expr.SetVariable(eminus, 1.0);
                     ClLinearExpression zRow = RowExpression(objective);
-                    ClSymbolicWeight sw = cn.Strength.SymbolicWeight * cn.Weight;
+                    ClSymbolicWeight sw = cn.Strength.SymbolicWeight*cn.Weight;
                     zRow.SetVariable(eminus, sw.AsDouble());
                     InsertErrorVar(cn, eminus);
                     NoteAddedVariable(eminus, objective);
@@ -1007,9 +999,9 @@ namespace Cassowary
                     expr.SetVariable(eminus, 1.0);
                     markerVariables.Add(cn, eplus);
                     ClLinearExpression zRow = RowExpression(objective);
-                    ClSymbolicWeight sw = cn.Strength.SymbolicWeight * cn.Weight;
+                    ClSymbolicWeight sw = cn.Strength.SymbolicWeight*cn.Weight;
                     double swCoeff = sw.AsDouble();
-                    
+
                     zRow.SetVariable(eplus, swCoeff);
                     NoteAddedVariable(eplus, objective);
                     zRow.SetVariable(eminus, swCoeff);
@@ -1050,7 +1042,7 @@ namespace Cassowary
             /* throws ExClInternalError */
         {
             ClLinearExpression zRow = RowExpression(zVar);
-            Debug.Assert(zRow != null, "zRow != null");
+            Debug.Assert(!Equals(zRow, null), "zRow != null");
 
             ClAbstractVariable entryVar = null;
             ClAbstractVariable exitVar = null;
@@ -1133,7 +1125,7 @@ namespace Cassowary
             ClAbstractVariable minusErrorVar)
         {
             ClLinearExpression exprPlus = RowExpression(plusErrorVar);
-            if (exprPlus != null)
+            if (!Equals(exprPlus, null))
             {
                 exprPlus.IncrementConstant(delta);
 
@@ -1145,7 +1137,7 @@ namespace Cassowary
             }
 
             ClLinearExpression exprMinus = RowExpression(minusErrorVar);
-            if (exprMinus != null)
+            if (!Equals(exprMinus, null))
             {
                 exprMinus.IncrementConstant(-delta);
                 if (exprMinus.Constant < 0.0)
@@ -1160,7 +1152,7 @@ namespace Cassowary
             foreach (ClAbstractVariable basicVar in columnVars)
             {
                 ClLinearExpression expr = RowExpression(basicVar);
-                Debug.Assert(expr != null, "expr != null");
+                Debug.Assert(!Equals(expr, null), "expr != null");
 
                 double c = expr.CoefficientFor(minusErrorVar);
                 expr.IncrementConstant(c*delta);
@@ -1193,7 +1185,7 @@ namespace Cassowary
                 ClAbstractVariable entryVar = null;
                 ClLinearExpression expr = RowExpression(exitVar);
 
-                if (expr == null) 
+                if (Equals(expr, null))
                     continue;
 
                 if (expr.Constant >= 0d)
@@ -1245,7 +1237,7 @@ namespace Cassowary
             // the entryVar might be non-pivotable if we're doing a 
             // RemoveConstraint -- otherwise it should be a pivotable
             // variable -- enforced at call sites, hopefully
-            
+
             var expression = RemoveRow(exitVariable);
 
             expression.ChangeSubject(exitVariable, entryVariable);
@@ -1278,13 +1270,13 @@ namespace Cassowary
                 var stayPlusErrorVar = stayPlusErrorVars[i];
                 var expression = RowExpression(stayPlusErrorVar);
 
-                if (expression == null)
+                if (Equals(expression, null))
                 {
                     var stayMinusErrorVar = stayMinusErrorVars[i];
                     expression = RowExpression(stayMinusErrorVar);
                 }
 
-                if (expression != null)
+                if (!Equals(expression, null))
                 {
                     expression.Constant = 0d;
                 }
@@ -1309,7 +1301,7 @@ namespace Cassowary
             {
                 var rowExpression = RowExpression(variable);
 
-                if (rowExpression != null)
+                if (!Equals(rowExpression, null))
                 {
                     Debug.WriteLine(
                         "Error: variable {0}in _externalParametricVars is basic",

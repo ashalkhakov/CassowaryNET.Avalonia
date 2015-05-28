@@ -25,7 +25,7 @@ using Cassowary.Variables;
 
 namespace Cassowary.Constraints
 {
-    public class ClLinearEquation : ClLinearConstraint
+    public sealed class ClLinearEquation : ClLinearConstraint
     {
         #region Fields
 
@@ -158,6 +158,16 @@ namespace Cassowary.Constraints
         #endregion
         
         #region Methods
+
+        public ClLinearEquation WithStrength(ClStrength strength)
+        {
+            return new ClLinearEquation(Expression, strength, Weight);
+        }
+
+        public ClLinearEquation WithWeight(double weight)
+        {
+            return new ClLinearEquation(Expression, Strength, weight);
+        }
 
         public override string ToString()
         {

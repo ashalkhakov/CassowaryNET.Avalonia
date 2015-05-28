@@ -233,7 +233,7 @@ namespace Cassowary
             /*throws ExCLInternalError*/
         {
             var expression = rows[variable];
-            Debug.Assert(expression != null);
+            Debug.Assert(!Equals(expression, null));
 
             // For each variable in this expression, update
             // the column mapping and remove the variable from the list
