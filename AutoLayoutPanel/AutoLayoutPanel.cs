@@ -154,9 +154,9 @@ namespace AutoLayoutPanel
 
             int ndx = Constraints.Count;
             var equality = relatedBy.Equals("<")
-                ? InequalityType.LEQ
+                ? InequalityType.LessThanOrEqual
                 : relatedBy.Equals(">")
-                    ? InequalityType.GEQ
+                    ? InequalityType.GreaterThanOrEqual
                     : 0;
 
             if (controlSecond == null)

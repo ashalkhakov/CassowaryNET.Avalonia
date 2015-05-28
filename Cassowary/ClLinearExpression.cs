@@ -20,9 +20,7 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Cassowary.Exceptions;
 using Cassowary.Utils;
@@ -41,25 +39,13 @@ namespace Cassowary
 
         #region Constructors
 
-        public ClLinearExpression(
-            ClAbstractVariable variable,
-            double value,
-            double constant)
-        {
-            this.constant = new ClDouble(constant);
-            terms = new Dictionary<ClAbstractVariable, ClDouble>(1);
-
-            if (variable != null)
-                terms.Add(variable, new ClDouble(value));
-        }
-
-        public ClLinearExpression(double num)
-            : this(null, 0d, num)
-        {
-        }
-
         public ClLinearExpression()
             : this(0d)
+        {
+        }
+
+        public ClLinearExpression(double constant)
+            : this(null, 0d, constant)
         {
         }
 
@@ -71,6 +57,18 @@ namespace Cassowary
         public ClLinearExpression(ClAbstractVariable variable)
             : this(variable, 1d, 0d)
         {
+        }
+
+        public ClLinearExpression(
+            ClAbstractVariable variable,
+            double value,
+            double constant)
+        {
+            this.constant = new ClDouble(constant);
+            terms = new Dictionary<ClAbstractVariable, ClDouble>(1);
+
+            if (variable != null)
+                terms.Add(variable, new ClDouble(value));
         }
 
         /// <summary>
@@ -387,7 +385,7 @@ namespace Cassowary
         /// if this expression is constant -- signal ExCLInternalError in
         /// that case).  Return null if no pivotable variables
         /// </summary>
-        public ClAbstractVariable AnyPivotableVariable()
+        public ClAbstractVariable GetAnyPivotableVariable()
             /*throws ExCLInternalError*/
         {
             if (IsConstant)
@@ -395,15 +393,7 @@ namespace Cassowary
                 throw new CassowaryInternalException("anyPivotableVariable called on a constant");
             }
 
-            foreach (ClAbstractVariable clv in terms.Keys)
-            {
-                if (clv.IsPivotable)
-                    return clv;
-            }
-
-            // No pivotable variables, so just return null, and let the caller
-            // error if needed
-            return null;
+            return terms.Keys.FirstOrDefault(clv => clv.IsPivotable);
         }
 
         /// <summary>
@@ -564,6 +554,12 @@ namespace Cassowary
 
             return s;
         }
+
+        #endregion
+
+        #region Operators
+
+
 
         #endregion
     }

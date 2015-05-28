@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Cassowary.Utils;
 using Cassowary.Variables;
+using JetBrains.Annotations;
 
 namespace Cassowary
 {
@@ -143,6 +144,170 @@ namespace Cassowary
         }
 
         /// <summary>
+        /// Convenience function to insert a variable into
+        /// the set of rows stored at _columns[param_var],
+        /// creating a new set if needed. 
+        /// </summary>
+        private void InsertColVar(
+            ClAbstractVariable param_var,
+            ClAbstractVariable rowvar)
+        {
+            var rowset = columns.GetOrDefault(param_var);
+
+            if (rowset == null)
+            {
+                rowset = new HashSet<ClAbstractVariable>();
+                columns.Add(param_var, rowset);
+            }
+
+            rowset.Add(rowvar);
+        }
+
+        // Add v=expr to the tableau, update column cross indices
+        // v becomes a basic variable
+        // expr is now owned by ClTableau class, 
+        // and ClTableau is responsible for deleting it
+        // (also, expr better be allocated on the heap!).
+        protected void AddRow(ClAbstractVariable variable, ClLinearExpression expression)
+        {
+            // for each variable in expr, add var to the set of rows which
+            // have that variable in their expression
+            rows.Add(variable, expression);
+
+            // FIXME: check correctness!
+            foreach (var expressionVariable in expression.Terms.Keys)
+            {
+                InsertColVar(expressionVariable, variable);
+
+                if (expressionVariable.IsExternal)
+                {
+                    var clVariable = (ClVariable) expressionVariable;
+                    externalParametricVars.Add(clVariable);
+                }
+            }
+
+            if (variable.IsExternal)
+            {
+                var clVariable = (ClVariable)variable;
+                externalRows.Add(clVariable);
+            }
+        }
+
+        /// <summary>
+        /// Remove v from the tableau -- remove the column cross indices for v
+        /// and remove v from every expression in rows in which v occurs
+        /// </summary>
+        protected void RemoveColumn(ClAbstractVariable variable)
+        {
+            // remove the rows with the variables in varset
+
+            var column = columns.GetOrDefault(variable);
+            columns.Remove(variable);
+
+            if (column != null)
+            {
+                foreach (var columnVariable in column)
+                {
+                    var expression = rows[columnVariable];
+                    expression.Terms.Remove(variable);
+                }
+            }
+            else
+            {
+                // Could not find var {0} in _columns
+            }
+
+            if (variable.IsExternal)
+            {
+                var clVariable = (ClVariable)variable;
+                externalRows.Remove(clVariable);
+                externalParametricVars.Remove(clVariable);
+            }
+        }
+
+        /// <summary>
+        /// Remove the basic variable v from the tableau row v=expr
+        /// Then update column cross indices.
+        /// </summary>
+        protected ClLinearExpression RemoveRow(ClAbstractVariable variable)
+            /*throws ExCLInternalError*/
+        {
+            var expression = rows[variable];
+            Debug.Assert(expression != null);
+
+            // For each variable in this expression, update
+            // the column mapping and remove the variable from the list
+            // of rows it is known to be in.
+            foreach (var clv in expression.Terms.Keys)
+            {
+                var varset = columns[clv];
+
+                if (varset != null)
+                {
+                    varset.Remove(variable);
+                }
+            }
+
+            infeasibleRows.Remove(variable);
+
+            if (variable.IsExternal)
+            {
+                var clVariable = (ClVariable) variable;
+                externalRows.Remove(clVariable);
+            }
+
+            rows.Remove(variable);
+
+            return expression;
+        }
+
+        /// <summary> 
+        /// Replace all occurrences of oldVar with expr, and update column cross indices
+        /// oldVar should now be a basic variable.
+        /// </summary> 
+        protected void SubstituteOut(
+            ClAbstractVariable oldVariable,
+            ClLinearExpression expression)
+        {
+            var oldVarColumnSet = columns[oldVariable];
+
+            foreach (var variable in oldVarColumnSet)
+            {
+                var row = rows[variable];
+                row.SubstituteOut(oldVariable, expression, variable, this);
+
+                if (variable.IsRestricted && row.Constant < 0.0)
+                {
+                    infeasibleRows.Add(variable);
+                }
+            }
+
+            if (oldVariable.IsExternal)
+            {
+                var oldClVariable = (ClVariable)oldVariable;
+                externalRows.Add(oldClVariable);
+                externalParametricVars.Remove(oldClVariable);
+            }
+
+            columns.Remove(oldVariable);
+        }
+
+        /// <summary>
+        /// Return true if and only if the variable subject is in the columns keys 
+        /// </summary>
+        [Pure]
+        protected bool ColumnsHasKey(ClAbstractVariable subject)
+        {
+            return columns.ContainsKey(subject);
+        }
+
+        [Pure]
+        protected ClLinearExpression RowExpression(ClAbstractVariable v)
+        {
+            return rows.GetOrDefault(v);
+        }
+
+        /// <summary>
         /// Returns information about the tableau's internals.
         /// </summary>
         /// <remarks>
@@ -189,169 +354,6 @@ namespace Cassowary
                 externalParametricVars.ToString());
 
             return s;
-        }
-
-
-        /// <summary>
-        /// Convenience function to insert a variable into
-        /// the set of rows stored at _columns[param_var],
-        /// creating a new set if needed. 
-        /// </summary>
-        private void InsertColVar(
-            ClAbstractVariable param_var,
-            ClAbstractVariable rowvar)
-        {
-            var rowset = columns.GetOrDefault(param_var);
-
-            if (rowset == null)
-            {
-                rowset = new HashSet<ClAbstractVariable>();
-                columns.Add(param_var, rowset);
-            }
-
-            rowset.Add(rowvar);
-        }
-
-        // Add v=expr to the tableau, update column cross indices
-        // v becomes a basic variable
-        // expr is now owned by ClTableau class, 
-        // and ClTableau is responsible for deleting it
-        // (also, expr better be allocated on the heap!).
-        protected void AddRow(ClAbstractVariable var, ClLinearExpression expr)
-        {
-            // for each variable in expr, add var to the set of rows which
-            // have that variable in their expression
-            rows.Add(var, expr);
-
-            // FIXME: check correctness!
-            foreach (var clv in expr.Terms.Keys)
-            {
-                InsertColVar(clv, var);
-
-                if (clv.IsExternal)
-                {
-                    var variable = (ClVariable) clv;
-                    externalParametricVars.Add(variable);
-                }
-            }
-
-            if (var.IsExternal)
-            {
-                var variable = (ClVariable)var;
-                externalRows.Add(variable);
-            }
-        }
-
-        /// <summary>
-        /// Remove v from the tableau -- remove the column cross indices for v
-        /// and remove v from every expression in rows in which v occurs
-        /// </summary>
-        protected void RemoveColumn(ClAbstractVariable var)
-        {
-            // remove the rows with the variables in varset
-
-            var _rows = columns.GetOrDefault(var);
-            columns.Remove(var);
-
-            if (_rows != null)
-            {
-                foreach (ClAbstractVariable clv in _rows)
-                {
-                    var expr = this.rows[clv];
-                    expr.Terms.Remove(var);
-                }
-            }
-            else
-            {
-                // Could not find var {0} in _columns
-            }
-
-            if (var.IsExternal)
-            {
-                var variable = (ClVariable)var;
-                externalRows.Remove(variable);
-                externalParametricVars.Remove(variable);
-            }
-        }
-
-        /// <summary>
-        /// Remove the basic variable v from the tableau row v=expr
-        /// Then update column cross indices.
-        /// </summary>
-        protected ClLinearExpression RemoveRow(ClAbstractVariable var)
-            /*throws ExCLInternalError*/
-        {
-            var expr = rows[var];
-            Debug.Assert(expr != null);
-
-            // For each variable in this expression, update
-            // the column mapping and remove the variable from the list
-            // of rows it is known to be in.
-            foreach (var clv in expr.Terms.Keys)
-            {
-                var varset = columns[clv];
-
-                if (varset != null)
-                {
-                    varset.Remove(var);
-                }
-            }
-
-            infeasibleRows.Remove(var);
-
-            if (var.IsExternal)
-            {
-                var variable = (ClVariable) var;
-                externalRows.Remove(variable);
-            }
-
-            rows.Remove(var);
-
-            return expr;
-        }
-
-        /// <summary> 
-        /// Replace all occurrences of oldVar with expr, and update column cross indices
-        /// oldVar should now be a basic variable.
-        /// </summary> 
-        protected void SubstituteOut(
-            ClAbstractVariable oldVar,
-            ClLinearExpression expr)
-        {
-            var varset = columns[oldVar];
-
-            foreach (ClAbstractVariable v in varset)
-            {
-                var row = rows[v];
-                row.SubstituteOut(oldVar, expr, v, this);
-
-                if (v.IsRestricted && row.Constant < 0.0)
-                {
-                    infeasibleRows.Add(v);
-                }
-            }
-
-            if (oldVar.IsExternal)
-            {
-                var oldVariable = (ClVariable)oldVar;
-                externalRows.Add(oldVariable);
-                externalParametricVars.Remove(oldVariable);
-            }
-
-            columns.Remove(oldVar);
-        }
-
-        /// <summary>
-        /// Return true if and only if the variable subject is in the columns keys 
-        /// </summary>
-        protected bool ColumnsHasKey(ClAbstractVariable subject)
-        {
-            return columns.ContainsKey(subject);
-        }
-
-        protected ClLinearExpression RowExpression(ClAbstractVariable v)
-        {
-            return rows.GetOrDefault(v);
         }
 
         #endregion

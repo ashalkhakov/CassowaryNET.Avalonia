@@ -52,7 +52,7 @@ namespace Cassowary.Tests
 
             var constraint = new ClLinearInequality(
                 x,
-                InequalityType.GEQ,
+                InequalityType.GreaterThanOrEqual,
                 new ClLinearExpression(10d));
             target.AddConstraint(constraint);
 
@@ -67,7 +67,7 @@ namespace Cassowary.Tests
 
             var constraint = new ClLinearInequality(
                 x,
-                InequalityType.LEQ,
+                InequalityType.LessThanOrEqual,
                 new ClLinearExpression(5d));
             target.AddConstraint(constraint);
 
@@ -93,7 +93,7 @@ namespace Cassowary.Tests
 
             var constraint = new ClLinearInequality(
                 new ClLinearExpression(5d),
-                InequalityType.GEQ,
+                InequalityType.GreaterThanOrEqual,
                 x);
             target.AddConstraint(constraint);
 
@@ -108,7 +108,7 @@ namespace Cassowary.Tests
 
             var constraint = new ClLinearInequality(
                 new ClLinearExpression(10d),
-                InequalityType.LEQ,
+                InequalityType.LessThanOrEqual,
                 x);
             target.AddConstraint(constraint);
 
@@ -131,7 +131,7 @@ namespace Cassowary.Tests
             // right >= 100
             var constraint = new ClLinearInequality(
                 right,
-                InequalityType.GEQ,
+                InequalityType.GreaterThanOrEqual,
                 rightMin);
 
             target.AddStay(width);
@@ -158,7 +158,7 @@ namespace Cassowary.Tests
             // right <= 100
             var constraint = new ClLinearInequality(
                 right,
-                InequalityType.LEQ,
+                InequalityType.LessThanOrEqual,
                 rightMin);
 
             target.AddStay(width);
@@ -210,7 +210,7 @@ namespace Cassowary.Tests
             // right >= 100
             var constraint = new ClLinearInequality(
                 right,
-                InequalityType.GEQ,
+                InequalityType.GreaterThanOrEqual,
                 rightMin);
 
             target.AddStay(width);
@@ -237,7 +237,7 @@ namespace Cassowary.Tests
             // right <= 100
             var constraint = new ClLinearInequality(
                 right,
-                InequalityType.LEQ,
+                InequalityType.LessThanOrEqual,
                 rightMin);
 
             target.AddStay(width);
@@ -299,7 +299,7 @@ namespace Cassowary.Tests
 
             var constraint = new ClLinearInequality(
                 right1,
-                InequalityType.GEQ,
+                InequalityType.GreaterThanOrEqual,
                 right2);
 
             target.AddStay(width1);
@@ -327,7 +327,7 @@ namespace Cassowary.Tests
 
             var constraint = new ClLinearInequality(
                 right2,
-                InequalityType.LEQ,
+                InequalityType.LessThanOrEqual,
                 right1);
 
             target.AddStay(width1);
@@ -347,8 +347,8 @@ namespace Cassowary.Tests
             var c100Weak = new ClLinearEquation(x, 100d, ClStrength.Weak);
             target.AddConstraint(c100Weak);
 
-            var c10 = new ClLinearInequality(x, InequalityType.LEQ, 10d);
-            var c20 = new ClLinearInequality(x, InequalityType.LEQ, 20d);
+            var c10 = new ClLinearInequality(x, InequalityType.LessThanOrEqual, 10d);
+            var c20 = new ClLinearInequality(x, InequalityType.LessThanOrEqual, 20d);
             target.AddConstraint(c10);
             target.AddConstraint(c20);
 
@@ -360,7 +360,7 @@ namespace Cassowary.Tests
             target.RemoveConstraint(c20);
             Assert.That(x.Value, IsX.Approx(100d));
 
-            var c10Again = new ClLinearInequality(x, InequalityType.LEQ, 10d);
+            var c10Again = new ClLinearInequality(x, InequalityType.LessThanOrEqual, 10d);
             target.AddConstraint(c10);
             target.AddConstraint(c10Again);
             Assert.That(x.Value, IsX.Approx(10d));
@@ -384,8 +384,8 @@ namespace Cassowary.Tests
             var cy120Strong = new ClLinearEquation(y, 120d, ClStrength.Strong);
             target.AddConstraint(cy120Strong);
 
-            var c10 = new ClLinearInequality(x, InequalityType.LEQ, 10d);
-            var c20 = new ClLinearInequality(x, InequalityType.LEQ, 20d);
+            var c10 = new ClLinearInequality(x, InequalityType.LessThanOrEqual, 10d);
+            var c20 = new ClLinearInequality(x, InequalityType.LessThanOrEqual, 20d);
             target.AddConstraint(c10);
             target.AddConstraint(c20);
             Assert.That(x.Value, IsX.Approx(10d));
@@ -419,7 +419,7 @@ namespace Cassowary.Tests
             // has to break one of the constraints!
             // either solution is ok
 
-            target.AddConstraint(new ClLinearInequality(x, InequalityType.LEQ, y));
+            target.AddConstraint(new ClLinearInequality(x, InequalityType.LessThanOrEqual, y));
             target.AddConstraint(new ClLinearEquation(y, CMath.Plus(x, 3d)));
             target.AddConstraint(new ClLinearEquation(x, 10d, ClStrength.Weak));
             target.AddConstraint(new ClLinearEquation(y, 10d, ClStrength.Weak));
@@ -455,11 +455,11 @@ namespace Cassowary.Tests
             var x = new ClVariable("x");
             var target = GetTarget();
 
-            target.AddConstraint(new ClLinearInequality(x, InequalityType.GEQ, 10d));
+            target.AddConstraint(new ClLinearInequality(x, InequalityType.GreaterThanOrEqual, 10d));
 
             Assert.That(
                 () => target.AddConstraint(
-                    new ClLinearInequality(x, InequalityType.LEQ, 5d)),
+                    new ClLinearInequality(x, InequalityType.LessThanOrEqual, 5d)),
                 Throws.TypeOf<CassowaryRequiredConstraintFailureException>());
         }
 
@@ -472,15 +472,15 @@ namespace Cassowary.Tests
             var z = new ClVariable("z");
             var target = GetTarget();
 
-            target.AddConstraint(new ClLinearInequality(w, InequalityType.GEQ, 10d));
-            target.AddConstraint(new ClLinearInequality(x, InequalityType.GEQ, w));
-            target.AddConstraint(new ClLinearInequality(y, InequalityType.GEQ, x));
-            target.AddConstraint(new ClLinearInequality(z, InequalityType.GEQ, y));
-            target.AddConstraint(new ClLinearInequality(z, InequalityType.GEQ, 8d));
+            target.AddConstraint(new ClLinearInequality(w, InequalityType.GreaterThanOrEqual, 10d));
+            target.AddConstraint(new ClLinearInequality(x, InequalityType.GreaterThanOrEqual, w));
+            target.AddConstraint(new ClLinearInequality(y, InequalityType.GreaterThanOrEqual, x));
+            target.AddConstraint(new ClLinearInequality(z, InequalityType.GreaterThanOrEqual, y));
+            target.AddConstraint(new ClLinearInequality(z, InequalityType.GreaterThanOrEqual, 8d));
 
             Assert.That(
                 () => target.AddConstraint(
-                    new ClLinearInequality(z, InequalityType.LEQ, 4d)),
+                    new ClLinearInequality(z, InequalityType.LessThanOrEqual, 4d)),
                 Throws.TypeOf<CassowaryRequiredConstraintFailureException>());
         }
 
@@ -743,7 +743,7 @@ namespace Cassowary.Tests
             target.AddConstraint(
                 new ClLinearInequality(
                     CMath.Plus(z, 150d),
-                    InequalityType.LEQ,
+                    InequalityType.LessThanOrEqual,
                     y,
                     ClStrength.Medium));
 
@@ -823,39 +823,39 @@ namespace Cassowary.Tests
             }
 
             var clex0 = CMath.Plus(points[0].X, 20d);
-            var clex02 = new ClLinearInequality(clex0, InequalityType.LEQ, points[2].X);
-            var clex03 = new ClLinearInequality(clex0, InequalityType.LEQ, points[3].X);
+            var clex02 = new ClLinearInequality(clex0, InequalityType.LessThanOrEqual, points[2].X);
+            var clex03 = new ClLinearInequality(clex0, InequalityType.LessThanOrEqual, points[3].X);
             target.AddConstraint(clex02);
             target.AddConstraint(clex03);
 
             var clex1 = CMath.Plus(points[1].X, 20d);
-            var clex12 = new ClLinearInequality(clex1, InequalityType.LEQ, points[2].X);
-            var clex13 = new ClLinearInequality(clex1, InequalityType.LEQ, points[3].X);
+            var clex12 = new ClLinearInequality(clex1, InequalityType.LessThanOrEqual, points[2].X);
+            var clex13 = new ClLinearInequality(clex1, InequalityType.LessThanOrEqual, points[3].X);
             target.AddConstraint(clex12);
             target.AddConstraint(clex13);
 
             var cley0 = CMath.Plus(points[0].Y, 20d);
-            var cley01 = new ClLinearInequality(cley0, InequalityType.LEQ, points[1].Y);
-            var cley02 = new ClLinearInequality(cley0, InequalityType.LEQ, points[2].Y);
+            var cley01 = new ClLinearInequality(cley0, InequalityType.LessThanOrEqual, points[1].Y);
+            var cley02 = new ClLinearInequality(cley0, InequalityType.LessThanOrEqual, points[2].Y);
             target.AddConstraint(cley01);
             target.AddConstraint(cley02);
 
             var cley3 = CMath.Plus(points[3].Y, 20d);
-            var cley31 = new ClLinearInequality(cley3, InequalityType.LEQ, points[1].Y);
-            var cley32 = new ClLinearInequality(cley3, InequalityType.LEQ, points[2].Y);
+            var cley31 = new ClLinearInequality(cley3, InequalityType.LessThanOrEqual, points[1].Y);
+            var cley32 = new ClLinearInequality(cley3, InequalityType.LessThanOrEqual, points[2].Y);
             target.AddConstraint(cley31);
             target.AddConstraint(cley32);
 
             foreach (var point in allPoints)
             {
                 target.AddConstraint(
-                    new ClLinearInequality(point.X, InequalityType.GEQ, 0d));
+                    new ClLinearInequality(point.X, InequalityType.GreaterThanOrEqual, 0d));
                 target.AddConstraint(
-                    new ClLinearInequality(point.Y, InequalityType.GEQ, 0d));
+                    new ClLinearInequality(point.Y, InequalityType.GreaterThanOrEqual, 0d));
                 target.AddConstraint(
-                    new ClLinearInequality(point.X, InequalityType.LEQ, 500d));
+                    new ClLinearInequality(point.X, InequalityType.LessThanOrEqual, 500d));
                 target.AddConstraint(
-                    new ClLinearInequality(point.Y, InequalityType.LEQ, 500d));
+                    new ClLinearInequality(point.Y, InequalityType.LessThanOrEqual, 500d));
             }
 
             // check the initial answers
@@ -973,7 +973,7 @@ namespace Cassowary.Tests
             target.AddConstraint(
                 new ClLinearInequality(
                     b2.Left,
-                    InequalityType.GEQ,
+                    InequalityType.GreaterThanOrEqual,
                     CMath.Plus(
                         CMath.Plus(b1.Left, b1.Width),
                         100d)));
@@ -983,7 +983,7 @@ namespace Cassowary.Tests
             target.AddConstraint(
                 new ClLinearInequality(
                     b1.Width,
-                    InequalityType.GEQ,
+                    InequalityType.GreaterThanOrEqual,
                     87d));
 
             // b1's preferred width is 87
@@ -996,7 +996,7 @@ namespace Cassowary.Tests
             target.AddConstraint(
                 new ClLinearInequality(
                     b2.Width,
-                    InequalityType.GEQ,
+                    InequalityType.GreaterThanOrEqual,
                     113d));
 
             // b2's preferred width is 113
@@ -1075,13 +1075,13 @@ namespace Cassowary.Tests
             target.AddConstraint(
                 new ClLinearInequality(
                     right,
-                    InequalityType.LEQ,
+                    InequalityType.LessThanOrEqual,
                     100d));
             // left >= 0
             target.AddConstraint(
                 new ClLinearInequality(
                     left,
-                    InequalityType.GEQ,
+                    InequalityType.GreaterThanOrEqual,
                     0d));
 
             // check that all the required constraints are true
@@ -1288,7 +1288,7 @@ namespace Cassowary.Tests
                         bottomRight_left),
                     new ClLinearExpression(bottomRight_right),
                     ClStrength.Required));
-            InequalityType geq = InequalityType.GEQ;
+            InequalityType geq = InequalityType.GreaterThanOrEqual;
             target.AddConstraint(
                 new ClLinearInequality(
                     bottomRight_top,
@@ -1334,7 +1334,7 @@ namespace Cassowary.Tests
                 new ClLinearInequality(update_right, geq, 0, ClStrength.Required));
             target.AddConstraint(
                 new ClLinearInequality(update_right, geq, 0, ClStrength.Required));
-            InequalityType leq = InequalityType.LEQ;
+            InequalityType leq = InequalityType.LessThanOrEqual;
             target.AddConstraint(
                 new ClLinearInequality(update_bottom, leq, bottomRight_height));
             target.AddConstraint(

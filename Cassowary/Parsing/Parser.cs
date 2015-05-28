@@ -171,9 +171,9 @@ namespace Cassowary.Parsing
             if (eq)
                 Value = new ClLinearEquation(e1, e2);
             else if (geq)
-                Value = new ClLinearInequality(e1, InequalityType.GEQ, e2);
+                Value = new ClLinearInequality(e1, InequalityType.GreaterThanOrEqual, e2);
             else if (leq)
-                Value = new ClLinearInequality(e1, InequalityType.LEQ, e2);
+                Value = new ClLinearInequality(e1, InequalityType.LessThanOrEqual, e2);
         }
 
         private void Expression(out ClLinearExpression e)

@@ -84,11 +84,11 @@ namespace Cassowary.Constraints
         {
             switch (inequalityType)
             {
-                case InequalityType.GEQ:
+                case InequalityType.GreaterThanOrEqual:
                     expression.MultiplyMe(-1d);
                     expression.AddVariable(clv1);
                     break;
-                case InequalityType.LEQ:
+                case InequalityType.LessThanOrEqual:
                     expression.AddVariable(clv1, -1d);
                     break;
                 default:
@@ -109,11 +109,11 @@ namespace Cassowary.Constraints
         {
             switch (inequalityType)
             {
-                case InequalityType.GEQ:
+                case InequalityType.GreaterThanOrEqual:
                     expression.MultiplyMe(-1d);
                     expression.AddVariable(clv);
                     break;
-                case InequalityType.LEQ:
+                case InequalityType.LessThanOrEqual:
                     expression.AddVariable(clv, -1d);
                     break;
                 default:
@@ -210,11 +210,11 @@ namespace Cassowary.Constraints
         {
             switch (inequalityType)
             {
-                case InequalityType.GEQ:
+                case InequalityType.GreaterThanOrEqual:
                     expression.MultiplyMe(-1d);
                     expression.AddExpression(cle1);
                     break;
-                case InequalityType.LEQ:
+                case InequalityType.LessThanOrEqual:
                     expression.AddExpression(cle1, -1d);
                     break;
                 default:
@@ -235,11 +235,11 @@ namespace Cassowary.Constraints
         {
             switch (inequalityType)
             {
-                case InequalityType.LEQ:
+                case InequalityType.LessThanOrEqual:
                     base.expression.MultiplyMe(-1d);
                     base.expression.AddVariable(clv);
                     break;
-                case InequalityType.GEQ:
+                case InequalityType.GreaterThanOrEqual:
                     base.expression.AddVariable(clv, -1d);
                     break;
                 default:
@@ -260,11 +260,11 @@ namespace Cassowary.Constraints
         {
             switch (inequalityType)
             {
-                case InequalityType.GEQ:
+                case InequalityType.GreaterThanOrEqual:
                     expression.MultiplyMe(-1d);
                     expression.AddVariable(clv);
                     break;
-                case InequalityType.LEQ:
+                case InequalityType.LessThanOrEqual:
                     expression.AddVariable(clv, -1d);
                     break;
                 default:

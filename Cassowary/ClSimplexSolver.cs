@@ -23,6 +23,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Cassowary.Constraints;
 using Cassowary.Exceptions;
 using Cassowary.Utils;
@@ -57,7 +58,7 @@ namespace Cassowary
         /// <remarks>
         /// Map ClConstraint to Set (of ClVariable).
         /// </remarks>
-        private readonly Dictionary<ClConstraint, HashSet<ClSlackVariable>> errorVars;
+        private readonly Dictionary<ClConstraint, HashSet<ClSlackVariable>> errorVariables;
 
         /// <summary>
         /// Return a lookup table giving the marker variable for
@@ -66,7 +67,7 @@ namespace Cassowary
         /// <remarks>
         /// Map ClConstraint to ClVariable.
         /// </remarks>
-        private readonly Dictionary<ClConstraint, ClAbstractVariable> markerVars;
+        private readonly Dictionary<ClConstraint, ClAbstractVariable> markerVariables;
 
         /// <summary>
         /// Map edit variables to ClEditInfo-s.
@@ -80,7 +81,6 @@ namespace Cassowary
         private readonly Dictionary<ClVariable, ClEditInfo> editVarMap;
 
         private readonly ClObjectiveVariable objective;
-        private readonly List<ClDouble> resolvePair;
         private readonly Stack<int> stkCedcns;
 
         private bool needsSolving = false;
@@ -98,21 +98,15 @@ namespace Cassowary
 
             stayMinusErrorVars = new List<ClSlackVariable>();
             stayPlusErrorVars = new List<ClSlackVariable>();
-            errorVars = new Dictionary<ClConstraint, HashSet<ClSlackVariable>>();
-            markerVars = new Dictionary<ClConstraint, ClAbstractVariable>();
-
-            resolvePair = new List<ClDouble>(2)
-            {
-                new ClDouble(0),
-                new ClDouble(0),
-            };
+            errorVariables = new Dictionary<ClConstraint, HashSet<ClSlackVariable>>();
+            markerVariables = new Dictionary<ClConstraint, ClAbstractVariable>();
 
             objective = new ClObjectiveVariable("Z");
 
             editVarMap = new Dictionary<ClVariable, ClEditInfo>();
 
-            var e = new ClLinearExpression();
-            Rows.Add(objective, e);
+            var expression = new ClLinearExpression();
+            Rows.Add(objective, expression);
             stkCedcns = new Stack<int>();
             stkCedcns.Push(0);
         }
@@ -143,54 +137,55 @@ namespace Cassowary
         /// <summary>
         /// Convenience function for creating a linear inequality constraint.
         /// </summary>
-        public void AddLowerBound(ClAbstractVariable v, double lower)
+        public void AddLowerBound(ClAbstractVariable variable, double lower)
             /* throws ExClRequiredFailure, ExClInternalError */
         {
-            var cn = new ClLinearInequality(
-                v,
-                InequalityType.GEQ,
+            var constraint = new ClLinearInequality(
+                variable,
+                InequalityType.GreaterThanOrEqual,
                 new ClLinearExpression(lower));
-            AddConstraint(cn);
+            AddConstraint(constraint);
         }
 
         /// <summary>
         /// Convenience function for creating a linear inequality constraint.
         /// </summary>
-        public void AddUpperBound(ClAbstractVariable v, double upper)
+        public void AddUpperBound(ClAbstractVariable variable, double upper)
             /* throws ExClRequiredFailure, ExClInternalError */
         {
-            var cn = new ClLinearInequality(
-                v,
-                InequalityType.LEQ,
+            var constraint = new ClLinearInequality(
+                variable,
+                InequalityType.LessThanOrEqual,
                 new ClLinearExpression(upper));
-            AddConstraint(cn);
+            AddConstraint(constraint);
         }
 
         /// <summary>
         /// Convenience function for creating a pair of linear inequality constraints.
         /// </summary>
-        public void AddBounds(ClAbstractVariable v, double lower, double upper)
+        public void AddBounds(ClAbstractVariable variable, double lower, double upper)
             /* throws ExClRequiredFailure, ExClInternalError */
         {
-            AddLowerBound(v, lower);
-            AddUpperBound(v, upper);
+            AddLowerBound(variable, lower);
+            AddUpperBound(variable, upper);
         }
 
         /// <summary>
         /// Add a constraint to the solver.
-        /// <param name="cn">
+        /// <param name="constraint">
         /// The constraint to be added.
         /// </param>
         /// </summary>
-        public void AddConstraint(ClConstraint cn)
+        public void AddConstraint(ClConstraint constraint)
             /* throws ExClRequiredFailure, ExClInternalError */
         {
-            var eplus_eminus = new List<ClSlackVariable>(2);
+            ClSlackVariable eplus;
+            ClSlackVariable eminus;
             ClDouble prevEConstant;
             var expr = NewExpression(
-                cn,
-                /* output to: */
-                eplus_eminus,
+                constraint,
+                out eplus,
+                out eminus,
                 out prevEConstant);
 
             var cAddedOkDirectly = TryAddingDirectly(expr);
@@ -202,18 +197,17 @@ namespace Cassowary
 
             needsSolving = true;
 
-            if (cn.IsEditConstraint)
+            if (constraint.IsEditConstraint)
             {
                 int i = editVarMap.Count;
-                var cnEdit = (ClEditConstraint)cn;
-                var clvEplus = eplus_eminus[0];
-                var clvEminus = eplus_eminus[1];
+                var cnEdit = (ClEditConstraint)constraint;
+
                 editVarMap.Add(
                     cnEdit.Variable,
                     new ClEditInfo(
                         cnEdit,
-                        clvEplus,
-                        clvEminus,
+                        eplus,
+                        eminus,
                         prevEConstant.Value,
                         i));
             }
@@ -464,106 +458,102 @@ namespace Cassowary
 
             ResetStayConstants();
 
-            ClLinearExpression zRow = RowExpression(objective);
-            
-            var eVars = errorVars.GetOrDefault(constraint);
-
-            if (eVars != null)
+            var slackVariables = errorVariables.GetOrDefault(constraint);
+            if (slackVariables != null)
             {
-                foreach (var clv in eVars)
+                errorVariables.Remove(constraint);
+
+                var objectiveRowExpression = RowExpression(objective);
+
+                foreach (var variable in slackVariables)
                 {
-                    ClLinearExpression expr = RowExpression(clv);
-                    if (expr == null)
+                    var coeff =
+                        -constraint.Weight*constraint.Strength.SymbolicWeight.AsDouble();
+
+                    var rowExpression = RowExpression(variable);
+                    if (rowExpression == null)
                     {
-                        zRow.AddVariable(
-                            clv,
-                            -constraint.Weight*
-                            constraint.Strength.SymbolicWeight.AsDouble(),
+                        objectiveRowExpression.AddVariable(
+                            variable,
+                            coeff,
                             objective,
                             this);
                     }
                     else // the error variable was in the basis
                     {
-                        zRow.AddExpression(
-                            expr,
-                            -constraint.Weight*
-                            constraint.Strength.SymbolicWeight.AsDouble(),
+                        objectiveRowExpression.AddExpression(
+                            rowExpression,
+                            coeff,
                             objective,
                             this);
                     }
                 }
             }
 
-            int markerVarsCount = markerVars.Count;
-            var marker = markerVars[constraint];
-            markerVars.Remove(constraint);
-
-            if (markerVarsCount == markerVars.Count) // key was not found
-            {
+            var marker = markerVariables.GetOrDefault(constraint);
+            if (marker == null)
                 throw new CassowaryConstraintNotFoundException();
-            }
 
+            markerVariables.Remove(constraint);
+            
             if (RowExpression(marker) == null)
             {
                 // not in the basis, so need to do some more work
-                var col = Columns[marker];
+                var markerColumn = Columns[marker];
 
                 // must pivot...
-
                 ClAbstractVariable exitVar = null;
-                double minRatio = 0.0;
-                foreach (ClAbstractVariable v in col)
+                double minRatio = 0d;
+
+                foreach (var variable in markerColumn)
                 {
-                    if (v.IsRestricted)
+                    if (variable.IsRestricted)
                     {
-                        ClLinearExpression expr = RowExpression(v);
-                        double coeff = expr.CoefficientFor(marker);
+                        var rowExpression = RowExpression(variable);
+                        var coefficient = rowExpression.CoefficientFor(marker);
 
-                        // "Marker " + marker + "'s coefficient in " + expr + " is " + coeff
+                        if (coefficient >= 0d) 
+                            continue;
 
-                        if (coeff < 0.0)
+                        var ratio = -rowExpression.Constant/coefficient;
+                        if (exitVar == null || ratio < minRatio)
                         {
-                            double r = -expr.Constant/coeff;
-                            if (exitVar == null || r < minRatio)
-                            {
-                                minRatio = r;
-                                exitVar = v;
-                            }
+                            minRatio = ratio;
+                            exitVar = variable;
                         }
                     }
                 }
 
                 if (exitVar == null)
                 {
-                    foreach (ClAbstractVariable v in col)
+                    // no restriced variables in markerColumn 
+                    // OR all coefficients >= 0
+                    foreach (var variable in markerColumn)
                     {
-                        if (v.IsRestricted)
+                        if (!variable.IsRestricted)
+                            continue;
+
+                        var rowExpression = RowExpression(variable);
+                        var coefficient = rowExpression.CoefficientFor(marker);
+
+                        var ratio = rowExpression.Constant/coefficient;
+                        if (exitVar == null || ratio < minRatio)
                         {
-                            ClLinearExpression expr = RowExpression(v);
-                            double coeff = expr.CoefficientFor(marker);
-                            double r = expr.Constant/coeff;
-                            if (exitVar == null || r < minRatio)
-                            {
-                                minRatio = r;
-                                exitVar = v;
-                            }
+                            minRatio = ratio;
+                            exitVar = variable;
                         }
                     }
                 }
 
                 if (exitVar == null)
                 {
-                    // exitVar is still null
-                    if (col.Count == 0)
+                    if (markerColumn.Count == 0)
                     {
                         RemoveColumn(marker);
                     }
                     else
                     {
-                        // put first element in exitVar
-                        IEnumerator colEnum = col.GetEnumerator();
-                        colEnum.MoveNext();
-                        exitVar = (ClAbstractVariable) colEnum.Current;
+                        exitVar = markerColumn.FirstOrDefault();
                     }
                 }
 
@@ -578,45 +568,38 @@ namespace Cassowary
                 RemoveRow(marker);
             }
 
-            if (eVars != null)
+            if (slackVariables != null)
             {
-                foreach (var v in eVars)
+                foreach (var slackVariable in slackVariables)
                 {
                     // FIXME: decide wether to use equals or !=
-                    if (v != marker)
+                    if (slackVariable != marker)
                     {
-                        RemoveColumn(v);
-                        // v = null; // is read-only, cannot be set to null
+                        RemoveColumn(slackVariable);
                     }
                 }
             }
 
             if (constraint.IsStayConstraint)
             {
-                if (eVars != null)
+                if (slackVariables != null)
                 {
                     for (int i = 0; i < stayPlusErrorVars.Count; i++)
                     {
-                        eVars.Remove(stayPlusErrorVars[i]);
-                        eVars.Remove(stayMinusErrorVars[i]);
+                        slackVariables.Remove(stayPlusErrorVars[i]);
+                        slackVariables.Remove(stayMinusErrorVars[i]);
                     }
                 }
             }
             else if (constraint.IsEditConstraint)
             {
-                Debug.Assert(eVars != null, "eVars != null");
+                Debug.Assert(slackVariables != null, "eVars != null");
                 var editConstraint = (ClEditConstraint) constraint;
                 var variable = editConstraint.Variable;
                 var editInfo = editVarMap[variable];
                 var clvEditMinus = editInfo.ClvEditMinus;
                 RemoveColumn(clvEditMinus);
                 editVarMap.Remove(variable);
-            }
-
-            // FIXME: do the remove at top
-            if (eVars != null)
-            {
-                errorVars.Remove(constraint);
             }
 
             if (AutoSolve)
@@ -637,52 +620,6 @@ namespace Cassowary
             /* throws ExClInternalError */
         {
             throw new CassowaryInternalException("Reset not implemented");
-        }
-
-        /// <summary>
-        /// Re-solve the current collection of constraints for new values
-        /// for the constants of the edit variables.
-        /// </summary>
-        /// <remarks>
-        /// Deprecated. Use SuggestValue(...) then Resolve(). If you must
-        /// use this, be sure to not use it if you
-        /// remove an edit variable (or edit constraints) from the middle
-        /// of a list of edits, and then try to resolve with this function
-        /// (you'll get the wrong answer, because the indices will be wrong
-        /// in the ClEditInfo objects).
-        /// </remarks>
-        public void Resolve(List<ClDouble> newEditConstants)
-            /* throws ExClInternalError */
-        {
-            foreach (var v in editVarMap.Keys)
-            {
-                var cei = editVarMap[v];
-                int i = cei.Index;
-                try
-                {
-                    if (i < newEditConstants.Count)
-                    {
-                        SuggestValue(v, newEditConstants[i].Value);
-                    }
-                }
-                catch (CassowaryException)
-                {
-                    throw new CassowaryInternalException("Error during resolve");
-                }
-            }
-            Resolve();
-        }
-
-        /// <summary>
-        /// Convenience function for resolve-s of two variables.
-        /// </summary>
-        public void Resolve(double x, double y)
-            /* throws ExClInternalError */
-        {
-            resolvePair[0] = new ClDouble(x);
-            resolvePair[1] = new ClDouble(y);
-
-            Resolve(resolvePair);
         }
 
         /// <summary>
@@ -844,23 +781,22 @@ namespace Cassowary
         /// to the inequality tableau, then make av be 0 (raise an exception
         /// if we can't attain av=0).
         /// </remarks>
-        private void AddWithArtificialVariable(ClLinearExpression expr)
+        private void AddWithArtificialVariable(ClLinearExpression expression)
             /* throws ExClRequiredFailure, ExClInternalError */
         {
             var av = new ClSlackVariable("a");
             var az = new ClObjectiveVariable("az");
-            var azRow = Cloneable.Clone(expr);
 
+            var expressionClone = Cloneable.Clone(expression);
 
-            AddRow(az, azRow);
-            AddRow(av, expr);
-
+            AddRow(az, expressionClone);
+            AddRow(av, expression);
 
             Optimize(az);
 
-            ClLinearExpression azTableauRow = RowExpression(az);
+            var azRowExpression = RowExpression(az);
 
-            if (!CMath.Approx(azTableauRow.Constant, 0.0))
+            if (!CMath.Approx(azRowExpression.Constant, 0.0))
             {
                 RemoveRow(az);
                 RemoveColumn(av);
@@ -868,13 +804,13 @@ namespace Cassowary
             }
 
             // see if av is a basic variable
-            ClLinearExpression e = RowExpression(av);
+            var avRowExpression = RowExpression(av);
 
-            if (e != null)
+            if (avRowExpression != null)
             {
                 // find another variable in this row and pivot,
                 // so that av becomes parametric
-                if (e.IsConstant)
+                if (avRowExpression.IsConstant)
                 {
                     // if there isn't another variable in the row
                     // then the tableau contains the equation av=0 --
@@ -883,7 +819,8 @@ namespace Cassowary
                     RemoveRow(az);
                     return;
                 }
-                ClAbstractVariable entryVar = e.AnyPivotableVariable();
+
+                var entryVar = avRowExpression.GetAnyPivotableVariable();
                 Pivot(entryVar, av);
             }
 
@@ -904,22 +841,22 @@ namespace Cassowary
         /// <returns>
         /// True if successful and false if not.
         /// </returns>
-        private bool TryAddingDirectly(ClLinearExpression expr)
+        private bool TryAddingDirectly(ClLinearExpression expression)
             /* throws ExClRequiredFailure */
         {
-            ClAbstractVariable subject = ChooseSubject(expr);
+            var subject = ChooseSubject(expression);
             if (subject == null)
             {
                 return false;
             }
 
-            expr.NewSubject(subject);
+            expression.NewSubject(subject);
             if (ColumnsHasKey(subject))
             {
-                SubstituteOut(subject, expr);
+                SubstituteOut(subject, expression);
             }
 
-            AddRow(subject, expr);
+            AddRow(subject, expression);
 
             return true; // succesfully added directly
         }
@@ -1020,17 +957,16 @@ namespace Cassowary
 
         private ClLinearExpression NewExpression(
             ClConstraint cn,
-            List<ClSlackVariable> eplus_eminus,
+            out ClSlackVariable eplus_,
+            out ClSlackVariable eminus_,
             out ClDouble prevEConstant)
         {
+            eplus_ = null;
+            eminus_ = null;
             prevEConstant = new ClDouble(0d);
 
             var cnExpr = cn.Expression;
             var expr = new ClLinearExpression(cnExpr.Constant);
-            var slackVar = new ClSlackVariable();
-            var dummyVar = new ClDummyVariable();
-            var eminus = new ClSlackVariable();
-            var eplus = new ClSlackVariable();
             var cnTerms = cnExpr.Terms;
 
             foreach (ClAbstractVariable v in cnTerms.Keys)
@@ -1045,13 +981,13 @@ namespace Cassowary
 
             if (cn.IsInequality)
             {
-                slackVar = new ClSlackVariable("s");
+                var slackVar = new ClSlackVariable("s");
                 expr.SetVariable(slackVar, -1);
-                markerVars.Add(cn, slackVar);
+                markerVariables.Add(cn, slackVar);
 
                 if (!cn.Strength.IsRequired)
                 {
-                    eminus = new ClSlackVariable("em");
+                    var eminus = new ClSlackVariable("em");
                     expr.SetVariable(eminus, 1.0);
                     ClLinearExpression zRow = RowExpression(objective);
                     ClSymbolicWeight sw = cn.Strength.SymbolicWeight * cn.Weight;
@@ -1065,18 +1001,18 @@ namespace Cassowary
                 // cn is an equality
                 if (cn.Strength.IsRequired)
                 {
-                    dummyVar = new ClDummyVariable("d");
+                    var dummyVar = new ClDummyVariable("d");
                     expr.SetVariable(dummyVar, 1.0);
-                    markerVars.Add(cn, dummyVar);
+                    markerVariables.Add(cn, dummyVar);
                 }
                 else
                 {
-                    eplus = new ClSlackVariable("ep");
-                    eminus = new ClSlackVariable("em");
+                    var eplus = new ClSlackVariable("ep");
+                    var eminus = new ClSlackVariable("em");
 
                     expr.SetVariable(eplus, -1.0);
                     expr.SetVariable(eminus, 1.0);
-                    markerVars.Add(cn, eplus);
+                    markerVariables.Add(cn, eplus);
                     ClLinearExpression zRow = RowExpression(objective);
                     ClSymbolicWeight sw = cn.Strength.SymbolicWeight * cn.Weight;
                     double swCoeff = sw.AsDouble();
@@ -1095,8 +1031,9 @@ namespace Cassowary
                     }
                     else if (cn.IsEditConstraint)
                     {
-                        eplus_eminus.Add(eplus);
-                        eplus_eminus.Add(eminus);
+                        eplus_ = eplus;
+                        eminus_ = eminus;
+
                         prevEConstant = new ClDouble(cnExpr.Constant);
                     }
                 }
@@ -1306,19 +1243,19 @@ namespace Cassowary
         /// make exitVar a parametric variable.
         /// </remarks>
         private void Pivot(
-            ClAbstractVariable entryVar,
-            ClAbstractVariable exitVar)
+            ClAbstractVariable entryVariable,
+            ClAbstractVariable exitVariable)
             /* throws ExClInternalError */
         {
             // the entryVar might be non-pivotable if we're doing a 
             // RemoveConstraint -- otherwise it should be a pivotable
             // variable -- enforced at call sites, hopefully
+            
+            var expression = RemoveRow(exitVariable);
 
-            ClLinearExpression pexpr = RemoveRow(exitVar);
-
-            pexpr.ChangeSubject(exitVar, entryVar);
-            SubstituteOut(entryVar, pexpr);
-            AddRow(entryVar, pexpr);
+            expression.ChangeSubject(exitVariable, entryVariable);
+            SubstituteOut(entryVariable, expression);
+            AddRow(entryVariable, expression);
         }
 
         /// <summary>
@@ -1404,10 +1341,10 @@ namespace Cassowary
         private void InsertErrorVar(ClConstraint constraint, ClSlackVariable variable)
         {
             HashSet<ClSlackVariable> constraintVariables;
-            if (!errorVars.TryGetValue(constraint, out constraintVariables))
+            if (!errorVariables.TryGetValue(constraint, out constraintVariables))
             {
                 constraintVariables = new HashSet<ClSlackVariable>();
-                errorVars.Add(constraint, constraintVariables);
+                errorVariables.Add(constraint, constraintVariables);
             }
 
             constraintVariables.Add(variable);
