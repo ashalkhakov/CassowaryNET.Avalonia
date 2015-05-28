@@ -83,15 +83,14 @@ namespace AutoLayoutPanel
             solver.AddConstraint(
                 new ClLinearEquation(
                     clX,
-                    new ClLinearExpression(clCenter).Minus(
-                        new ClLinearExpression(clWidth).Divide(2)),
+                    new ClLinearExpression(clCenter) - new ClLinearExpression(clWidth).Divide(2),
                     ClStrength.Required));
 
             // X = Right - Width
             solver.AddConstraintNoException(
                 new ClLinearEquation(
                     clX,
-                    new ClLinearExpression(clRight).Minus(clWidth),
+                    new ClLinearExpression(clRight) - clWidth,
                     ClStrength.Required));
 
             // Y = Top
@@ -105,15 +104,14 @@ namespace AutoLayoutPanel
             solver.AddConstraint(
                 new ClLinearEquation(
                     clY,
-                    new ClLinearExpression(clMiddle).Minus(
-                        new ClLinearExpression(clHeight).Divide(2)),
+                    new ClLinearExpression(clMiddle) - new ClLinearExpression(clHeight).Divide(2),
                     ClStrength.Required));
 
             // Y = Bottom - Height
             solver.AddConstraint(
                 new ClLinearEquation(
                     clY,
-                    new ClLinearExpression(clBottom).Minus(clHeight),
+                    new ClLinearExpression(clBottom) - clHeight,
                     ClStrength.Required));
         }
 

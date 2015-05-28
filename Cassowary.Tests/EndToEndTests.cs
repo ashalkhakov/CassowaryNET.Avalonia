@@ -122,9 +122,7 @@ namespace Cassowary.Tests
             var width = new ClVariable(10d);
             var rightMin = new ClVariable(100d);
 
-            var right = CMath.Plus(
-                new ClLinearExpression(x),
-                new ClLinearExpression(width));
+            var right = new ClLinearExpression(x) + new ClLinearExpression(width);
 
             var target = GetTarget();
 
@@ -149,9 +147,7 @@ namespace Cassowary.Tests
             var width = new ClVariable(10d);
             var rightMin = new ClVariable(100d);
 
-            var right = CMath.Plus(
-                new ClLinearExpression(x),
-                new ClLinearExpression(width));
+            var right = new ClLinearExpression(x) + new ClLinearExpression(width);
 
             var target = GetTarget();
 
@@ -176,9 +172,7 @@ namespace Cassowary.Tests
             var width = new ClVariable(10d);
             var rightMin = new ClVariable(100d);
 
-            var right = CMath.Plus(
-                new ClLinearExpression(x),
-                new ClLinearExpression(width));
+            var right = new ClLinearExpression(x) + new ClLinearExpression(width);
 
             var target = GetTarget();
 
@@ -201,9 +195,7 @@ namespace Cassowary.Tests
             var width = new ClVariable(10d);
             var rightMin = new ClVariable(100d);
 
-            var right = CMath.Plus(
-                new ClLinearExpression(x),
-                new ClLinearExpression(width));
+            var right = new ClLinearExpression(x) + new ClLinearExpression(width);
 
             var target = GetTarget();
 
@@ -228,9 +220,7 @@ namespace Cassowary.Tests
             var width = new ClVariable(10d);
             var rightMin = new ClVariable(100d);
 
-            var right = CMath.Plus(
-                new ClLinearExpression(x),
-                new ClLinearExpression(width));
+            var right = new ClLinearExpression(x) + new ClLinearExpression(width);
 
             var target = GetTarget();
 
@@ -253,15 +243,11 @@ namespace Cassowary.Tests
         {
             var x1 = new ClVariable(10d);
             var width1 = new ClVariable(10d);
-            var right1 = CMath.Plus(
-                new ClLinearExpression(x1),
-                new ClLinearExpression(width1));
+            var right1 = new ClLinearExpression(x1) + new ClLinearExpression(width1);
 
             var x2 = new ClVariable(100d);
             var width2 = new ClVariable(10d);
-            var right2 = CMath.Plus(
-                new ClLinearExpression(x2),
-                new ClLinearExpression(width2));
+            var right2 = new ClLinearExpression(x2) + new ClLinearExpression(width2);
 
             var target = GetTarget();
 
@@ -285,15 +271,11 @@ namespace Cassowary.Tests
         {
             var x1 = new ClVariable(10d);
             var width1 = new ClVariable(10d);
-            var right1 = CMath.Plus(
-                new ClLinearExpression(x1),
-                new ClLinearExpression(width1));
+            var right1 = new ClLinearExpression(x1) + new ClLinearExpression(width1);
 
             var x2 = new ClVariable(100d);
             var width2 = new ClVariable(10d);
-            var right2 = CMath.Plus(
-                new ClLinearExpression(x2),
-                new ClLinearExpression(width2));
+            var right2 = new ClLinearExpression(x2) + new ClLinearExpression(width2);
 
             var target = GetTarget();
 
@@ -315,13 +297,11 @@ namespace Cassowary.Tests
         {
             var x1 = new ClVariable(10d);
             var width1 = new ClVariable(10d);
-            var right1 = CMath.Plus(x1, width1);
+            var right1 = x1 + width1;
 
             var x2 = new ClVariable(100d);
             var width2 = new ClVariable(10d);
-            var right2 = CMath.Plus(
-                new ClLinearExpression(x2),
-                new ClLinearExpression(width2));
+            var right2 = new ClLinearExpression(x2) + new ClLinearExpression(width2);
 
             var target = GetTarget();
 
@@ -420,7 +400,7 @@ namespace Cassowary.Tests
             // either solution is ok
 
             target.AddConstraint(new ClLinearInequality(x, InequalityType.LessThanOrEqual, y));
-            target.AddConstraint(new ClLinearEquation(y, CMath.Plus(x, 3d)));
+            target.AddConstraint(new ClLinearEquation(y, x + 3d));
             target.AddConstraint(new ClLinearEquation(x, 10d, ClStrength.Weak));
             target.AddConstraint(new ClLinearEquation(y, 10d, ClStrength.Weak));
 
@@ -681,13 +661,13 @@ namespace Cassowary.Tests
             target.AddConstraint(
                 new ClLinearEquation(
                     bottom,
-                    CMath.Plus(top, height),
+                    top + height,
                     ClStrength.Medium,
                     0d));
             target.AddConstraint(
                 new ClLinearEquation(
                     right,
-                    CMath.Plus(left, width),
+                    left + width,
                     ClStrength.Medium,
                     0d));
 
@@ -803,7 +783,7 @@ namespace Cassowary.Tests
             // z + 150 <= y
             target.AddConstraint(
                 new ClLinearInequality(
-                    CMath.Plus(z, 150d),
+                    z + 150d,
                     InequalityType.LessThanOrEqual,
                     y,
                     ClStrength.Medium));
@@ -871,37 +851,37 @@ namespace Cassowary.Tests
 
                 // (points[start].X + points[end].X) / 2
                 var cleX = CMath.Divide(
-                    CMath.Plus(points[start].X, points[end].X),
+                    points[start].X + points[end].X,
                     2d);
                 var cleXq = new ClLinearEquation(midpoints[start].X, cleX);
                 target.AddConstraint(cleXq);
 
                 var cleY = CMath.Divide(
-                    CMath.Plus(points[start].Y, points[end].Y),
+                    points[start].Y + points[end].Y,
                     2d);
                 var cleYq = new ClLinearEquation(midpoints[start].Y, cleY);
                 target.AddConstraint(cleYq);
             }
 
-            var clex0 = CMath.Plus(points[0].X, 20d);
+            var clex0 = points[0].X + 20d;
             var clex02 = new ClLinearInequality(clex0, InequalityType.LessThanOrEqual, points[2].X);
             var clex03 = new ClLinearInequality(clex0, InequalityType.LessThanOrEqual, points[3].X);
             target.AddConstraint(clex02);
             target.AddConstraint(clex03);
 
-            var clex1 = CMath.Plus(points[1].X, 20d);
+            var clex1 = points[1].X + 20d;
             var clex12 = new ClLinearInequality(clex1, InequalityType.LessThanOrEqual, points[2].X);
             var clex13 = new ClLinearInequality(clex1, InequalityType.LessThanOrEqual, points[3].X);
             target.AddConstraint(clex12);
             target.AddConstraint(clex13);
 
-            var cley0 = CMath.Plus(points[0].Y, 20d);
+            var cley0 = points[0].Y + 20d;
             var cley01 = new ClLinearInequality(cley0, InequalityType.LessThanOrEqual, points[1].Y);
             var cley02 = new ClLinearInequality(cley0, InequalityType.LessThanOrEqual, points[2].Y);
             target.AddConstraint(cley01);
             target.AddConstraint(cley02);
 
-            var cley3 = CMath.Plus(points[3].Y, 20d);
+            var cley3 = points[3].Y + 20d;
             var cley31 = new ClLinearInequality(cley3, InequalityType.LessThanOrEqual, points[1].Y);
             var cley32 = new ClLinearInequality(cley3, InequalityType.LessThanOrEqual, points[2].Y);
             target.AddConstraint(cley31);
@@ -1018,16 +998,14 @@ namespace Cassowary.Tests
             target.AddConstraint(
                 new ClLinearEquation(
                     b1.Left,
-                    CMath.Plus(leftLimit, 50d)));
+                    leftLimit + 50d));
 
             // b2 ends 50 from the right margin
             //solver.add_constraint(left_limit + right_limit == b2.left + b2.width + 50)
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(leftLimit, rightLimit),
-                    CMath.Plus(
-                        CMath.Plus(b2.Left, b2.Width),
-                        50d)));
+                    leftLimit + rightLimit,
+                    b2.Left + b2.Width + 50d));
 
             // b2 starts at least 100 from the end of b1
             //solver.add_constraint(b2.left >= (b1.left + b1.width + 100))
@@ -1035,9 +1013,7 @@ namespace Cassowary.Tests
                 new ClLinearInequality(
                     b2.Left,
                     InequalityType.GreaterThanOrEqual,
-                    CMath.Plus(
-                        CMath.Plus(b1.Left, b1.Width),
-                        100d)));
+                    b1.Left + b1.Width + 100d));
 
             // b1 has a minimum width of 87
             //solver.add_constraint(b1.width >= 87)
@@ -1126,12 +1102,12 @@ namespace Cassowary.Tests
             target.AddConstraint(
                 new ClLinearEquation(
                     middle,
-                    CMath.Divide(CMath.Plus(left, right), 2d)));
+                    CMath.Divide(left + right, 2d)));
             // right == left + 10
             target.AddConstraint(
                 new ClLinearEquation(
                     right,
-                    CMath.Plus(left, 10d)));
+                    left + 10d));
             // right <= 100
             target.AddConstraint(
                 new ClLinearInequality(
@@ -1337,16 +1313,12 @@ namespace Cassowary.Tests
 
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(
-                        new ClLinearExpression(bottomRight_height),
-                        bottomRight_top),
+                    new ClLinearExpression(bottomRight_height) + bottomRight_top,
                     new ClLinearExpression(bottomRight_bottom),
                     ClStrength.Required));
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(
-                        new ClLinearExpression(bottomRight_width),
-                        bottomRight_left),
+                    new ClLinearExpression(bottomRight_width) + bottomRight_left,
                     new ClLinearExpression(bottomRight_right),
                     ClStrength.Required));
             InequalityType geq = InequalityType.GreaterThanOrEqual;
@@ -1377,12 +1349,12 @@ namespace Cassowary.Tests
 
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(update_height), update_top),
+                    new ClLinearExpression(update_height) + update_top,
                     new ClLinearExpression(update_bottom),
                     ClStrength.Required));
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(update_width), update_left),
+                    new ClLinearExpression(update_width) + update_left,
                     new ClLinearExpression(update_right),
                     ClStrength.Required));
             target.AddConstraint(
@@ -1403,12 +1375,12 @@ namespace Cassowary.Tests
 
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(newpost_height), newpost_top),
+                    new ClLinearExpression(newpost_height) + newpost_top,
                     new ClLinearExpression(newpost_bottom),
                     ClStrength.Required));
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(newpost_width), newpost_left),
+                    new ClLinearExpression(newpost_width) + newpost_left,
                     new ClLinearExpression(newpost_right),
                     ClStrength.Required));
             target.AddConstraint(
@@ -1428,12 +1400,12 @@ namespace Cassowary.Tests
 
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(quit_height), quit_top),
+                    new ClLinearExpression(quit_height) + quit_top,
                     new ClLinearExpression(quit_bottom),
                     ClStrength.Required));
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(quit_width), quit_left),
+                    new ClLinearExpression(quit_width) + quit_left,
                     new ClLinearExpression(quit_right),
                     ClStrength.Required));
             target.AddConstraint(
@@ -1453,12 +1425,12 @@ namespace Cassowary.Tests
 
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(topRight_height), topRight_top),
+                    new ClLinearExpression(topRight_height) + topRight_top,
                     new ClLinearExpression(topRight_bottom),
                     ClStrength.Required));
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(topRight_width), topRight_left),
+                    new ClLinearExpression(topRight_width) + topRight_left,
                     new ClLinearExpression(topRight_right),
                     ClStrength.Required));
             target.AddConstraint(
@@ -1478,12 +1450,12 @@ namespace Cassowary.Tests
 
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(l_title_height), l_title_top),
+                    new ClLinearExpression(l_title_height) + l_title_top,
                     new ClLinearExpression(l_title_bottom),
                     ClStrength.Required));
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(l_title_width), l_title_left),
+                    new ClLinearExpression(l_title_width) + l_title_left,
                     new ClLinearExpression(l_title_right),
                     ClStrength.Required));
             target.AddConstraint(
@@ -1503,12 +1475,12 @@ namespace Cassowary.Tests
 
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(title_height), title_top),
+                    new ClLinearExpression(title_height) + title_top,
                     new ClLinearExpression(title_bottom),
                     ClStrength.Required));
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(title_width), title_left),
+                    new ClLinearExpression(title_width) + title_left,
                     new ClLinearExpression(title_right),
                     ClStrength.Required));
             target.AddConstraint(
@@ -1528,12 +1500,12 @@ namespace Cassowary.Tests
 
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(l_body_height), l_body_top),
+                    new ClLinearExpression(l_body_height) + l_body_top,
                     new ClLinearExpression(l_body_bottom),
                     ClStrength.Required));
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(l_body_width), l_body_left),
+                    new ClLinearExpression(l_body_width) + l_body_left,
                     new ClLinearExpression(l_body_right),
                     ClStrength.Required));
             target.AddConstraint(
@@ -1553,12 +1525,12 @@ namespace Cassowary.Tests
 
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(blogentry_height), blogentry_top),
+                    new ClLinearExpression(blogentry_height) + blogentry_top,
                     new ClLinearExpression(blogentry_bottom),
                     ClStrength.Required));
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(blogentry_width), blogentry_left),
+                    new ClLinearExpression(blogentry_width) + blogentry_left,
                     new ClLinearExpression(blogentry_right),
                     ClStrength.Required));
             target.AddConstraint(
@@ -1590,12 +1562,12 @@ namespace Cassowary.Tests
 
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(left_height), left_top),
+                    new ClLinearExpression(left_height) + left_top,
                     new ClLinearExpression(left_bottom),
                     ClStrength.Required));
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(left_width), left_left),
+                    new ClLinearExpression(left_width) + left_left,
                     new ClLinearExpression(left_right),
                     ClStrength.Required));
             target.AddConstraint(
@@ -1611,12 +1583,12 @@ namespace Cassowary.Tests
 
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(l_recent_height), l_recent_top),
+                    new ClLinearExpression(l_recent_height) + l_recent_top,
                     new ClLinearExpression(l_recent_bottom),
                     ClStrength.Required));
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(l_recent_width), l_recent_left),
+                    new ClLinearExpression(l_recent_width) + l_recent_left,
                     new ClLinearExpression(l_recent_right),
                     ClStrength.Required));
             target.AddConstraint(
@@ -1640,12 +1612,12 @@ namespace Cassowary.Tests
 
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(articles_height), articles_top),
+                    new ClLinearExpression(articles_height) + articles_top,
                     new ClLinearExpression(articles_bottom),
                     ClStrength.Required));
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(articles_width), articles_left),
+                    new ClLinearExpression(articles_width) + articles_left,
                     new ClLinearExpression(articles_right),
                     ClStrength.Required));
             target.AddConstraint(
@@ -1669,12 +1641,12 @@ namespace Cassowary.Tests
 
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(left_height), left_top),
+                    new ClLinearExpression(left_height) + left_top,
                     new ClLinearExpression(left_bottom),
                     ClStrength.Required));
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(left_width), left_left),
+                    new ClLinearExpression(left_width) + left_left,
                     new ClLinearExpression(left_right),
                     ClStrength.Required));
             target.AddConstraint(
@@ -1690,12 +1662,12 @@ namespace Cassowary.Tests
 
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(right_height), right_top),
+                    new ClLinearExpression(right_height) + right_top,
                     new ClLinearExpression(right_bottom),
                     ClStrength.Required));
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(right_width), right_left),
+                    new ClLinearExpression(right_width) + right_left,
                     new ClLinearExpression(right_right),
                     ClStrength.Required));
             target.AddConstraint(
@@ -1721,12 +1693,12 @@ namespace Cassowary.Tests
 
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(fr_height), fr_top),
+                    new ClLinearExpression(fr_height) + fr_top,
                     new ClLinearExpression(fr_bottom),
                     ClStrength.Required));
             target.AddConstraint(
                 new ClLinearEquation(
-                    CMath.Plus(new ClLinearExpression(fr_width), fr_left),
+                    new ClLinearExpression(fr_width) + fr_left,
                     new ClLinearExpression(fr_right),
                     ClStrength.Required));
             target.AddConstraint(

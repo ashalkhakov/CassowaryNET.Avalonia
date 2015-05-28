@@ -187,13 +187,13 @@ namespace Cassowary.Parsing
                 {
                     Get();
                     Term(out e1);
-                    e = CMath.Plus(e, e1);
+                    e = e + e1;
                 }
                 else
                 {
                     Get();
                     Term(out e1);
-                    e = CMath.Minus(e, e1);
+                    e = e - e1;
                 }
             }
         }
@@ -249,7 +249,7 @@ namespace Cassowary.Parsing
             }
             else SynErr(16);
             if (negate)
-                e = CMath.Minus(0, e);
+                e = -e;
         }
 
         private void Number(out ClDouble d)

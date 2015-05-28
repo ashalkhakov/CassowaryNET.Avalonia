@@ -421,11 +421,13 @@ namespace Cassowary
 
         #region Operators
 
-        public static ClLinearExpression operator +(
+        private static ClLinearExpression Add(
             ClLinearExpression a,
-            ClLinearExpression b)
+            ClLinearExpression b,
+            double aMultiplier,
+            double bMultiplier)
         {
-            var constant = a.constant + b.constant;
+            var constant = aMultiplier*a.constant + bMultiplier*b.constant;
 
             var terms = new Dictionary<ClAbstractVariable, ClDouble>();
 
@@ -435,7 +437,7 @@ namespace Cassowary
                 var bCoefficient = b.Terms.GetOrDefault(variable, new ClDouble(0d));
                 var aCoefficient = a.Terms.GetOrDefault(variable, new ClDouble(0d));
 
-                var coefficient = aCoefficient + bCoefficient;
+                var coefficient = aMultiplier*aCoefficient + bMultiplier*bCoefficient;
                 if (!coefficient.IsApproxZero)
                 {
                     terms.Add(variable, coefficient);
@@ -443,6 +445,14 @@ namespace Cassowary
             }
 
             return new ClLinearExpression(constant, terms);
+        }
+
+
+        public static ClLinearExpression operator +(
+            ClLinearExpression a,
+            ClLinearExpression b)
+        {
+            return Add(a, b, 1d, 1d);
         }
 
         public static ClLinearExpression operator +(
@@ -474,6 +484,56 @@ namespace Cassowary
         }
 
 
+        public static ClLinearExpression operator -(
+            ClLinearExpression a,
+            ClLinearExpression b)
+        {
+            return Add(a, b, 1d, -1d);
+        }
+
+        public static ClLinearExpression operator -(
+            ClLinearExpression a,
+            ClVariable b)
+        {
+            return a - new ClLinearExpression(b);
+        }
+
+        public static ClLinearExpression operator -(
+            ClVariable a,
+            ClLinearExpression b)
+        {
+            return new ClLinearExpression(a) - b;
+        }
+
+        public static ClLinearExpression operator -(
+            ClLinearExpression a,
+            double b)
+        {
+            return a - new ClLinearExpression(b);
+        }
+
+        public static ClLinearExpression operator -(
+            double a,
+            ClLinearExpression b)
+        {
+            return new ClLinearExpression(a) - b;
+        }
+
+        public static ClLinearExpression operator -(
+            ClLinearExpression a)
+        {
+            return 0d - a;
+        }
+
+        public static ClLinearExpression operator +(
+            ClLinearExpression a)
+        {
+            return 0d + a;
+        }
+
+
+
+        
         public ClLinearExpression Times(double x)
         {
             var newConstant = constant * x;
@@ -503,20 +563,6 @@ namespace Cassowary
             }
 
             return Times(expression.constant.Value);
-        }
-
-        public ClLinearExpression Minus(ClLinearExpression expression)
-        {
-            var clone = Cloneable.Clone(this);
-            clone.AddExpression(expression, -1.0);
-            return clone;
-        }
-
-        public ClLinearExpression Minus(ClVariable variable)
-        {
-            var clone = Cloneable.Clone(this);
-            clone.AddVariable(variable, -1.0);
-            return clone;
         }
 
         public ClLinearExpression Divide(double x)
