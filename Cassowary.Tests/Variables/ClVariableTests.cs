@@ -107,18 +107,18 @@ namespace Cassowary.Tests
             }
         }
 
-        //[TestFixture]
-        //public class SetValueTests : TestBase
-        //{
-        //    [Test]
-        //    public void changes_value()
-        //    {
-        //        var target = GetTarget();
+        [TestFixture]
+        public class SetValueTests : TestBase
+        {
+            [Test]
+            public void changes_value()
+            {
+                var target = GetTarget();
 
-        //        target.Value = 42.3d;
+                target.Value = 42.3d;
 
-        //        Assert.That(target.Value, Is.EqualTo(42.3d));
-        //    }
-        //}
+                Assert.That(target.Value, Is.EqualTo(42.3d));
+            }
+        }
     }
 }
