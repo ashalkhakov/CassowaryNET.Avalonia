@@ -41,11 +41,6 @@ namespace Cassowary
             this.value = value;
         }
 
-        public ClDouble()
-            : this(0d)
-        {
-        }
-
         #endregion
 
         #region Properties
@@ -53,6 +48,11 @@ namespace Cassowary
         public double Value
         {
             get { return value; }
+        }
+
+        public bool IsApproxZero
+        {
+            get { return CMath.Approx(value, 0d); }
         }
 
         #endregion
@@ -64,6 +64,11 @@ namespace Cassowary
             return value.ToString(CultureInfo.InvariantCulture);
         }
 
+
+        public static implicit operator ClDouble(double value)
+        {
+            return new ClDouble(value);
+        }
 
         public static ClDouble operator +(ClDouble a, double b)
         {

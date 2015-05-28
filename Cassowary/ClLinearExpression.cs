@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Cassowary.Exceptions;
 using Cassowary.Utils;
 using Cassowary.Variables;
@@ -138,148 +139,43 @@ namespace Cassowary
             }
         }
 
-        public ClLinearExpression Times(double x)
-        {
-            var newConstant = constant*x;
-            var newTerms = terms.Select(
-                kvp => new
-                {
-                    Key = kvp.Key,
-                    Value = kvp.Value*x,
-                })
-                .ToDictionary(o => o.Key, o => o.Value);
-
-            return new ClLinearExpression(
-                newConstant,
-                newTerms);
-        }
-
-        public ClLinearExpression Times(ClLinearExpression expression)
-            /*throws ExCLNonlinearExpression*/
-        {
-            if (IsConstant)
-            {
-                return expression.Times(constant.Value);
-            }
-            else if (!expression.IsConstant)
-            {
-                throw new CassowaryNonLinearExpressionException();
-            }
-
-            return Times(expression.constant.Value);
-        }
-
-        public ClLinearExpression Plus(ClLinearExpression expression)
-        {
-            var clone = Cloneable.Clone(this);
-            clone.AddExpression(expression, 1.0);
-            return clone;
-        }
-
-        public ClLinearExpression Plus(ClVariable variable)
-            /*throws ExCLNonlinearExpression*/
-        {
-            var clone = Cloneable.Clone(this);
-            clone.AddVariable(variable, 1.0);
-            return clone;
-        }
-
-        public ClLinearExpression Minus(ClLinearExpression expression)
-        {
-            var clone = Cloneable.Clone(this);
-            clone.AddExpression(expression, -1.0);
-            return clone;
-        }
-
-        public ClLinearExpression Minus(ClVariable variable)
-            /*throws ExCLNonlinearExpression*/
-        {
-            var clone = Cloneable.Clone(this);
-            clone.AddVariable(variable, -1.0);
-            return clone;
-        }
-
-        public ClLinearExpression Divide(double x)
-            /*throws ExCLNonlinearExpression*/
-        {
-            if (CMath.Approx(x, 0.0))
-            {
-                throw new CassowaryNonLinearExpressionException();
-            }
-
-            return Times(1.0/x);
-        }
-
-        public ClLinearExpression Divide(ClLinearExpression expression)
-            /*throws ExCLNonlinearExpression*/
-        {
-            if (!expression.IsConstant)
-            {
-                throw new CassowaryNonLinearExpressionException();
-            }
-
-            return Divide(expression.constant.Value);
-        }
-
-        public ClLinearExpression DivFrom(ClLinearExpression expression)
-            /*throws ExCLNonlinearExpression*/
-        {
-            if (!IsConstant || CMath.Approx(constant.Value, 0.0))
-            {
-                throw new CassowaryNonLinearExpressionException();
-            }
-
-            return expression.Divide(constant.Value);
-        }
-
-        public ClLinearExpression SubtractFrom(ClLinearExpression expression)
-        {
-            return expression.Minus(this);
-        }
-
         /// <summary>
         /// Add n*expr to this expression from another expression expr.
         /// Notify the solver if a variable is added or deleted from this
         /// expression.
         /// </summary>
-        public ClLinearExpression AddExpression(
+        public void AddExpression(
             ClLinearExpression expression,
-            double n,
+            double multiplier,
             ClAbstractVariable subject,
             ClTableau solver)
         {
-            IncrementConstant(n*expression.Constant);
+            IncrementConstant(multiplier*expression.Constant);
 
             foreach (var clv in expression.Terms.Keys)
             {
                 double coeff = expression.Terms[clv].Value;
-                AddVariable(clv, coeff*n, subject, solver);
+                AddVariable(clv, coeff*multiplier, subject, solver);
             }
-
-            return this;
         }
 
         /// <summary>
         /// Add n*expr to this expression from another expression expr.
         /// </summary>
-        public ClLinearExpression AddExpression(
-            ClLinearExpression expression,
-            double n)
+        public void AddExpression(ClLinearExpression expression, double multiplier)
         {
-            IncrementConstant(n*expression.Constant);
+            IncrementConstant(multiplier*expression.Constant);
 
             foreach (var clv in expression.Terms.Keys)
             {
                 double coeff = expression.Terms[clv].Value;
-                AddVariable(clv, coeff*n);
+                AddVariable(clv, coeff*multiplier);
             }
-
-            return this;
         }
 
-        public ClLinearExpression AddExpression(ClLinearExpression expression)
+        public void AddExpression(ClLinearExpression expression)
         {
-            return AddExpression(expression, 1.0);
+            AddExpression(expression, 1d);
         }
 
         /// <summary>
@@ -287,41 +183,28 @@ namespace Cassowary
         /// contains a term involving v, add c to the existing coefficient.
         /// If the new coefficient is approximately 0, delete v.
         /// </summary>
-        public ClLinearExpression AddVariable(ClAbstractVariable variable, double c)
+        public void AddVariable(ClAbstractVariable variable, double multiplier)
         {
-            var coefficient = terms.GetOrDefault(variable);
+            var coefficient = terms.GetOrAdd(variable, _ => new ClDouble(0d));
+            var newCoefficient = coefficient + multiplier;
 
-            if (coefficient != null)
+            if (newCoefficient.IsApproxZero)
             {
-                double newCoefficient = coefficient.Value + c;
-
-                if (CMath.Approx(newCoefficient, 0.0))
-                {
-                    terms.Remove(variable);
-                }
-                else
-                {
-                    terms[variable] = new ClDouble(newCoefficient);
-                }
+                // if now coeff is zero
+                terms.Remove(variable);
             }
             else
             {
-                if (!CMath.Approx(c, 0.0))
-                {
-                    terms.Add(variable, new ClDouble(c));
-                }
+                terms[variable] = newCoefficient;
             }
-
-            return this;
         }
 
-        public ClLinearExpression AddVariable(ClAbstractVariable variable)
+        public void AddVariable(ClAbstractVariable variable)
         {
-            return AddVariable(variable, 1.0);
+            AddVariable(variable, 1d);
         }
 
-
-        public ClLinearExpression SetVariable(ClAbstractVariable variable, double c)
+        public void SetVariable(ClAbstractVariable variable, double c)
         {
             // Assert(c != 0.0);
             var coefficient = terms.GetOrDefault(variable);
@@ -334,8 +217,6 @@ namespace Cassowary
             {
                 terms.Add(variable, new ClDouble(c));
             }
-
-            return this;
         }
 
         /// <summary>
@@ -344,11 +225,7 @@ namespace Cassowary
         /// If the new coefficient is approximately 0, delete v.  Notify the
         /// solver if v appears or disappears from this expression.
         /// </summary>
-        public ClLinearExpression AddVariable(
-            ClAbstractVariable variable,
-            double c,
-            ClAbstractVariable subject,
-            ClTableau solver)
+        public void AddVariable(ClAbstractVariable variable, double multiplier, ClAbstractVariable subject, ClTableau solver)
         {
             // body largely duplicated above
 
@@ -356,7 +233,7 @@ namespace Cassowary
 
             if (coeff != null)
             {
-                var newCoefficient = coeff + c;
+                var newCoefficient = coeff + multiplier;
 
                 if (CMath.Approx(newCoefficient.Value, 0.0))
                 {
@@ -370,14 +247,12 @@ namespace Cassowary
             }
             else
             {
-                if (!CMath.Approx(c, 0.0))
+                if (!CMath.Approx(multiplier, 0.0))
                 {
-                    terms.Add(variable, new ClDouble(c));
+                    terms.Add(variable, new ClDouble(multiplier));
                     solver.NoteAddedVariable(variable, subject);
                 }
             }
-
-            return this;
         }
 
         /// <summary>
@@ -526,38 +401,156 @@ namespace Cassowary
 
         public override string ToString()
         {
-            var s = "";
+            var builder = new StringBuilder();
 
-            var e = terms.GetEnumerator();
-
-            if (!CMath.Approx(constant.Value, 0.0) || terms.Count == 0)
+            if (!CMath.Approx(constant.Value, 0d))
             {
-                s += constant.ToString();
-            }
-            else
-            {
-                if (terms.Count == 0)
-                {
-                    return s;
-                }
-                e.MoveNext(); // go to first element
-                var clv = e.Current.Key;
-                var coeff = terms[clv];
-                s += string.Format("{0}*{1}", coeff, clv);
-            }
-            while (e.MoveNext())
-            {
-                var clv = e.Current.Key;
-                var coeff = terms[clv];
-                s += string.Format(" + {0}*{1}", coeff, clv);
+                builder.Append(constant);
+                builder.Append(" + ");
             }
 
-            return s;
+            var termsString = string.Join(
+                " + ",
+                terms.Select(t => string.Format("{0}*{1}", t.Value, t.Key)));
+
+            builder.Append(termsString);
+            return builder.ToString();
         }
 
         #endregion
 
         #region Operators
+
+        public static ClLinearExpression operator +(
+            ClLinearExpression a,
+            ClLinearExpression b)
+        {
+            var constant = a.constant + b.constant;
+
+            var terms = new Dictionary<ClAbstractVariable, ClDouble>();
+
+            var variables = a.Terms.Keys.Union(b.Terms.Keys);
+            foreach (var variable in variables)
+            {
+                var bCoefficient = b.Terms.GetOrDefault(variable, new ClDouble(0d));
+                var aCoefficient = a.Terms.GetOrDefault(variable, new ClDouble(0d));
+
+                var coefficient = aCoefficient + bCoefficient;
+                if (!coefficient.IsApproxZero)
+                {
+                    terms.Add(variable, coefficient);
+                }
+            }
+
+            return new ClLinearExpression(constant, terms);
+        }
+
+        public static ClLinearExpression operator +(
+            ClLinearExpression a,
+            ClVariable b)
+        {
+            return a + new ClLinearExpression(b);
+        }
+
+        public static ClLinearExpression operator +(
+            ClVariable a,
+            ClLinearExpression b)
+        {
+            return new ClLinearExpression(a) + b;
+        }
+
+        public static ClLinearExpression operator +(
+            ClLinearExpression a,
+            double b)
+        {
+            return a + new ClLinearExpression(b);
+        }
+
+        public static ClLinearExpression operator +(
+            double a,
+            ClLinearExpression b)
+        {
+            return new ClLinearExpression(a) + b;
+        }
+
+
+        public ClLinearExpression Times(double x)
+        {
+            var newConstant = constant * x;
+            var newTerms = terms.Select(
+                kvp => new
+                {
+                    Key = kvp.Key,
+                    Value = kvp.Value * x,
+                })
+                .ToDictionary(o => o.Key, o => o.Value);
+
+            return new ClLinearExpression(
+                newConstant,
+                newTerms);
+        }
+
+        public ClLinearExpression Times(ClLinearExpression expression)
+        /*throws ExCLNonlinearExpression*/
+        {
+            if (IsConstant)
+            {
+                return expression.Times(constant.Value);
+            }
+            else if (!expression.IsConstant)
+            {
+                throw new CassowaryNonLinearExpressionException();
+            }
+
+            return Times(expression.constant.Value);
+        }
+
+        public ClLinearExpression Minus(ClLinearExpression expression)
+        {
+            var clone = Cloneable.Clone(this);
+            clone.AddExpression(expression, -1.0);
+            return clone;
+        }
+
+        public ClLinearExpression Minus(ClVariable variable)
+        {
+            var clone = Cloneable.Clone(this);
+            clone.AddVariable(variable, -1.0);
+            return clone;
+        }
+
+        public ClLinearExpression Divide(double x)
+        /*throws ExCLNonlinearExpression*/
+        {
+            if (CMath.Approx(x, 0.0))
+            {
+                throw new CassowaryNonLinearExpressionException();
+            }
+
+            return Times(1.0 / x);
+        }
+
+        public ClLinearExpression Divide(ClLinearExpression expression)
+        /*throws ExCLNonlinearExpression*/
+        {
+            if (!expression.IsConstant)
+            {
+                throw new CassowaryNonLinearExpressionException();
+            }
+
+            return Divide(expression.constant.Value);
+        }
+
+        public ClLinearExpression DivFrom(ClLinearExpression expression)
+        /*throws ExCLNonlinearExpression*/
+        {
+            if (!IsConstant || CMath.Approx(constant.Value, 0.0))
+            {
+                throw new CassowaryNonLinearExpressionException();
+            }
+
+            return expression.Divide(constant.Value);
+        }
 
 
 

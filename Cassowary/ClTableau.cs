@@ -340,18 +340,14 @@ namespace Cassowary
             foreach (var clv in rows.Keys)
             {
                 var expr = rows[clv];
-                s += string.Format("{0} <==> {1}\n", clv.ToString(), expr.ToString());
+                s += string.Format("{0} <==> {1}\n", clv, expr);
             }
 
-            s += string.Format("\nColumns:\n{0}", columns.ToString());
-            s += string.Format("\nInfeasible rows: {0}", infeasibleRows.ToString());
+            s += string.Format("\nColumns:\n{0}", columns);
+            s += string.Format("\nInfeasible rows: {0}", infeasibleRows);
 
-            s += string.Format(
-                "\nExternal basic variables: {0}",
-                externalRows.ToString());
-            s += string.Format(
-                "\nExternal parametric variables: {0}",
-                externalParametricVars.ToString());
+            s += string.Format("\nExternal basic variables: {0}", externalRows);
+            s += string.Format("\nExternal parametric variables: {0}", externalParametricVars);
 
             return s;
         }

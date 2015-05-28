@@ -271,18 +271,6 @@ namespace Cassowary
         }
 
         /// <summary>
-        /// Remove the edit constraint previously added.
-        /// <param name="v">Variable to which the edit constraint was added before.</param>
-        /// </summary>
-        public void RemoveEditVar(ClVariable v)
-            /* throws ExClInternalError, ExClConstraintNotFound */
-        {
-            var editInfo = editVarMap[v];
-            var constraint = editInfo.Constraint;
-            RemoveConstraint(constraint);
-        }
-
-        /// <summary>
         /// Marks the start of an edit session.
         /// </summary>
         /// <remarks>
@@ -364,6 +352,18 @@ namespace Cassowary
                 // should not get this
                 throw new CassowaryInternalException("Constraint not found in RemoveEditVarsTo");
             }
+        }
+
+        /// <summary>
+        /// Remove the edit constraint previously added.
+        /// <param name="v">Variable to which the edit constraint was added before.</param>
+        /// </summary>
+        private void RemoveEditVar(ClVariable v)
+            /* throws ExClInternalError, ExClConstraintNotFound */
+        {
+            var editInfo = editVarMap[v];
+            var constraint = editInfo.Constraint;
+            RemoveConstraint(constraint);
         }
 
         /// <summary>
@@ -747,15 +747,6 @@ namespace Cassowary
             result += " (" + stayPlusErrorVars.Count + " +, ";
             result += stayMinusErrorVars.Count + " -)\n";
             result += "Edit Variables: " + editVarMap.Count;
-            result += "\n";
-
-            return result;
-        }
-
-        public string GetDebugInfo()
-        {
-            string result = ToString();
-            result += GetInternalInfo();
             result += "\n";
 
             return result;

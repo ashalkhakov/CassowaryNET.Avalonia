@@ -97,5 +97,30 @@ namespace Cassowary.Variables
         }
 
         #endregion
+
+        #region Operators
+
+        public static ClLinearExpression operator +(
+            ClVariable a,
+            ClVariable b)
+        {
+            return new ClLinearExpression(a) + new ClLinearExpression(b);
+        }
+
+        public static ClLinearExpression operator +(
+            ClVariable a,
+            double b)
+        {
+            return new ClLinearExpression(a) + new ClLinearExpression(b);
+        }
+
+        public static ClLinearExpression operator +(
+            double a,
+            ClVariable b)
+        {
+            return new ClLinearExpression(a) + new ClLinearExpression(b);
+        }
+
+        #endregion
     }
 }

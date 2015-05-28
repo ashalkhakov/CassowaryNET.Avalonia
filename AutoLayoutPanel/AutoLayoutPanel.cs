@@ -187,8 +187,7 @@ namespace AutoLayoutPanel
                     target.constraint = new ClLinearEquation(
                         target.propertyFirstVariable,
                         new ClLinearExpression(target.propertySecondVariable)
-                            .Times(multiplier)
-                            .Plus(new ClLinearExpression(constant)),
+                            .Times(multiplier) + new ClLinearExpression(constant),
                         ClStrength.Required);
                 }
                 else
@@ -198,8 +197,7 @@ namespace AutoLayoutPanel
                         target.propertyFirstVariable,
                         equality,
                         new ClLinearExpression(target.propertySecondVariable)
-                            .Times(multiplier)
-                            .Plus(new ClLinearExpression(constant)),
+                            .Times(multiplier) + new ClLinearExpression(constant),
                         ClStrength.Required);
                 }
             }
