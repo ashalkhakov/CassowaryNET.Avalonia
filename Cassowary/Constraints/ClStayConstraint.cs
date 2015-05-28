@@ -32,18 +32,18 @@ namespace Cassowary.Constraints
 
         #region Constructors
 
-        public ClStayConstraint(ClVariable variable, ClStrength strength, double weight)
-            : base(variable, strength, weight)
+        public ClStayConstraint(ClVariable variable)
+            : this(variable, ClStrength.Weak)
         {
         }
 
         public ClStayConstraint(ClVariable variable, ClStrength strength)
-            : base(variable, strength, 1.0)
+            : this(variable, strength, 1d)
         {
         }
 
-        public ClStayConstraint(ClVariable variable)
-            : base(variable, ClStrength.Weak, 1.0)
+        public ClStayConstraint(ClVariable variable, ClStrength strength, double weight)
+            : base(variable, strength, weight)
         {
         }
 

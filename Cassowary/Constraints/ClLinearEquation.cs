@@ -33,122 +33,122 @@ namespace Cassowary.Constraints
 
         #region Constructors
 
-        public ClLinearEquation(
-            ClLinearExpression expression,
-            ClStrength strength,
-            double weight)
-            : base(expression, strength, weight)
-        {
-        }
-
-        public ClLinearEquation(
-            ClLinearExpression expression,
-            ClStrength strength)
-            : base(expression, strength)
-        {
-        }
-
         public ClLinearEquation(ClLinearExpression expression)
-            : base(expression)
+            : this(expression, ClStrength.Required)
         {
         }
 
         public ClLinearEquation(
-            ClAbstractVariable clv,
+            ClLinearExpression expression,
+            ClStrength strength)
+            : this(expression, strength, 1d)
+        {
+        }
+
+        public ClLinearEquation(
             ClLinearExpression expression,
             ClStrength strength,
             double weight)
             : base(expression, strength, weight)
         {
-            base.expression.AddVariable(clv, -1.0);
         }
 
         public ClLinearEquation(
-            ClAbstractVariable clv,
+            ClAbstractVariable variable,
             ClLinearExpression expression,
-            ClStrength strength)
-            : this(clv, expression, strength, 1.0)
-        {
-        }
-
-        public ClLinearEquation(
-            ClAbstractVariable clv,
-            ClLinearExpression expression)
-            : this(clv, expression, ClStrength.Required, 1.0)
-        {
-        }
-
-        public ClLinearEquation(
-            ClAbstractVariable clv,
-            double val,
             ClStrength strength,
             double weight)
-            : base(new ClLinearExpression(val), strength, weight)
+            : base(expression, strength, weight)
         {
-            expression.AddVariable(clv, -1.0);
+            base.Expression.AddVariable(variable, -1.0);
         }
 
         public ClLinearEquation(
-            ClAbstractVariable clv,
-            double val,
+            ClAbstractVariable variable,
+            ClLinearExpression expression,
             ClStrength strength)
-            : this(clv, val, strength, 1.0)
+            : this(variable, expression, strength, 1.0)
         {
         }
 
         public ClLinearEquation(
-            ClAbstractVariable clv,
-            double val)
-            : this(clv, val, ClStrength.Required, 1.0)
+            ClAbstractVariable variable,
+            ClLinearExpression expression)
+            : this(variable, expression, ClStrength.Required, 1.0)
         {
+        }
+
+        public ClLinearEquation(
+            ClAbstractVariable variable,
+            double value)
+            : this(variable, value, ClStrength.Required, 1.0)
+        {
+        }
+
+        public ClLinearEquation(
+            ClAbstractVariable variable,
+            double value,
+            ClStrength strength)
+            : this(variable, value, strength, 1.0)
+        {
+        }
+
+        public ClLinearEquation(
+            ClAbstractVariable variable,
+            double value,
+            ClStrength strength,
+            double weight)
+            : base(new ClLinearExpression(value), strength, weight)
+        {
+            Expression.AddVariable(variable, -1.0);
         }
 
         public ClLinearEquation(
             ClLinearExpression expression,
-            ClAbstractVariable clv,
+            ClAbstractVariable variable,
             ClStrength strength,
             double weight)
             : base(Cloneable.Clone(expression), strength, weight)
         {
-            base.expression.AddVariable(clv, -1.0);
+            base.Expression.AddVariable(variable, -1.0);
         }
 
         public ClLinearEquation(
             ClLinearExpression expression,
-            ClAbstractVariable clv,
+            ClAbstractVariable variable,
             ClStrength strength)
-            : this(expression, clv, strength, 1.0)
+            : this(expression, variable, strength, 1.0)
         {
         }
 
-        public ClLinearEquation(ClLinearExpression expression, ClAbstractVariable clv)
-            : this(expression, clv, ClStrength.Required, 1.0)
+        public ClLinearEquation(ClLinearExpression expression, ClAbstractVariable variable)
+            : this(expression, variable, ClStrength.Required, 1.0)
         {
         }
 
         public ClLinearEquation(
-            ClLinearExpression cle1,
-            ClLinearExpression cle2,
+            ClLinearExpression expression1,
+            ClLinearExpression expression2)
+            : this(expression1, expression2, ClStrength.Required, 1.0)
+        {
+        }
+
+        public ClLinearEquation(
+            ClLinearExpression expression1,
+            ClLinearExpression expression2,
+            ClStrength strength)
+            : this(expression1, expression2, strength, 1.0)
+        {
+        }
+
+        public ClLinearEquation(
+            ClLinearExpression expression1,
+            ClLinearExpression expression2,
             ClStrength strength,
             double weight)
-            : base(Cloneable.Clone(cle1), strength, weight)
+            : base(Cloneable.Clone(expression1), strength, weight)
         {
-            expression.AddExpression(cle2, -1.0);
-        }
-
-        public ClLinearEquation(
-            ClLinearExpression cle1,
-            ClLinearExpression cle2,
-            ClStrength strength)
-            : this(cle1, cle2, strength, 1.0)
-        {
-        }
-
-        public ClLinearEquation(
-            ClLinearExpression cle1,
-            ClLinearExpression cle2)
-            : this(cle1, cle2, ClStrength.Required, 1.0)
-        {
+            Expression.AddExpression(expression2, -1.0);
         }
 
         #endregion

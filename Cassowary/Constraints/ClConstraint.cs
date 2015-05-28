@@ -33,23 +33,11 @@ namespace Cassowary.Constraints
         #endregion
 
         #region Constructors
-
+        
         protected ClConstraint(ClStrength strength, double weight)
         {
             this.strength = strength;
             this.weight = weight;
-        }
-
-        protected ClConstraint(ClStrength strength)
-        {
-            this.strength = strength;
-            weight = 1.0;
-        }
-
-        protected ClConstraint()
-        {
-            strength = ClStrength.Required;
-            weight = 1.0;
         }
 
         #endregion
@@ -57,6 +45,16 @@ namespace Cassowary.Constraints
         #region Properties
 
         public abstract ClLinearExpression Expression { get; }
+
+        public ClStrength Strength
+        {
+            get { return strength; }
+        }
+
+        public double Weight
+        {
+            get { return weight; }
+        }
 
         public virtual bool IsEditConstraint
         {
@@ -71,16 +69,6 @@ namespace Cassowary.Constraints
         public virtual bool IsStayConstraint
         {
             get { return false; }
-        }
-
-        public ClStrength Strength
-        {
-            get { return strength; }
-        }
-
-        public double Weight
-        {
-            get { return weight; }
         }
 
         #endregion

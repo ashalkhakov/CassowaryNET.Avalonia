@@ -23,11 +23,11 @@ using System;
 
 namespace Cassowary.Constraints
 {
-    public class ClLinearConstraint : ClConstraint
+    public abstract class ClLinearConstraint : ClConstraint
     {
         #region Fields
-        
-        protected readonly ClLinearExpression expression;
+
+        private readonly ClLinearExpression expression;
 
         #endregion
 
@@ -42,25 +42,11 @@ namespace Cassowary.Constraints
             this.expression = expression;
         }
 
-        protected ClLinearConstraint(
-            ClLinearExpression expression,
-            ClStrength strength)
-            : base(strength, 1.0)
-        {
-            this.expression = expression;
-        }
-
-        protected ClLinearConstraint(ClLinearExpression expression)
-            : base(ClStrength.Required, 1.0)
-        {
-            this.expression = expression;
-        }
-
         #endregion
 
         #region Properties
 
-        public override ClLinearExpression Expression
+        public override sealed ClLinearExpression Expression
         {
             get { return expression; }
         }

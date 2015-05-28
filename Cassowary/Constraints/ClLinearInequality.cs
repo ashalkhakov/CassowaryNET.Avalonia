@@ -34,6 +34,18 @@ namespace Cassowary.Constraints
 
         #region Constructors
 
+        public ClLinearInequality(ClLinearExpression expression)
+            : this(expression, ClStrength.Required)
+        {
+        }
+
+        public ClLinearInequality(
+            ClLinearExpression expression,
+            ClStrength strength)
+            : this(expression, strength, 1d)
+        {
+        }
+
         public ClLinearInequality(
             ClLinearExpression expression,
             ClStrength strength,
@@ -43,53 +55,41 @@ namespace Cassowary.Constraints
         }
 
         public ClLinearInequality(
-            ClLinearExpression expression,
-            ClStrength strength)
-            : base(expression, strength)
-        {
-        }
-
-        public ClLinearInequality(ClLinearExpression expression)
-            : base(expression)
-        {
-        }
-
-        public ClLinearInequality(
-            ClVariable clv1,
+            ClVariable variable1,
             InequalityType inequalityType,
-            ClVariable clv2,
-            ClStrength strength)
-            : this(clv1, inequalityType, clv2, strength, 1d)
+            ClVariable variable2)
+            : this(variable1, inequalityType, variable2, ClStrength.Required, 1d)
             /* throws ExClInternalError */
         {
         }
 
         public ClLinearInequality(
-            ClVariable clv1,
+            ClVariable variable1,
             InequalityType inequalityType,
-            ClVariable clv2)
-            : this(clv1, inequalityType, clv2, ClStrength.Required, 1d)
+            ClVariable variable2,
+            ClStrength strength)
+            : this(variable1, inequalityType, variable2, strength, 1d)
             /* throws ExClInternalError */
         {
         }
 
         private ClLinearInequality(
-            ClVariable clv1,
+            ClVariable variable1,
             InequalityType inequalityType,
-            ClVariable clv2,
+            ClVariable variable2,
             ClStrength strength,
             double weight)
-            : base(new ClLinearExpression(clv2), strength, weight)
+            : base(new ClLinearExpression(variable2), strength, weight)
             /* throws ExClInternalError */
         {
             switch (inequalityType)
             {
                 case InequalityType.GreaterThanOrEqual:
-                    expression.MultiplyMe(-1d);
-                    expression.AddVariable(clv1);
+                    Expression.MultiplyMe(-1d);
+                    Expression.AddVariable(variable1);
                     break;
                 case InequalityType.LessThanOrEqual:
-                    expression.AddVariable(clv1, -1d);
+                    Expression.AddVariable(variable1, -1d);
                     break;
                 default:
                     // invalid operator
@@ -99,22 +99,22 @@ namespace Cassowary.Constraints
         }
 
         public ClLinearInequality(
-            ClVariable clv,
+            ClVariable variable,
             InequalityType inequalityType,
-            double val,
+            double value,
             ClStrength strength,
             double weight)
-            : base(new ClLinearExpression(val), strength, weight)
+            : base(new ClLinearExpression(value), strength, weight)
             /* throws ExClInternalError */
         {
             switch (inequalityType)
             {
                 case InequalityType.GreaterThanOrEqual:
-                    expression.MultiplyMe(-1d);
-                    expression.AddVariable(clv);
+                    Expression.MultiplyMe(-1d);
+                    Expression.AddVariable(variable);
                     break;
                 case InequalityType.LessThanOrEqual:
-                    expression.AddVariable(clv, -1d);
+                    Expression.AddVariable(variable, -1d);
                     break;
                 default:
                     // invalid operator
@@ -124,58 +124,58 @@ namespace Cassowary.Constraints
         }
 
         public ClLinearInequality(
-            ClVariable clv,
+            ClVariable variable,
             InequalityType inequalityType,
-            double val,
+            double value,
             ClStrength strength)
-            : this(clv, inequalityType, val, strength, 1d)
+            : this(variable, inequalityType, value, strength, 1d)
             /* throws ExClInternalError */
         {
         }
 
         public ClLinearInequality(
-            ClVariable clv,
+            ClVariable variable,
             InequalityType inequalityType,
-            double val)
-            : this(clv, inequalityType, val, ClStrength.Required, 1d)
+            double value)
+            : this(variable, inequalityType, value, ClStrength.Required, 1d)
             /* throws ExClInternalError */
         {
         }
 
         public ClLinearInequality(
-            ClLinearExpression cle1,
+            ClLinearExpression expression1,
             InequalityType inequalityType,
-            ClLinearExpression cle2,
+            ClLinearExpression expression2,
             ClStrength strength)
-            : this(cle1, inequalityType, cle2, strength, 1d)
+            : this(expression1, inequalityType, expression2, strength, 1d)
             /* throws ExClInternalError */
         {
         }
 
         public ClLinearInequality(
-            ClLinearExpression cle1,
+            ClLinearExpression expression1,
             InequalityType inequalityType,
-            ClLinearExpression cle2)
-            : this(cle1, inequalityType, cle2, ClStrength.Required, 1d)
+            ClLinearExpression expression2)
+            : this(expression1, inequalityType, expression2, ClStrength.Required, 1d)
             /* throws ExClInternalError */
         {
         }
 
         public ClLinearInequality(
-            ClAbstractVariable clv,
+            ClAbstractVariable variable,
             InequalityType inequalityType,
-            ClLinearExpression cle,
+            ClLinearExpression expression,
             ClStrength strength)
-            : this(clv, inequalityType, cle, strength, 1d)
+            : this(variable, inequalityType, expression, strength, 1d)
             /* throws ExClInternalError */
         {
         }
 
         public ClLinearInequality(
-            ClAbstractVariable clv,
+            ClAbstractVariable variable,
             InequalityType inequalityType,
-            ClLinearExpression cle)
-            : this(clv, inequalityType, cle, ClStrength.Required, 1d)
+            ClLinearExpression expression)
+            : this(variable, inequalityType, expression, ClStrength.Required, 1d)
             /* throws ExClInternalError */
         {
         }
@@ -183,9 +183,9 @@ namespace Cassowary.Constraints
         public ClLinearInequality(
             ClLinearExpression expression,
             InequalityType inequalityType,
-            ClAbstractVariable clv,
+            ClAbstractVariable variable,
             ClStrength strength)
-            : this(expression, inequalityType, clv, strength, 1d)
+            : this(expression, inequalityType, variable, strength, 1d)
             /* throws ExClInternalError */
         {
         }
@@ -193,41 +193,16 @@ namespace Cassowary.Constraints
         public ClLinearInequality(
             ClLinearExpression expression,
             InequalityType inequalityType,
-            ClAbstractVariable clv)
-            : this(expression, inequalityType, clv, ClStrength.Required, 1d)
+            ClAbstractVariable variable)
+            : this(expression, inequalityType, variable, ClStrength.Required, 1d)
             /* throws ExClInternalError */
         {
-        }
-
-        public ClLinearInequality(
-            ClLinearExpression cle1,
-            InequalityType inequalityType,
-            ClLinearExpression cle2,
-            ClStrength strength,
-            double weight)
-            : base(Cloneable.Clone(cle2), strength, weight)
-            /* throws ExClInternalError */
-        {
-            switch (inequalityType)
-            {
-                case InequalityType.GreaterThanOrEqual:
-                    expression.MultiplyMe(-1d);
-                    expression.AddExpression(cle1);
-                    break;
-                case InequalityType.LessThanOrEqual:
-                    expression.AddExpression(cle1, -1d);
-                    break;
-                default:
-                    // invalid operator
-                    throw new CassowaryInternalException(
-                        "Invalid operator in ClLinearInequality constructor");
-            }
         }
 
         public ClLinearInequality(
             ClLinearExpression expression,
             InequalityType inequalityType,
-            ClAbstractVariable clv,
+            ClAbstractVariable variable,
             ClStrength strength,
             double weight)
             : base(Cloneable.Clone(expression), strength, weight)
@@ -236,11 +211,11 @@ namespace Cassowary.Constraints
             switch (inequalityType)
             {
                 case InequalityType.LessThanOrEqual:
-                    base.expression.MultiplyMe(-1d);
-                    base.expression.AddVariable(clv);
+                    base.Expression.MultiplyMe(-1d);
+                    base.Expression.AddVariable(variable);
                     break;
                 case InequalityType.GreaterThanOrEqual:
-                    base.expression.AddVariable(clv, -1d);
+                    base.Expression.AddVariable(variable, -1d);
                     break;
                 default:
                     // invalid operator
@@ -250,22 +225,47 @@ namespace Cassowary.Constraints
         }
 
         public ClLinearInequality(
-            ClAbstractVariable clv,
+            ClAbstractVariable variable,
             InequalityType inequalityType,
-            ClLinearExpression cle,
+            ClLinearExpression expression,
             ClStrength strength,
             double weight)
-            : base(Cloneable.Clone(cle), strength, weight)
+            : base(Cloneable.Clone(expression), strength, weight)
             /* throws ExClInternalError */
         {
             switch (inequalityType)
             {
                 case InequalityType.GreaterThanOrEqual:
-                    expression.MultiplyMe(-1d);
-                    expression.AddVariable(clv);
+                    Expression.MultiplyMe(-1d);
+                    Expression.AddVariable(variable);
                     break;
                 case InequalityType.LessThanOrEqual:
-                    expression.AddVariable(clv, -1d);
+                    Expression.AddVariable(variable, -1d);
+                    break;
+                default:
+                    // invalid operator
+                    throw new CassowaryInternalException(
+                        "Invalid operator in ClLinearInequality constructor");
+            }
+        }
+
+        public ClLinearInequality(
+            ClLinearExpression expression1,
+            InequalityType inequalityType,
+            ClLinearExpression expression2,
+            ClStrength strength,
+            double weight)
+            : base(Cloneable.Clone(expression2), strength, weight)
+            /* throws ExClInternalError */
+        {
+            switch (inequalityType)
+            {
+                case InequalityType.GreaterThanOrEqual:
+                    Expression.MultiplyMe(-1d);
+                    Expression.AddExpression(expression1);
+                    break;
+                case InequalityType.LessThanOrEqual:
+                    Expression.AddExpression(expression1, -1d);
                     break;
                 default:
                     // invalid operator

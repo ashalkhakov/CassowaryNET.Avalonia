@@ -43,20 +43,7 @@ namespace Cassowary.Constraints
             : base(strength, weight)
         {
             this.variable = variable;
-            expression = new ClLinearExpression(this.variable, -1.0, this.variable.Value);
-        }
-
-        protected ClEditOrStayConstraint(
-            ClVariable variable,
-            ClStrength strength)
-            : this(variable, strength, 1.0)
-        {
-        }
-
-        protected ClEditOrStayConstraint(ClVariable variable)
-            : this(variable, ClStrength.Required, 1.0)
-        {
-            this.variable = variable;
+            expression = new ClLinearExpression(this.variable, -1d, this.variable.Value);
         }
 
         #endregion
@@ -68,7 +55,7 @@ namespace Cassowary.Constraints
             get { return variable; }
         }
 
-        public override ClLinearExpression Expression
+        public override sealed ClLinearExpression Expression
         {
             get { return expression; }
         }

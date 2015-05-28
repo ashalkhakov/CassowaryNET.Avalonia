@@ -32,23 +32,23 @@ namespace Cassowary.Constraints
 
         #region Constructors
 
-        public ClEditConstraint(
-            ClVariable variable,
-            ClStrength strength,
-            double weight)
-            : base(variable, strength, weight)
+        public ClEditConstraint(ClVariable variable)
+            : this(variable, ClStrength.Required)
         {
         }
 
         public ClEditConstraint(
             ClVariable variable,
             ClStrength strength)
-            : base(variable, strength)
+            : this(variable, strength, 1d)
         {
         }
 
-        public ClEditConstraint(ClVariable variable)
-            : base(variable)
+        public ClEditConstraint(
+            ClVariable variable,
+            ClStrength strength,
+            double weight)
+            : base(variable, strength, weight)
         {
         }
 
