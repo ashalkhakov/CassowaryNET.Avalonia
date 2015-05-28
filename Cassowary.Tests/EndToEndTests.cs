@@ -718,6 +718,67 @@ namespace Cassowary.Tests
         }
 
         [Test]
+        public void required_edit_vars()
+        {
+            var x = new ClVariable("x");
+            var y = new ClVariable("y");
+            var w = new ClVariable("w");
+            var h = new ClVariable("h");
+
+            var target = GetTarget();
+
+            target.AddStay(x);
+            target.AddStay(y);
+            target.AddStay(w);
+            target.AddStay(h);
+
+            target.AddEditVar(x);
+            target.AddEditVar(y);
+
+            target.BeginEdit();
+            target.SuggestValue(x, 10d);
+            target.SuggestValue(y, 20d);
+            target.EndEdit();
+
+            Assert.That(x.Value, IsX.Approx(10d));
+            Assert.That(y.Value, IsX.Approx(20d));
+            Assert.That(w.Value, IsX.Approx(0d));
+            Assert.That(h.Value, IsX.Approx(0d));
+
+            // Open a second set of variables for editing
+
+            target.AddEditVar(w);
+            target.AddEditVar(h);
+
+            target.BeginEdit();
+            target.SuggestValue(w, 30d);
+            target.SuggestValue(h, 40d);
+            target.EndEdit();
+
+            Assert.That(x.Value, IsX.Approx(10d));
+            Assert.That(y.Value, IsX.Approx(20d));
+            Assert.That(w.Value, IsX.Approx(30d));
+            Assert.That(h.Value, IsX.Approx(40d));
+
+            // Now make sure the first set can still be edited
+
+            target.AddEditVar(x);
+            target.AddEditVar(y);
+
+            target.BeginEdit();
+            target.SuggestValue(x, 50d);
+            target.SuggestValue(y, 60d);
+            target.EndEdit();
+
+            Assert.That(x.Value, IsX.Approx(50d));
+            Assert.That(y.Value, IsX.Approx(60d));
+            Assert.That(w.Value, IsX.Approx(30d));
+            Assert.That(h.Value, IsX.Approx(40d));
+
+
+        }
+
+        [Test]
         public void test_error_weights()
         {
             var x = new ClVariable("x", 100d);

@@ -246,6 +246,8 @@ namespace Cassowary
         public void AddEditVar(ClVariable v, ClStrength strength)
             /* throws ExClInternalError */
         {
+            // we get problems here is strength == Required
+
             try
             {
                 var cnEdit = new ClEditConstraint(v, strength);

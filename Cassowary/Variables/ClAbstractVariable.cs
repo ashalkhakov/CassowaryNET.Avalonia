@@ -29,6 +29,8 @@ namespace Cassowary.Variables
     // Dummy     => true  | false | false | true 
     // Slack     => false | false | true  | true 
 
+    // TODO: the subtyping / casting here is attrocious. Clean up needed.
+
     public abstract class ClAbstractVariable
     {
         #region Fields
