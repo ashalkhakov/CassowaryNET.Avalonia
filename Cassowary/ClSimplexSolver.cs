@@ -57,7 +57,7 @@ namespace Cassowary
         /// <remarks>
         /// Map ClConstraint to Set (of ClVariable).
         /// </remarks>
-        private readonly Dictionary<ClConstraint, HashSet<ClAbstractVariable>> errorVars;
+        private readonly Dictionary<ClConstraint, HashSet<ClSlackVariable>> errorVars;
 
         /// <summary>
         /// Return a lookup table giving the marker variable for
@@ -98,7 +98,7 @@ namespace Cassowary
 
             stayMinusErrorVars = new List<ClSlackVariable>();
             stayPlusErrorVars = new List<ClSlackVariable>();
-            errorVars = new Dictionary<ClConstraint, HashSet<ClAbstractVariable>>();
+            errorVars = new Dictionary<ClConstraint, HashSet<ClSlackVariable>>();
             markerVars = new Dictionary<ClConstraint, ClAbstractVariable>();
 
             resolvePair = new List<ClDouble>(2)
@@ -501,7 +501,7 @@ namespace Cassowary
 
             if (eVars != null)
             {
-                foreach (ClAbstractVariable clv in eVars)
+                foreach (var clv in eVars)
                 {
                     ClLinearExpression expr = RowExpression(clv);
                     if (expr == null)
@@ -611,7 +611,7 @@ namespace Cassowary
 
             if (eVars != null)
             {
-                foreach (ClAbstractVariable v in eVars)
+                foreach (var v in eVars)
                 {
                     // FIXME: decide wether to use equals or !=
                     if (v != marker)
@@ -636,7 +636,7 @@ namespace Cassowary
             else if (constraint.IsEditConstraint)
             {
                 Debug.Assert(eVars != null, "eVars != null");
-                ClEditConstraint editConstraint = (ClEditConstraint) constraint;
+                var editConstraint = (ClEditConstraint) constraint;
                 var variable = editConstraint.Variable;
                 var editInfo = editVarMap[variable];
                 var clvEditMinus = editInfo.ClvEditMinus;
@@ -649,7 +649,6 @@ namespace Cassowary
             {
                 errorVars.Remove(constraint);
             }
-            marker = null;
 
             if (AutoSolve)
             {
@@ -1405,23 +1404,25 @@ namespace Cassowary
         /// </remarks>
         private void SetExternalVariables()
         {
-            foreach (ClVariable v in ExternalParametricVars)
+            foreach (var variable in ExternalParametricVars)
             {
-                if (RowExpression(v) != null)
+                var rowExpression = RowExpression(variable);
+
+                if (rowExpression != null)
                 {
-                    Console.Error.WriteLine(
-                        "Error: variable " + v +
-                        "in _externalParametricVars is basic");
+                    Debug.WriteLine(
+                        "Error: variable {0}in _externalParametricVars is basic",
+                        variable);
                     continue;
                 }
 
-                v.Value = 0d;
+                variable.Value = 0d;
             }
 
-            foreach (ClVariable v in ExternalRows)
+            foreach (var variable in ExternalRows)
             {
-                ClLinearExpression expr = RowExpression(v);
-                v.Value = expr.Constant;
+                var rowExpression = RowExpression(variable);
+                variable.Value = rowExpression.Constant;
             }
 
             needsSolving = false;
@@ -1431,16 +1432,16 @@ namespace Cassowary
         /// Protected convenience function to insert an error variable
         /// into the _errorVars set, creating the mapping with Add as necessary.
         /// </summary>
-        private void InsertErrorVar(ClConstraint cn, ClAbstractVariable var)
+        private void InsertErrorVar(ClConstraint constraint, ClSlackVariable variable)
         {
-            HashSet<ClAbstractVariable> cnset;
-            if (!errorVars.TryGetValue(cn, out cnset))
+            HashSet<ClSlackVariable> constraintVariables;
+            if (!errorVars.TryGetValue(constraint, out constraintVariables))
             {
-                cnset = new HashSet<ClAbstractVariable>();
-                errorVars.Add(cn, cnset);
+                constraintVariables = new HashSet<ClSlackVariable>();
+                errorVars.Add(constraint, constraintVariables);
             }
 
-            cnset.Add(var);
+            constraintVariables.Add(variable);
         }
 
         #endregion

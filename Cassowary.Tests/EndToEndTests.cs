@@ -122,7 +122,7 @@ namespace Cassowary.Tests
             var width = new ClVariable(10d);
             var rightMin = new ClVariable(100d);
 
-            var right = ClLinearExpression.Plus(
+            var right = CMath.Plus(
                 new ClLinearExpression(x),
                 new ClLinearExpression(width));
 
@@ -149,7 +149,7 @@ namespace Cassowary.Tests
             var width = new ClVariable(10d);
             var rightMin = new ClVariable(100d);
 
-            var right = ClLinearExpression.Plus(
+            var right = CMath.Plus(
                 new ClLinearExpression(x),
                 new ClLinearExpression(width));
 
@@ -176,7 +176,7 @@ namespace Cassowary.Tests
             var width = new ClVariable(10d);
             var rightMin = new ClVariable(100d);
 
-            var right = ClLinearExpression.Plus(
+            var right = CMath.Plus(
                 new ClLinearExpression(x),
                 new ClLinearExpression(width));
 
@@ -201,7 +201,7 @@ namespace Cassowary.Tests
             var width = new ClVariable(10d);
             var rightMin = new ClVariable(100d);
 
-            var right = ClLinearExpression.Plus(
+            var right = CMath.Plus(
                 new ClLinearExpression(x),
                 new ClLinearExpression(width));
 
@@ -228,7 +228,7 @@ namespace Cassowary.Tests
             var width = new ClVariable(10d);
             var rightMin = new ClVariable(100d);
 
-            var right = ClLinearExpression.Plus(
+            var right = CMath.Plus(
                 new ClLinearExpression(x),
                 new ClLinearExpression(width));
 
@@ -253,13 +253,13 @@ namespace Cassowary.Tests
         {
             var x1 = new ClVariable(10d);
             var width1 = new ClVariable(10d);
-            var right1 = ClLinearExpression.Plus(
+            var right1 = CMath.Plus(
                 new ClLinearExpression(x1),
                 new ClLinearExpression(width1));
 
             var x2 = new ClVariable(100d);
             var width2 = new ClVariable(10d);
-            var right2 = ClLinearExpression.Plus(
+            var right2 = CMath.Plus(
                 new ClLinearExpression(x2),
                 new ClLinearExpression(width2));
 
@@ -285,13 +285,13 @@ namespace Cassowary.Tests
         {
             var x1 = new ClVariable(10d);
             var width1 = new ClVariable(10d);
-            var right1 = ClLinearExpression.Plus(
+            var right1 = CMath.Plus(
                 new ClLinearExpression(x1),
                 new ClLinearExpression(width1));
 
             var x2 = new ClVariable(100d);
             var width2 = new ClVariable(10d);
-            var right2 = ClLinearExpression.Plus(
+            var right2 = CMath.Plus(
                 new ClLinearExpression(x2),
                 new ClLinearExpression(width2));
 
@@ -319,7 +319,7 @@ namespace Cassowary.Tests
 
             var x2 = new ClVariable(100d);
             var width2 = new ClVariable(10d);
-            var right2 = ClLinearExpression.Plus(
+            var right2 = CMath.Plus(
                 new ClLinearExpression(x2),
                 new ClLinearExpression(width2));
 

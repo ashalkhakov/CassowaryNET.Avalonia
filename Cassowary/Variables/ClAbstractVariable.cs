@@ -23,6 +23,12 @@ using System;
 
 namespace Cassowary.Variables
 {
+    // Type      => Dummy | External | Pivotable | Restricted
+    // Variable  => false | true  | false | false
+    // Objective => false | false | false | false
+    // Dummy     => true  | false | false | true 
+    // Slack     => false | false | true  | true 
+
     public abstract class ClAbstractVariable
     {
         #region Fields
@@ -35,13 +41,15 @@ namespace Cassowary.Variables
 
         #region Constructors
 
-        protected ClAbstractVariable(string name)
+        // only internal constructors disallows external inheritors
+
+        internal ClAbstractVariable(string name)
         {
             this.name = name;
             iVariableNumber++;
         }
 
-        protected ClAbstractVariable()
+        internal ClAbstractVariable()
             : this("v" + iVariableNumber)
         {
         }

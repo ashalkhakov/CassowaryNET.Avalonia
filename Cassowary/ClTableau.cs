@@ -20,7 +20,6 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Cassowary.Utils;
@@ -55,13 +54,13 @@ namespace Cassowary
         /// Set of rows where the basic variable is external
         /// this was added to the Java/C++/C# versions to reduce time in SetExternalVariables().
         /// </summary>
-        private readonly HashSet<ClAbstractVariable> externalRows;
+        private readonly HashSet<ClVariable> externalRows;
 
         /// <summary>
         /// Set of external variables which are parametric
         /// this was added to the Java/C++/C# versions to reduce time in SetExternalVariables().
         /// </summary>
-        private readonly HashSet<ClAbstractVariable> externalParametricVars;
+        private readonly HashSet<ClVariable> externalParametricVars;
         
         #endregion
 
@@ -76,8 +75,8 @@ namespace Cassowary
             columns = new Dictionary<ClAbstractVariable, HashSet<ClAbstractVariable>>();
             rows = new Dictionary<ClAbstractVariable, ClLinearExpression>();
             infeasibleRows = new HashSet<ClAbstractVariable>();
-            externalRows = new HashSet<ClAbstractVariable>();
-            externalParametricVars = new HashSet<ClAbstractVariable>();
+            externalRows = new HashSet<ClVariable>();
+            externalParametricVars = new HashSet<ClVariable>();
         }
 
         #endregion
@@ -99,12 +98,12 @@ namespace Cassowary
             get { return infeasibleRows; }
         }
 
-        protected HashSet<ClAbstractVariable> ExternalRows
+        protected IEnumerable<ClVariable> ExternalRows
         {
             get { return externalRows; }
         }
 
-        protected HashSet<ClAbstractVariable> ExternalParametricVars
+        protected IEnumerable<ClVariable> ExternalParametricVars
         {
             get { return externalParametricVars; }
         }
@@ -231,13 +230,15 @@ namespace Cassowary
 
                 if (clv.IsExternal)
                 {
-                    externalParametricVars.Add(clv);
+                    var variable = (ClVariable) clv;
+                    externalParametricVars.Add(variable);
                 }
             }
 
             if (var.IsExternal)
             {
-                externalRows.Add(var);
+                var variable = (ClVariable)var;
+                externalRows.Add(variable);
             }
         }
 
@@ -267,8 +268,9 @@ namespace Cassowary
 
             if (var.IsExternal)
             {
-                externalRows.Remove(var);
-                externalParametricVars.Remove(var);
+                var variable = (ClVariable)var;
+                externalRows.Remove(variable);
+                externalParametricVars.Remove(variable);
             }
         }
 
@@ -299,7 +301,8 @@ namespace Cassowary
 
             if (var.IsExternal)
             {
-                externalRows.Remove(var);
+                var variable = (ClVariable) var;
+                externalRows.Remove(variable);
             }
 
             rows.Remove(var);
@@ -321,6 +324,7 @@ namespace Cassowary
             {
                 var row = rows[v];
                 row.SubstituteOut(oldVar, expr, v, this);
+
                 if (v.IsRestricted && row.Constant < 0.0)
                 {
                     infeasibleRows.Add(v);
@@ -329,8 +333,9 @@ namespace Cassowary
 
             if (oldVar.IsExternal)
             {
-                externalRows.Add(oldVar);
-                externalParametricVars.Remove(oldVar);
+                var oldVariable = (ClVariable)oldVar;
+                externalRows.Add(oldVariable);
+                externalParametricVars.Remove(oldVariable);
             }
 
             columns.Remove(oldVar);
@@ -346,7 +351,6 @@ namespace Cassowary
 
         protected ClLinearExpression RowExpression(ClAbstractVariable v)
         {
-            // if (Trace) FnEnterPrint(string.Format("rowExpression: {0}", v));
             return rows.GetOrDefault(v);
         }
 

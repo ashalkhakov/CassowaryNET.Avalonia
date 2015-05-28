@@ -23,7 +23,7 @@ using System;
 
 namespace Cassowary.Variables
 {
-    public class ClObjectiveVariable : ClAbstractVariable
+    public sealed class ClObjectiveVariable : ClAbstractVariable
     {
         #region Fields
 

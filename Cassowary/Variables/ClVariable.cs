@@ -21,7 +21,7 @@
 
 namespace Cassowary.Variables
 {
-    public class ClVariable : ClAbstractVariable
+    public sealed class ClVariable : ClAbstractVariable
     {
         #region Fields
 

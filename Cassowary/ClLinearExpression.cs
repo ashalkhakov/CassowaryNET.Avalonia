@@ -541,44 +541,6 @@ namespace Cassowary
             return s;
         }
 
-        public new static ClLinearExpression Plus(
-            ClLinearExpression e1,
-            ClLinearExpression e2)
-        {
-            return e1.Plus(e2);
-        }
-
-        public new static ClLinearExpression Minus(
-            ClLinearExpression e1,
-            ClLinearExpression e2)
-        {
-            return e1.Minus(e2);
-        }
-
-        public new static ClLinearExpression Times(
-            ClLinearExpression e1,
-            ClLinearExpression e2)
-            /* throws ExCLNonlinearExpression */
-        {
-            return e1.Times(e2);
-        }
-
-        public new static ClLinearExpression Divide(
-            ClLinearExpression e1,
-            ClLinearExpression e2)
-            /* throws ExCLNonlinearExpression */
-        {
-            return e1.Divide(e2);
-        }
-
-        public static bool FEquals(
-            ClLinearExpression e1,
-            ClLinearExpression e2)
-        {
-            return e1 == e2;
-        }
-
         #endregion
-
     }
 }
