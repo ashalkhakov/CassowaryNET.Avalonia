@@ -107,20 +107,18 @@ namespace Cassowary.Tests
             }
         }
 
-        [TestFixture]
-        public class SetValueTests : TestBase
-        {
-            // TODO: ClVariable should be made immutable?
+        //[TestFixture]
+        //public class SetValueTests : TestBase
+        //{
+        //    [Test]
+        //    public void changes_value()
+        //    {
+        //        var target = GetTarget();
 
-            [Test]
-            public void changes_value()
-            {
-                var target = GetTarget();
+        //        target.Value = 42.3d;
 
-                target.Value = 42.3d;
-
-                Assert.That(target.Value, Is.EqualTo(42.3d));
-            }
-        }
+        //        Assert.That(target.Value, Is.EqualTo(42.3d));
+        //    }
+        //}
     }
 }

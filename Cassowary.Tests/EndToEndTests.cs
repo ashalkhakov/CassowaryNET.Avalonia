@@ -1013,7 +1013,7 @@ namespace Cassowary.Tests
             Assert.That(rightLimit.Value, IsX.Approx(426d));
 
             // The window is 500 pixels wide.
-            rightLimit.Value = 500d;
+            target.SetEditedValue(rightLimit, 500d);
             var stay1 = new ClStayConstraint(rightLimit, ClStrength.Required);
             target.AddConstraint(stay1);
 
@@ -1026,7 +1026,7 @@ namespace Cassowary.Tests
             target.RemoveConstraint(stay1);
 
             // Expand to 700 pixels
-            rightLimit.Value = 700d;
+            target.SetEditedValue(rightLimit, 700d);
             var stay2 = new ClStayConstraint(rightLimit, ClStrength.Required);
             target.AddConstraint(stay2);
 
@@ -1039,7 +1039,7 @@ namespace Cassowary.Tests
             target.RemoveConstraint(stay2);
 
             // Contract to 600 pixels
-            rightLimit.Value = 600d;
+            target.SetEditedValue(rightLimit, 600d);
             var stay3 = new ClStayConstraint(rightLimit, ClStrength.Required);
             target.AddConstraint(stay3);
 
@@ -1092,6 +1092,7 @@ namespace Cassowary.Tests
 
             // set the middle value to a stay
             middle.Value = 45d;
+            //target.SetEditedValue(middle, 45d);
             target.AddStay(middle);
 
             // check that all the required constraints are true
@@ -1876,10 +1877,10 @@ namespace Cassowary.Tests
 
             Assert.That(bottomRight_top.Value, IsX.Approx(381d));
             Assert.That(bottomRight_bottom.Value, IsX.Approx(404d));
-            Assert.That(bottomRight_left.Value, IsX.Approx(0d));
+            Assert.That(bottomRight_left.Value, IsX.Approx(175d)); //0d
             Assert.That(bottomRight_right.Value, IsX.Approx(400d)); //225d
             Assert.That(bottomRight_height.Value, IsX.Approx(23d));
-            Assert.That(bottomRight_width.Value, IsX.Approx(400d)); //225d
+            Assert.That(bottomRight_width.Value, IsX.Approx(225d));
 
             Assert.That(right_top.Value, IsX.Approx(0d));
             Assert.That(right_bottom.Value, IsX.Approx(404d));

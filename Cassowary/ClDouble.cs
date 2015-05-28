@@ -24,11 +24,13 @@ using System.Globalization;
 
 namespace Cassowary
 {
-    public class ClDouble : ICloneable
+    // TODO: inline this class to System.Double
+
+    public class ClDouble
     {
         #region Fields
 
-        private double value;
+        private readonly double value;
 
         #endregion
 
@@ -51,21 +53,75 @@ namespace Cassowary
         public double Value
         {
             get { return value; }
-            set { this.value = value; }
         }
 
         #endregion
 
         #region Methods
 
-        object ICloneable.Clone()
-        {
-            return new ClDouble(value);
-        }
-
         public override sealed string ToString()
         {
             return value.ToString(CultureInfo.InvariantCulture);
+        }
+
+
+        public static ClDouble operator +(ClDouble a, double b)
+        {
+            return new ClDouble(a.Value + b);
+        }
+
+        public static ClDouble operator +(double a, ClDouble b)
+        {
+            return new ClDouble(a + b.Value);
+        }
+
+        public static ClDouble operator +(ClDouble a, ClDouble b)
+        {
+            return new ClDouble(a.Value + b.Value);
+        }
+        public static ClDouble operator -(ClDouble a, double b)
+        {
+            return new ClDouble(a.Value - b);
+        }
+
+        public static ClDouble operator -(double a, ClDouble b)
+        {
+            return new ClDouble(a - b.Value);
+        }
+
+        public static ClDouble operator -(ClDouble a, ClDouble b)
+        {
+            return new ClDouble(a.Value - b.Value);
+        }
+
+        public static ClDouble operator *(ClDouble a, double b)
+        {
+            return new ClDouble(a.Value*b);
+        }
+
+        public static ClDouble operator *(double a, ClDouble b)
+        {
+            return new ClDouble(a*b.Value);
+        }
+
+        public static ClDouble operator *(ClDouble a, ClDouble b)
+        {
+            return new ClDouble(a.Value*b.Value);
+        }
+
+        public static ClDouble operator /(ClDouble a, double b)
+        {
+            return new ClDouble(a.Value/b);
+        }
+
+        public static ClDouble operator /(double a, ClDouble b)
+        {
+            return new ClDouble(a/b.Value);
+        }
+
+        public static ClDouble operator /(ClDouble a, ClDouble b)
+        {
+            return new ClDouble(a.Value/b.Value);
         }
 
         #endregion
