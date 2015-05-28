@@ -19,74 +19,41 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-using System.Collections;
+using System;
+using Cassowary.Variables;
 
-namespace Cassowary
+namespace Cassowary.Constraints
 {
-    public class ClVariable : ClAbstractVariable
+    public class ClStayConstraint : ClEditOrStayConstraint
     {
         #region Fields
-
-        private double value;
 
         #endregion
 
         #region Constructors
 
-        public ClVariable()
-            : this(0d)
+        public ClStayConstraint(ClVariable variable, ClStrength strength, double weight)
+            : base(variable, strength, weight)
         {
         }
 
-        public ClVariable(double value)
-            : base()
-        {
-            this.value = value;
-        }
-
-        public ClVariable(string name)
-            : this(name, 0d)
+        public ClStayConstraint(ClVariable variable, ClStrength strength)
+            : base(variable, strength, 1.0)
         {
         }
 
-        public ClVariable(string name, double value)
-            : base(name)
+        public ClStayConstraint(ClVariable variable)
+            : base(variable, ClStrength.Weak, 1.0)
         {
-            this.value = value;
         }
 
         #endregion
 
         #region Properties
 
-        /// <remarks>
-        /// Change the value held -- should *not* use this if the variable is 
-        /// in a solver -- instead use AddEditVar() and SuggestValue() interface
-        /// </remarks>
-        public double Value
-        {
-            get { return value; }
-            set { this.value = value; }
-        }
-
-        public override bool IsDummy
-        {
-            get { return false; }
-        }
-
-        public override bool IsExternal
+        public override bool IsStayConstraint
         {
             get { return true; }
-        }
-
-        public override bool IsPivotable
-        {
-            get { return false; }
-        }
-
-        public override bool IsRestricted
-        {
-            get { return false; }
         }
 
         #endregion
@@ -95,7 +62,7 @@ namespace Cassowary
 
         public override string ToString()
         {
-            return string.Format("[{0}:{1}]", Name, value);
+            return "stay" + base.ToString();
         }
 
         #endregion

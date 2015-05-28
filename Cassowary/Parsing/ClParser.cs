@@ -23,7 +23,9 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using Cassowary;
+using Cassowary.Constraints;
 using Cassowary.Parsing;
+using Cassowary.Variables;
 
 namespace Cassowary.Parsing
 {

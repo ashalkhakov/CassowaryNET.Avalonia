@@ -21,14 +21,11 @@
 
 using System;
 using Cassowary.Exceptions;
+using Cassowary.Variables;
 
 namespace Cassowary
 {
-    /// <summary>
-    /// The enumerations from ClLinearInequality,
-    /// and `global' functions that we want easy to access
-    /// </summary>
-    public class Cl
+    public static class CMath
     {
         #region Fields
 
@@ -36,57 +33,13 @@ namespace Cassowary
 
         #region Constructors
 
-        static Cl()
-        {
-            Trace = false;
-        }
-
         #endregion
 
         #region Properties
 
-        protected static bool Trace { get; set; }
-
         #endregion
 
         #region Methods
-
-        protected static void DebugPrint(string s)
-        {
-            Console.Error.WriteLine(s);
-        }
-
-        protected static void TracePrint(string s)
-        {
-            Console.Error.WriteLine(s);
-        }
-
-        protected static void FnEnterPrint(string s)
-        {
-            Console.Error.WriteLine("* {0}", s);
-        }
-
-        protected static void FnExitPrint(string s)
-        {
-            Console.Error.WriteLine("- {0}", s);
-        }
-
-        protected void Assert(bool f, string description)
-        {
-            if (!f)
-            {
-                throw new CassowaryInternalException(
-                    string.Format("Assertion failed: {0}", description));
-            }
-        }
-
-        protected void Assert(bool f)
-        {
-            if (!f)
-            {
-                throw new CassowaryInternalException("Assertion failed");
-            }
-        }
 
         public static ClLinearExpression Plus(
             ClLinearExpression e1,

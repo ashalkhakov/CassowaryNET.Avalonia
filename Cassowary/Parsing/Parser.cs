@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Globalization;
 using Cassowary;
+using Cassowary.Constraints;
+using Cassowary.Variables;
 
 namespace Cassowary.Parsing
 {
@@ -185,13 +187,13 @@ namespace Cassowary.Parsing
                 {
                     Get();
                     Term(out e1);
-                    e = Cl.Plus(e, e1);
+                    e = CMath.Plus(e, e1);
                 }
                 else
                 {
                     Get();
                     Term(out e1);
-                    e = Cl.Minus(e, e1);
+                    e = CMath.Minus(e, e1);
                 }
             }
         }
@@ -207,13 +209,13 @@ namespace Cassowary.Parsing
                 {
                     Get();
                     Factor(out e1);
-                    e = Cl.Times(e, e1);
+                    e = CMath.Times(e, e1);
                 }
                 else
                 {
                     Get();
                     Factor(out e1);
-                    e = Cl.Divide(e, e1);
+                    e = CMath.Divide(e, e1);
                 }
             }
         }
@@ -247,7 +249,7 @@ namespace Cassowary.Parsing
             }
             else SynErr(16);
             if (negate)
-                e = Cl.Minus(0, e);
+                e = CMath.Minus(0, e);
         }
 
         private void Number(out ClDouble d)

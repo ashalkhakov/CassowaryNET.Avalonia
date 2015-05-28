@@ -20,6 +20,8 @@
 */
 
 using System;
+using Cassowary.Constraints;
+using Cassowary.Variables;
 
 namespace Cassowary
 {

@@ -4,6 +4,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Reflection;
 using Cassowary;
+using Cassowary.Constraints;
+using Cassowary.Variables;
 
 namespace AutoLayoutPanel
 {

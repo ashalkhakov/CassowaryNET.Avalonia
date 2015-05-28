@@ -20,6 +20,7 @@
 */
 
 using System;
+using Cassowary.Variables;
 
 namespace Cassowary
 {

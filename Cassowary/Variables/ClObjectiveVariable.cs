@@ -21,28 +21,18 @@
 
 using System;
 
-namespace Cassowary
+namespace Cassowary.Variables
 {
-    public abstract class ClAbstractVariable
+    public class ClObjectiveVariable : ClAbstractVariable
     {
         #region Fields
-
-        private static int iVariableNumber;
-
-        private readonly string name;
 
         #endregion
 
         #region Constructors
 
-        protected ClAbstractVariable(string name)
-        {
-            this.name = name;
-            iVariableNumber++;
-        }
-
-        protected ClAbstractVariable()
-            : this("v" + iVariableNumber)
+        public ClObjectiveVariable(string name)
+            : base(name)
         {
         }
 
@@ -50,27 +40,29 @@ namespace Cassowary
 
         #region Properties
 
-        public string Name
-        {
-            get { return name; }
-        }
-
-        public virtual bool IsDummy
+        public override bool IsExternal
         {
             get { return false; }
         }
 
-        public abstract bool IsExternal { get; }
+        public override bool IsPivotable
+        {
+            get { return false; }
+        }
 
-        public abstract bool IsPivotable { get; }
+        public override bool IsRestricted
+        {
+            get { return false; }
+        }
 
-        public abstract bool IsRestricted { get; }
-        
         #endregion
 
         #region Methods
 
-        public abstract override string ToString();
+        public override string ToString()
+        {
+            return string.Format("[{0}:obj]", Name);
+        }
 
         #endregion
     }

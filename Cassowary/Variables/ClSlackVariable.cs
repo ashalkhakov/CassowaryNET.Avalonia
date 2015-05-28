@@ -1,9 +1,9 @@
 /*
   Cassowary.net: an incremental constraint solver for .NET
   (http://lumumba.uhasselt.be/jo/projects/cassowary.net/)
-    
+  
   Copyright (C) 2005-2006  Jo Vermeulen (jo.vermeulen@uhasselt.be)
-    
+  
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public License
   as published by the Free Software Foundation; either version 2.1
@@ -21,53 +21,54 @@
 
 using System;
 
-namespace Cassowary
+namespace Cassowary.Variables
 {
-    public class ClLinearConstraint : ClConstraint
+    internal class ClSlackVariable : ClAbstractVariable
     {
         #region Fields
-        
-        protected readonly ClLinearExpression expression;
+
+        private static long slackCounter = 0;
 
         #endregion
 
         #region Constructors
 
-        protected ClLinearConstraint(
-            ClLinearExpression expression,
-            ClStrength strength,
-            double weight)
-            : base(strength, weight)
+        public ClSlackVariable(string name)
+            : base(name + (++slackCounter))
         {
-            this.expression = expression;
         }
 
-        protected ClLinearConstraint(
-            ClLinearExpression expression,
-            ClStrength strength)
-            : base(strength, 1.0)
+        public ClSlackVariable()
         {
-            this.expression = expression;
-        }
-
-        protected ClLinearConstraint(ClLinearExpression expression)
-            : base(ClStrength.Required, 1.0)
-        {
-            this.expression = expression;
         }
 
         #endregion
 
         #region Properties
 
-        public override ClLinearExpression Expression
+        public override bool IsExternal
         {
-            get { return expression; }
+            get { return false; }
+        }
+
+        public override bool IsPivotable
+        {
+            get { return true; }
+        }
+
+        public override bool IsRestricted
+        {
+            get { return true; }
         }
 
         #endregion
 
         #region Methods
+
+        public override string ToString()
+        {
+            return string.Format("[{0}:slack]", Name);
+        }
 
         #endregion
     }

@@ -20,25 +20,9 @@ namespace Cassowary.Tests
             public virtual void TearDown()
             {
             }
-
-            internal Class1 GetTarget()
-            {
-                return new Class1();
-            }
         }
 
         #endregion
-
-        [TestFixture]
-        public class ConstructorTests //: TestBase
-        {
-            [Test]
-            public void can_be_created()
-            {
-                var target = new Cl();
-                Assert.Pass();
-            }
-        }
 
         [TestFixture]
         public class Method1Tests : TestBase

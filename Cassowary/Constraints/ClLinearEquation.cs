@@ -21,8 +21,9 @@
 
 using System;
 using Cassowary.Utils;
+using Cassowary.Variables;
 
-namespace Cassowary
+namespace Cassowary.Constraints
 {
     public class ClLinearEquation : ClLinearConstraint
     {

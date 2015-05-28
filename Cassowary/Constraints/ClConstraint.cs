@@ -1,9 +1,9 @@
 /*
   Cassowary.net: an incremental constraint solver for .NET
   (http://lumumba.uhasselt.be/jo/projects/cassowary.net/)
-  
+    
   Copyright (C) 2005-2006  Jo Vermeulen (jo.vermeulen@uhasselt.be)
-  
+    
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public License
   as published by the Free Software Foundation; either version 2.1
@@ -21,44 +21,66 @@
 
 using System;
 
-namespace Cassowary
+namespace Cassowary.Constraints
 {
-    internal class ClSlackVariable : ClAbstractVariable
+    public abstract class ClConstraint
     {
         #region Fields
 
-        private static long slackCounter = 0;
+        private readonly ClStrength strength;
+        private readonly double weight;
 
         #endregion
 
         #region Constructors
 
-        public ClSlackVariable(string name)
-            : base(name + (++slackCounter))
+        protected ClConstraint(ClStrength strength, double weight)
         {
+            this.strength = strength;
+            this.weight = weight;
         }
 
-        public ClSlackVariable()
+        protected ClConstraint(ClStrength strength)
         {
+            this.strength = strength;
+            weight = 1.0;
+        }
+
+        protected ClConstraint()
+        {
+            strength = ClStrength.Required;
+            weight = 1.0;
         }
 
         #endregion
 
         #region Properties
 
-        public override bool IsExternal
+        public abstract ClLinearExpression Expression { get; }
+
+        public virtual bool IsEditConstraint
         {
             get { return false; }
         }
 
-        public override bool IsPivotable
+        public virtual bool IsInequality
         {
-            get { return true; }
+            get { return false; }
         }
 
-        public override bool IsRestricted
+        public virtual bool IsStayConstraint
         {
-            get { return true; }
+            get { return false; }
+        }
+
+        public ClStrength Strength
+        {
+            get { return strength; }
+        }
+
+        public double Weight
+        {
+            get { return weight; }
         }
 
         #endregion
@@ -67,7 +89,13 @@ namespace Cassowary
 
         public override string ToString()
         {
-            return string.Format("[{0}:slack]", Name);
+            // example output:
+            // weak:[0,0,1] {1} (23 + -1*[update.height:23]
+            return string.Format(
+                "{0} {{{1}}} ({2}",
+                Strength,
+                Weight,
+                Expression);
         }
 
         #endregion

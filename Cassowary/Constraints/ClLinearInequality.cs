@@ -22,8 +22,9 @@
 using System;
 using Cassowary.Exceptions;
 using Cassowary.Utils;
+using Cassowary.Variables;
 
-namespace Cassowary
+namespace Cassowary.Constraints
 {
     public class ClLinearInequality : ClLinearConstraint
     {

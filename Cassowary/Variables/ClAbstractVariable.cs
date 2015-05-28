@@ -21,28 +21,28 @@
 
 using System;
 
-namespace Cassowary
+namespace Cassowary.Variables
 {
-    public class ClStayConstraint : ClEditOrStayConstraint
+    public abstract class ClAbstractVariable
     {
         #region Fields
+
+        private static int iVariableNumber;
+
+        private readonly string name;
 
         #endregion
 
         #region Constructors
 
-        public ClStayConstraint(ClVariable variable, ClStrength strength, double weight)
-            : base(variable, strength, weight)
+        protected ClAbstractVariable(string name)
         {
+            this.name = name;
+            iVariableNumber++;
         }
 
-        public ClStayConstraint(ClVariable variable, ClStrength strength)
-            : base(variable, strength, 1.0)
-        {
-        }
-
-        public ClStayConstraint(ClVariable variable)
-            : base(variable, ClStrength.Weak, 1.0)
+        protected ClAbstractVariable()
+            : this("v" + iVariableNumber)
         {
         }
 
@@ -50,19 +50,27 @@ namespace Cassowary
 
         #region Properties
 
-        public override bool IsStayConstraint
+        public string Name
         {
-            get { return true; }
+            get { return name; }
         }
 
+        public virtual bool IsDummy
+        {
+            get { return false; }
+        }
+
+        public abstract bool IsExternal { get; }
+
+        public abstract bool IsPivotable { get; }
+
+        public abstract bool IsRestricted { get; }
+        
         #endregion
 
         #region Methods
 
-        public override string ToString()
-        {
-            return "stay" + base.ToString();
-        }
+        public abstract override string ToString();
 
         #endregion
     }

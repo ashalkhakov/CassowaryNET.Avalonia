@@ -2,7 +2,7 @@
   Cassowary.net: an incremental constraint solver for .NET
   (http://lumumba.uhasselt.be/jo/projects/cassowary.net/)
     
-  Copyright (C) 2005  Jo Vermeulen (jo.vermeulen@uhasselt.be)
+  Copyright (C) 2005-2006  Jo Vermeulen (jo.vermeulen@uhasselt.be)
     
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public License
@@ -21,51 +21,44 @@
 
 using System;
 
-namespace Cassowary
+namespace Cassowary.Constraints
 {
-    public abstract class ClEditOrStayConstraint : ClConstraint
+    public class ClLinearConstraint : ClConstraint
     {
         #region Fields
-
-        private readonly ClVariable variable;
-        // cache the expression
-        private readonly ClLinearExpression expression;
+        
+        protected readonly ClLinearExpression expression;
 
         #endregion
 
         #region Constructors
 
-        protected ClEditOrStayConstraint(
-            ClVariable variable,
+        protected ClLinearConstraint(
+            ClLinearExpression expression,
             ClStrength strength,
             double weight)
             : base(strength, weight)
         {
-            this.variable = variable;
-            expression = new ClLinearExpression(this.variable, -1.0, this.variable.Value);
+            this.expression = expression;
         }
 
-        protected ClEditOrStayConstraint(
-            ClVariable variable,
+        protected ClLinearConstraint(
+            ClLinearExpression expression,
             ClStrength strength)
-            : this(variable, strength, 1.0)
+            : base(strength, 1.0)
         {
+            this.expression = expression;
         }
 
-        protected ClEditOrStayConstraint(ClVariable variable)
-            : this(variable, ClStrength.Required, 1.0)
+        protected ClLinearConstraint(ClLinearExpression expression)
+            : base(ClStrength.Required, 1.0)
         {
-            this.variable = variable;
+            this.expression = expression;
         }
 
         #endregion
 
         #region Properties
-
-        public ClVariable Variable
-        {
-            get { return variable; }
-        }
 
         public override ClLinearExpression Expression
         {
@@ -75,12 +68,6 @@ namespace Cassowary
         #endregion
 
         #region Methods
-
-        public override string ToString()
-        {
-            // add missing bracket -> see ClConstraint#ToString(...)
-            return base.ToString() + ")";
-        }
 
         #endregion
     }

@@ -24,10 +24,11 @@ using System.Collections;
 using System.Collections.Generic;
 using Cassowary.Exceptions;
 using Cassowary.Utils;
+using Cassowary.Variables;
 
 namespace Cassowary
 {
-    public class ClLinearExpression : Cl, ICloneable
+    public class ClLinearExpression : ICloneable
     {
         #region Fields
 
@@ -186,7 +187,7 @@ namespace Cassowary
         public ClLinearExpression Divide(double x)
             /*throws ExCLNonlinearExpression*/
         {
-            if (Approx(x, 0.0))
+            if (CMath.Approx(x, 0.0))
             {
                 throw new CassowaryNonLinearExpressionException();
             }
@@ -208,7 +209,7 @@ namespace Cassowary
         public ClLinearExpression DivFrom(ClLinearExpression expr)
             /*throws ExCLNonlinearExpression*/
         {
-            if (!IsConstant || Approx(constant.Value, 0.0))
+            if (!IsConstant || CMath.Approx(constant.Value, 0.0))
             {
                 throw new CassowaryNonLinearExpressionException();
             }
@@ -273,17 +274,13 @@ namespace Cassowary
         /// </summary>
         public ClLinearExpression AddVariable(ClAbstractVariable v, double c)
         {
-            // body largely duplicated below
-            if (Trace)
-                FnEnterPrint(string.Format("AddVariable: {0}, {1}", v, c));
-
             var coeff = terms.GetOrDefault(v);
 
             if (coeff != null)
             {
                 double new_coefficient = coeff.Value + c;
 
-                if (Approx(new_coefficient, 0.0))
+                if (CMath.Approx(new_coefficient, 0.0))
                 {
                     terms.Remove(v);
                 }
@@ -294,7 +291,7 @@ namespace Cassowary
             }
             else
             {
-                if (!Approx(c, 0.0))
+                if (!CMath.Approx(c, 0.0))
                 {
                     terms.Add(v, new ClDouble(c));
                 }
@@ -335,9 +332,6 @@ namespace Cassowary
             ClTableau solver)
         {
             // body largely duplicated above
-            if (Trace)
-                FnEnterPrint(
-                    string.Format("AddVariable: {0}, {1}, {2}, ...", v, c, subject));
 
             var coeff = terms.GetOrDefault(v);
 
@@ -345,7 +339,7 @@ namespace Cassowary
             {
                 double new_coefficient = coeff.Value + c;
 
-                if (Approx(new_coefficient, 0.0))
+                if (CMath.Approx(new_coefficient, 0.0))
                 {
                     solver.NoteRemovedVariable(v, subject);
                     terms.Remove(v);
@@ -357,7 +351,7 @@ namespace Cassowary
             }
             else
             {
-                if (!Approx(c, 0.0))
+                if (!CMath.Approx(c, 0.0))
                 {
                     terms.Add(v, new ClDouble(c));
                     solver.NoteAddedVariable(v, subject);
@@ -405,16 +399,6 @@ namespace Cassowary
             ClAbstractVariable subject,
             ClTableau solver)
         {
-            if (Trace)
-                FnEnterPrint(
-                    string.Format(
-                        "CLE:SubstituteOut: {0}, {1}, {2}, ...",
-                        var,
-                        expr,
-                        subject));
-            if (Trace)
-                TracePrint("this = " + this);
-
             double multiplier = terms[var].Value;
             terms.Remove(var);
             IncrementConstant(multiplier*expr.Constant);
@@ -429,7 +413,7 @@ namespace Cassowary
                     double old_coeff = d_old_coeff.Value;
                     double newCoeff = old_coeff + multiplier*coeff;
 
-                    if (Approx(newCoeff, 0.0))
+                    if (CMath.Approx(newCoeff, 0.0))
                     {
                         solver.NoteRemovedVariable(clv, subject);
                         terms.Remove(clv);
@@ -446,9 +430,6 @@ namespace Cassowary
                     solver.NoteAddedVariable(clv, subject);
                 }
             }
-
-            if (Trace)
-                TracePrint("Now this is " + this);
         }
 
         /// <summary>
@@ -500,9 +481,6 @@ namespace Cassowary
         /// </summary>
         public double NewSubject(ClAbstractVariable subject)
         {
-            if (Trace)
-                FnEnterPrint(string.Format("newSubject: {0}", subject));
-
             var coeff = terms[subject];
             terms.Remove(subject);
 
@@ -538,7 +516,7 @@ namespace Cassowary
 
             var e = terms.GetEnumerator();
 
-            if (!Approx(constant.Value, 0.0) || terms.Count == 0)
+            if (!CMath.Approx(constant.Value, 0.0) || terms.Count == 0)
             {
                 s += constant.ToString();
             }

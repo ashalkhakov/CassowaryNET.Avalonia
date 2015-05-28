@@ -21,66 +21,49 @@
 
 using System;
 
-namespace Cassowary
+namespace Cassowary.Variables
 {
-    public abstract class ClConstraint
+    internal class ClDummyVariable : ClAbstractVariable
     {
         #region Fields
 
-        private readonly ClStrength strength;
-        private readonly double weight;
+        private static long dummyCounter = 0;
 
         #endregion
 
         #region Constructors
 
-        protected ClConstraint(ClStrength strength, double weight)
+        public ClDummyVariable(string name)
+            : base(name + (++dummyCounter))
         {
-            this.strength = strength;
-            this.weight = weight;
         }
 
-        protected ClConstraint(ClStrength strength)
+        public ClDummyVariable()
         {
-            this.strength = strength;
-            weight = 1.0;
-        }
-
-        protected ClConstraint()
-        {
-            strength = ClStrength.Required;
-            weight = 1.0;
         }
 
         #endregion
 
         #region Properties
 
-        public abstract ClLinearExpression Expression { get; }
+        public override bool IsDummy
+        {
+            get { return true; }
+        }
 
-        public virtual bool IsEditConstraint
+        public override bool IsExternal
         {
             get { return false; }
         }
 
-        public virtual bool IsInequality
+        public override bool IsPivotable
         {
             get { return false; }
         }
 
-        public virtual bool IsStayConstraint
+        public override bool IsRestricted
         {
-            get { return false; }
-        }
-
-        public ClStrength Strength
-        {
-            get { return strength; }
-        }
-
-        public double Weight
-        {
-            get { return weight; }
+            get { return true; }
         }
 
         #endregion
@@ -89,13 +72,7 @@ namespace Cassowary
 
         public override string ToString()
         {
-            // example output:
-            // weak:[0,0,1] {1} (23 + -1*[update.height:23]
-            return string.Format(
-                "{0} {{{1}}} ({2}",
-                Strength,
-                Weight,
-                Expression);
+            return "[" + Name + ":dummy]";
         }
 
         #endregion

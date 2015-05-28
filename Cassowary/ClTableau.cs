@@ -22,11 +22,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Cassowary.Utils;
+using Cassowary.Variables;
 
 namespace Cassowary
 {
-    public class ClTableau : Cl
+    public class ClTableau
     {
         #region Fields
 
@@ -121,9 +123,6 @@ namespace Cassowary
             ClAbstractVariable v,
             ClAbstractVariable subject)
         {
-            if (Trace)
-                FnEnterPrint(string.Format("NoteRemovedVariable: {0}, {1}", v, subject));
-
             if (subject != null)
             {
                 columns[v].Remove(subject);
@@ -138,8 +137,6 @@ namespace Cassowary
             ClAbstractVariable v,
             ClAbstractVariable subject)
         {
-            if (Trace)
-                FnEnterPrint(string.Format("NoteAddedVariable: {0}, {1}", v, subject));
             if (subject != null)
             {
                 InsertColVar(v, subject);
@@ -223,9 +220,6 @@ namespace Cassowary
         // (also, expr better be allocated on the heap!).
         protected void AddRow(ClAbstractVariable var, ClLinearExpression expr)
         {
-            if (Trace)
-                FnEnterPrint("AddRow: " + var + ", " + expr);
-
             // for each variable in expr, add var to the set of rows which
             // have that variable in their expression
             rows.Add(var, expr);
@@ -245,9 +239,6 @@ namespace Cassowary
             {
                 externalRows.Add(var);
             }
-
-            if (Trace)
-                TracePrint(this.ToString());
         }
 
         /// <summary>
@@ -256,8 +247,6 @@ namespace Cassowary
         /// </summary>
         protected void RemoveColumn(ClAbstractVariable var)
         {
-            if (Trace)
-                FnEnterPrint(string.Format("RemoveColumn: {0}", var));
             // remove the rows with the variables in varset
 
             var _rows = columns.GetOrDefault(var);
@@ -273,8 +262,7 @@ namespace Cassowary
             }
             else
             {
-                if (Trace)
-                    DebugPrint(string.Format("Could not find var {0} in _columns", var));
+                // Could not find var {0} in _columns
             }
 
             if (var.IsExternal)
@@ -291,11 +279,8 @@ namespace Cassowary
         protected ClLinearExpression RemoveRow(ClAbstractVariable var)
             /*throws ExCLInternalError*/
         {
-            if (Trace)
-                FnEnterPrint(string.Format("RemoveRow: {0}", var));
-
             var expr = rows[var];
-            Assert(expr != null);
+            Debug.Assert(expr != null);
 
             // For each variable in this expression, update
             // the column mapping and remove the variable from the list
@@ -306,9 +291,6 @@ namespace Cassowary
 
                 if (varset != null)
                 {
-                    if (Trace)
-                        DebugPrint(string.Format("removing from varset {0}", var));
-
                     varset.Remove(var);
                 }
             }
@@ -321,8 +303,6 @@ namespace Cassowary
             }
 
             rows.Remove(var);
-            if (Trace)
-                FnExitPrint(string.Format("returning {0}", expr));
 
             return expr;
         }
@@ -335,11 +315,6 @@ namespace Cassowary
             ClAbstractVariable oldVar,
             ClLinearExpression expr)
         {
-            if (Trace)
-                FnEnterPrint(string.Format("SubstituteOut: {0}", oldVar, expr));
-            if (Trace)
-                TracePrint(this.ToString());
-
             var varset = columns[oldVar];
 
             foreach (ClAbstractVariable v in varset)
