@@ -105,7 +105,7 @@ namespace Cassowary
 
             editVarMap = new Dictionary<ClVariable, ClEditInfo>();
 
-            var expression = new ClLinearExpression();
+            var expression = new ClLinearExpression(0d);
             Rows.Add(objective, expression);
             stkCedcns = new Stack<int>();
             stkCedcns.Push(0);

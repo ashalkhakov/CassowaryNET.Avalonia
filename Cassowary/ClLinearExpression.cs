@@ -40,36 +40,21 @@ namespace Cassowary
 
         #region Constructors
 
-        public ClLinearExpression()
-            : this(0d)
-        {
-        }
-
         public ClLinearExpression(double constant)
             : this(null, 0d, constant)
         {
         }
 
-        public ClLinearExpression(ClAbstractVariable variable, double value)
-            : this(variable, value, 0d)
-        {
-        }
-
-        public ClLinearExpression(ClAbstractVariable variable)
-            : this(variable, 1d, 0d)
-        {
-        }
-
         public ClLinearExpression(
             ClAbstractVariable variable,
-            double value,
-            double constant)
+            double multiplier = 1d,
+            double constant = 0d)
         {
             this.constant = new ClDouble(constant);
             terms = new Dictionary<ClAbstractVariable, ClDouble>(1);
 
             if (variable != null)
-                terms.Add(variable, new ClDouble(value));
+                terms.Add(variable, new ClDouble(multiplier));
         }
 
         /// <summary>
@@ -612,9 +597,6 @@ namespace Cassowary
             ClLinearExpression a,
             ClLinearExpression b)
         {
-            //if (a.IsConstant)
-            //    return a.constant.Value / b;
-
             if (!b.IsConstant) 
                 throw new CassowaryNonLinearExpressionException();
 
