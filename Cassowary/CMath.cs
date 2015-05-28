@@ -20,8 +20,6 @@
 */
 
 using System;
-using Cassowary.Exceptions;
-using Cassowary.Variables;
 
 namespace Cassowary
 {
@@ -40,76 +38,16 @@ namespace Cassowary
         #endregion
 
         #region Methods
-        
-        public static ClLinearExpression Times(
-            ClLinearExpression e1,
-            ClLinearExpression e2)
-            /*throws ExCLNonlinearExpression*/
-        {
-            return e1.Times(e2);
-        }
-
-        public static ClLinearExpression Times(ClLinearExpression e1, ClVariable e2)
-            /*throws ExCLNonlinearExpression*/
-        {
-            return e1.Times(new ClLinearExpression(e2));
-        }
-
-        public static ClLinearExpression Times(ClVariable e1, ClLinearExpression e2)
-            /*throws ExCLNonlinearExpression*/
-        {
-            return (new ClLinearExpression(e1)).Times(e2);
-        }
-
-        public static ClLinearExpression Times(ClLinearExpression e1, double e2)
-            /*throws ExCLNonlinearExpression*/
-        {
-            return e1.Times(new ClLinearExpression(e2));
-        }
-
-        public static ClLinearExpression Times(double e1, ClLinearExpression e2)
-            /*throws ExCLNonlinearExpression*/
-        {
-            return (new ClLinearExpression(e1)).Times(e2);
-        }
-
-        public static ClLinearExpression Times(double n, ClVariable clv)
-            /*throws ExCLNonlinearExpression*/
-        {
-            return new ClLinearExpression(clv, n);
-        }
-
-        public static ClLinearExpression Times(ClVariable clv, double n)
-            /*throws ExCLNonlinearExpression*/
-        {
-            return new ClLinearExpression(clv, n);
-        }
-
-        public static ClLinearExpression Divide(
-            ClLinearExpression e1,
-            ClLinearExpression e2)
-            /*throws ExCLNonlinearExpression*/
-        {
-            return e1.Divide(e2);
-        }
-
-        public static ClLinearExpression Divide(
-            ClLinearExpression e1,
-            double v)
-            /*throws ExCLNonlinearExpression*/
-        {
-            return e1.Divide(new ClLinearExpression(v));
-        }
 
         public static bool Approx(double a, double b)
         {
             const double epsilon = 1.0e-8;
 
-            if (a == 0.0)
+            if (a == 0d)
             {
                 return (Math.Abs(b) < epsilon);
             }
-            if (b == 0.0)
+            if (b == 0d)
             {
                 return (Math.Abs(a) < epsilon);
             }

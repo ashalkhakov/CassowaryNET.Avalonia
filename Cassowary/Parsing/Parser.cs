@@ -209,13 +209,13 @@ namespace Cassowary.Parsing
                 {
                     Get();
                     Factor(out e1);
-                    e = CMath.Times(e, e1);
+                    e = e * e1;
                 }
                 else
                 {
                     Get();
                     Factor(out e1);
-                    e = CMath.Divide(e, e1);
+                    e = e/e1;
                 }
             }
         }

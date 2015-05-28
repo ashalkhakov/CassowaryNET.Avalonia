@@ -447,6 +447,23 @@ namespace Cassowary
             return new ClLinearExpression(constant, terms);
         }
 
+        #region Unary
+
+        public static ClLinearExpression operator -(
+            ClLinearExpression a)
+        {
+            return 0d - a;
+        }
+
+        public static ClLinearExpression operator +(
+            ClLinearExpression a)
+        {
+            return 0d + a;
+        }
+
+        #endregion
+
+        #region +
 
         public static ClLinearExpression operator +(
             ClLinearExpression a,
@@ -482,6 +499,10 @@ namespace Cassowary
         {
             return new ClLinearExpression(a) + b;
         }
+
+        #endregion
+
+        #region -
 
 
         public static ClLinearExpression operator -(
@@ -519,29 +540,17 @@ namespace Cassowary
             return new ClLinearExpression(a) - b;
         }
 
-        public static ClLinearExpression operator -(
-            ClLinearExpression a)
+        #endregion
+
+
+        private static ClLinearExpression Multiply(ClLinearExpression a, double b)
         {
-            return 0d - a;
-        }
-
-        public static ClLinearExpression operator +(
-            ClLinearExpression a)
-        {
-            return 0d + a;
-        }
-
-
-
-        
-        public ClLinearExpression Times(double x)
-        {
-            var newConstant = constant * x;
-            var newTerms = terms.Select(
+            var newConstant = a.constant*b;
+            var newTerms = a.terms.Select(
                 kvp => new
                 {
                     Key = kvp.Key,
-                    Value = kvp.Value * x,
+                    Value = kvp.Value*b,
                 })
                 .ToDictionary(o => o.Key, o => o.Value);
 
@@ -550,55 +559,94 @@ namespace Cassowary
                 newTerms);
         }
 
-        public ClLinearExpression Times(ClLinearExpression expression)
-        /*throws ExCLNonlinearExpression*/
-        {
-            if (IsConstant)
-            {
-                return expression.Times(constant.Value);
-            }
-            else if (!expression.IsConstant)
-            {
-                throw new CassowaryNonLinearExpressionException();
-            }
+        #region *
 
-            return Times(expression.constant.Value);
+        public static ClLinearExpression operator *(
+            ClLinearExpression a,
+            ClLinearExpression b)
+        {
+            if (a.IsConstant)
+                return a.constant.Value*b;
+
+            if (b.IsConstant)
+                return a*b.constant.Value;
+
+            throw new CassowaryNonLinearExpressionException();
         }
 
-        public ClLinearExpression Divide(double x)
-        /*throws ExCLNonlinearExpression*/
+        public static ClLinearExpression operator *(
+            ClLinearExpression a,
+            ClVariable b)
         {
-            if (CMath.Approx(x, 0.0))
-            {
-                throw new CassowaryNonLinearExpressionException();
-            }
-
-            return Times(1.0 / x);
+            return a * new ClLinearExpression(b);
         }
 
-        public ClLinearExpression Divide(ClLinearExpression expression)
-        /*throws ExCLNonlinearExpression*/
+        public static ClLinearExpression operator *(
+            ClVariable a,
+            ClLinearExpression b)
         {
-            if (!expression.IsConstant)
-            {
-                throw new CassowaryNonLinearExpressionException();
-            }
-
-            return Divide(expression.constant.Value);
+            return new ClLinearExpression(a) * b;
         }
 
-        public ClLinearExpression DivFrom(ClLinearExpression expression)
-        /*throws ExCLNonlinearExpression*/
+        public static ClLinearExpression operator *(
+            ClLinearExpression a,
+            double b)
         {
-            if (!IsConstant || CMath.Approx(constant.Value, 0.0))
-            {
-                throw new CassowaryNonLinearExpressionException();
-            }
-
-            return expression.Divide(constant.Value);
+            return Multiply(a, b);
         }
 
+        public static ClLinearExpression operator *(
+            double a,
+            ClLinearExpression b)
+        {
+            return Multiply(b, a);
+        }
 
+        #endregion
+        
+
+
+        #region /
+
+        public static ClLinearExpression operator /(
+            ClLinearExpression a,
+            ClLinearExpression b)
+        {
+            //if (a.IsConstant)
+            //    return a.constant.Value / b;
+
+            if (!b.IsConstant) 
+                throw new CassowaryNonLinearExpressionException();
+
+            return a/b.constant.Value;
+        }
+
+        public static ClLinearExpression operator /(
+            ClVariable a,
+            ClLinearExpression b)
+        {
+            return new ClLinearExpression(a) / b;
+        }
+
+        public static ClLinearExpression operator /(
+            ClLinearExpression a,
+            double b)
+        {
+            // cannot divide by zero
+            if (CMath.Approx(b, 0d))
+                throw new CassowaryNonLinearExpressionException();
+
+            return a*(1d/b);
+        }
+
+        public static ClLinearExpression operator /(
+            double a,
+            ClLinearExpression b)
+        {
+            return new ClLinearExpression(a)/b;
+        }
+
+        #endregion
 
         #endregion
     }

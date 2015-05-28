@@ -375,7 +375,7 @@ namespace Cassowary.Tests
             Assert.That(x.Value, IsX.Approx(20d));
             Assert.That(y.Value, IsX.Approx(120d));
 
-            var cxy = new ClLinearEquation(CMath.Times(2d, x), y);
+            var cxy = new ClLinearEquation(2d*x, y);
             target.AddConstraint(cxy);
             Assert.That(x.Value, IsX.Approx(20d));
             Assert.That(y.Value, IsX.Approx(40d));
@@ -850,15 +850,11 @@ namespace Cassowary.Tests
                 var end = (start + 1) % 4;
 
                 // (points[start].X + points[end].X) / 2
-                var cleX = CMath.Divide(
-                    points[start].X + points[end].X,
-                    2d);
+                var cleX = (points[start].X + points[end].X) / 2d;
                 var cleXq = new ClLinearEquation(midpoints[start].X, cleX);
                 target.AddConstraint(cleXq);
 
-                var cleY = CMath.Divide(
-                    points[start].Y + points[end].Y,
-                    2d);
+                var cleY = (points[start].Y + points[end].Y) / 2d;
                 var cleYq = new ClLinearEquation(midpoints[start].Y, cleY);
                 target.AddConstraint(cleYq);
             }
@@ -1102,7 +1098,7 @@ namespace Cassowary.Tests
             target.AddConstraint(
                 new ClLinearEquation(
                     middle,
-                    CMath.Divide(left + right, 2d)));
+                    (left + right) / 2d));
             // right == left + 10
             target.AddConstraint(
                 new ClLinearEquation(

@@ -100,6 +100,8 @@ namespace Cassowary.Variables
 
         #region Operators
 
+        #region +
+
         public static ClLinearExpression operator +(
             ClVariable a,
             ClVariable b)
@@ -121,6 +123,10 @@ namespace Cassowary.Variables
             return new ClLinearExpression(a) + new ClLinearExpression(b);
         }
 
+        #endregion
+
+        #region -
+
         public static ClLinearExpression operator -(
             ClVariable a,
             ClVariable b)
@@ -141,6 +147,37 @@ namespace Cassowary.Variables
         {
             return new ClLinearExpression(a) - new ClLinearExpression(b);
         }
+
+        #endregion
+
+        #region *
+
+        public static ClLinearExpression operator *(
+            ClVariable a,
+            double b)
+        {
+            return new ClLinearExpression(a, b);
+        }
+
+        public static ClLinearExpression operator *(
+            double a,
+            ClVariable b)
+        {
+            return new ClLinearExpression(b, a);
+        }
+
+        #endregion
+
+        #region /
+
+        public static ClLinearExpression operator /(
+            ClVariable a,
+            double b)
+        {
+            return new ClLinearExpression(a) / b;
+        }
+
+        #endregion
 
         #endregion
     }

@@ -1033,7 +1033,9 @@ namespace Cassowary
             }
 
             if (expr.Constant < 0)
-                expr = expr.Times(-1);
+            {
+                expr = -expr;
+            }
 
             return expr;
         }

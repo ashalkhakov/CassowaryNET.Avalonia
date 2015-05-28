@@ -83,7 +83,7 @@ namespace AutoLayoutPanel
             solver.AddConstraint(
                 new ClLinearEquation(
                     clX,
-                    new ClLinearExpression(clCenter) - new ClLinearExpression(clWidth).Divide(2),
+                    new ClLinearExpression(clCenter) - new ClLinearExpression(clWidth)/2,
                     ClStrength.Required));
 
             // X = Right - Width
@@ -104,7 +104,7 @@ namespace AutoLayoutPanel
             solver.AddConstraint(
                 new ClLinearEquation(
                     clY,
-                    new ClLinearExpression(clMiddle) - new ClLinearExpression(clHeight).Divide(2),
+                    new ClLinearExpression(clMiddle) - new ClLinearExpression(clHeight)/2,
                     ClStrength.Required));
 
             // Y = Bottom - Height
@@ -184,8 +184,7 @@ namespace AutoLayoutPanel
                     // y = m*x + c
                     target.constraint = new ClLinearEquation(
                         target.propertyFirstVariable,
-                        new ClLinearExpression(target.propertySecondVariable)
-                            .Times(multiplier) + new ClLinearExpression(constant),
+                        new ClLinearExpression(target.propertySecondVariable)*multiplier + new ClLinearExpression(constant),
                         ClStrength.Required);
                 }
                 else
@@ -194,8 +193,7 @@ namespace AutoLayoutPanel
                     target.constraint = new ClLinearInequality(
                         target.propertyFirstVariable,
                         equality,
-                        new ClLinearExpression(target.propertySecondVariable)
-                            .Times(multiplier) + new ClLinearExpression(constant),
+                        new ClLinearExpression(target.propertySecondVariable)*multiplier + new ClLinearExpression(constant),
                         ClStrength.Required);
                 }
             }
