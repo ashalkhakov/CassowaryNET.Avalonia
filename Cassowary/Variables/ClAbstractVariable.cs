@@ -20,18 +20,22 @@
 */
 
 using System;
+using Cassowary.Constraints;
 
 namespace Cassowary.Variables
 {
     // Type      => Dummy | External | Pivotable | Restricted
-    // Variable  => false | true  | false | false
-    // Objective => false | false | false | false
-    // Dummy     => true  | false | false | true 
-    // Slack     => false | false | true  | true 
+    // Variable  => false | true     | false     | false
+    // Objective => false | false    | false     | false
+    // Dummy     => true  | false    | false     | true 
+    // Slack     => false | false    | true      | true 
 
     // TODO: the subtyping / casting here is attrocious. Clean up needed.
 
+#pragma warning disable 660,661
+    // We are heavily using operator overloading here
     public abstract class ClAbstractVariable
+#pragma warning restore 660,661
     {
         #region Fields
 
@@ -81,6 +85,189 @@ namespace Cassowary.Variables
         #region Methods
 
         public abstract override string ToString();
+
+        #endregion
+
+        #region Operators
+
+        #region +
+
+        public static ClLinearExpression operator +(
+            ClAbstractVariable a,
+            ClAbstractVariable b)
+        {
+            return new ClLinearExpression(a) + new ClLinearExpression(b);
+        }
+
+        public static ClLinearExpression operator +(
+            ClAbstractVariable a,
+            double b)
+        {
+            return new ClLinearExpression(a) + new ClLinearExpression(b);
+        }
+
+        public static ClLinearExpression operator +(
+            double a,
+            ClAbstractVariable b)
+        {
+            return new ClLinearExpression(a) + new ClLinearExpression(b);
+        }
+
+        #endregion
+
+        #region -
+
+        public static ClLinearExpression operator -(
+            ClAbstractVariable a,
+            ClAbstractVariable b)
+        {
+            return new ClLinearExpression(a) - new ClLinearExpression(b);
+        }
+
+        public static ClLinearExpression operator -(
+            ClAbstractVariable a,
+            double b)
+        {
+            return new ClLinearExpression(a) - new ClLinearExpression(b);
+        }
+
+        public static ClLinearExpression operator -(
+            double a,
+            ClAbstractVariable b)
+        {
+            return new ClLinearExpression(a) - new ClLinearExpression(b);
+        }
+
+        #endregion
+
+        #region *
+
+        public static ClLinearExpression operator *(
+            ClAbstractVariable a,
+            double b)
+        {
+            return new ClLinearExpression(a, b);
+        }
+
+        public static ClLinearExpression operator *(
+            double a,
+            ClAbstractVariable b)
+        {
+            return new ClLinearExpression(b, a);
+        }
+
+        #endregion
+
+        #region /
+
+        public static ClLinearExpression operator /(
+            ClAbstractVariable a,
+            double b)
+        {
+            return new ClLinearExpression(a) / b;
+        }
+
+        #endregion
+
+        #region ==
+
+        public static ClLinearEquation operator ==(
+            ClAbstractVariable a,
+            ClAbstractVariable b)
+        {
+            var aExpression = new ClLinearExpression(a);
+            var bExpression = new ClLinearExpression(b);
+            return new ClLinearEquation(aExpression, bExpression);
+        }
+
+        public static ClLinearEquation operator !=(
+            ClAbstractVariable a,
+            ClAbstractVariable b)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static ClLinearEquation operator ==(
+            ClAbstractVariable a,
+            double b)
+        {
+            var bExpression = new ClLinearExpression(b);
+            return new ClLinearEquation(a, bExpression);
+        }
+
+        public static ClLinearEquation operator !=(
+            ClAbstractVariable a,
+            double b)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static ClLinearEquation operator ==(
+            double a,
+            ClAbstractVariable b)
+        {
+            var aExpression = new ClLinearExpression(a);
+            return new ClLinearEquation(aExpression, b);
+        }
+
+        public static ClLinearEquation operator !=(
+            double a,
+            ClAbstractVariable b)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region <= and >=
+
+        public static ClLinearInequality operator <=(
+            ClAbstractVariable a,
+            ClAbstractVariable b)
+        {
+            return new ClLinearInequality(a, InequalityType.LessThanOrEqual, b);
+        }
+
+        public static ClLinearInequality operator >=(
+            ClAbstractVariable a,
+            ClAbstractVariable b)
+        {
+            return new ClLinearInequality(a, InequalityType.GreaterThanOrEqual, b);
+        }
+
+        public static ClLinearInequality operator <=(
+            ClAbstractVariable a,
+            double b)
+        {
+            var bExpression = new ClLinearExpression(b);
+            return new ClLinearInequality(a, InequalityType.LessThanOrEqual, bExpression);
+        }
+
+        public static ClLinearInequality operator >=(
+            ClAbstractVariable a,
+            double b)
+        {
+            var bExpression = new ClLinearExpression(b);
+            return new ClLinearInequality(a, InequalityType.GreaterThanOrEqual, bExpression);
+        }
+
+        public static ClLinearInequality operator <=(
+            double a,
+            ClAbstractVariable b)
+        {
+            var aExpression = new ClLinearExpression(a);
+            return new ClLinearInequality(aExpression, InequalityType.LessThanOrEqual, b);
+        }
+
+        public static ClLinearInequality operator >=(
+            double a,
+            ClAbstractVariable b)
+        {
+            var aExpression = new ClLinearExpression(a);
+            return new ClLinearInequality(aExpression, InequalityType.GreaterThanOrEqual, b);
+        }
+
+        #endregion
 
         #endregion
     }

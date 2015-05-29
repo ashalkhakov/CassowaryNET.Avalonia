@@ -23,6 +23,13 @@ using System;
 
 namespace Cassowary.Constraints
 {
+    // Type         => Edit  | Stay  | Equality | Inequality
+    // IsEdit       => true  | false | false    | false
+    // IsStay       => false | true  | false    | false
+    // IsInequality => false | false | false    | true 
+
+    // TODO: the subtyping / casting here is attrocious. Clean up needed.
+
     public abstract class ClConstraint
     {
         #region Fields
@@ -61,12 +68,12 @@ namespace Cassowary.Constraints
             get { return false; }
         }
 
-        public virtual bool IsInequality
+        public virtual bool IsStayConstraint
         {
             get { return false; }
         }
 
-        public virtual bool IsStayConstraint
+        public virtual bool IsInequality
         {
             get { return false; }
         }

@@ -123,7 +123,7 @@ namespace Cassowary
             ClAbstractVariable v,
             ClAbstractVariable subject)
         {
-            if (subject != null)
+            if (!Equals(subject, null))
             {
                 columns[v].Remove(subject);
             }
@@ -137,7 +137,7 @@ namespace Cassowary
             ClAbstractVariable v,
             ClAbstractVariable subject)
         {
-            if (subject != null)
+            if (!Equals(subject, null))
             {
                 InsertColVar(v, subject);
             }

@@ -480,7 +480,7 @@ namespace Cassowary
             }
 
             var marker = markerVariables.GetOrDefault(constraint);
-            if (marker == null)
+            if (Equals(marker, null))
                 throw new CassowaryConstraintNotFoundException();
 
             markerVariables.Remove(constraint);
@@ -505,7 +505,7 @@ namespace Cassowary
                             continue;
 
                         var ratio = -rowExpression.Constant/coefficient;
-                        if (exitVar == null || ratio < minRatio)
+                        if (Equals(exitVar, null) || ratio < minRatio)
                         {
                             minRatio = ratio;
                             exitVar = variable;
@@ -513,7 +513,7 @@ namespace Cassowary
                     }
                 }
 
-                if (exitVar == null)
+                if (Equals(exitVar, null))
                 {
                     // no restriced variables in markerColumn 
                     // OR all coefficients >= 0
@@ -526,7 +526,7 @@ namespace Cassowary
                         var coefficient = rowExpression.CoefficientFor(marker);
 
                         var ratio = rowExpression.Constant/coefficient;
-                        if (exitVar == null || ratio < minRatio)
+                        if (Equals(exitVar, null) || ratio < minRatio)
                         {
                             minRatio = ratio;
                             exitVar = variable;
@@ -534,7 +534,7 @@ namespace Cassowary
                     }
                 }
 
-                if (exitVar == null)
+                if (Equals(exitVar, null))
                 {
                     if (markerColumn.Count == 0)
                     {
@@ -546,7 +546,7 @@ namespace Cassowary
                     }
                 }
 
-                if (exitVar != null)
+                if (!Equals(exitVar, null))
                 {
                     Pivot(marker, exitVar);
                 }
@@ -562,7 +562,7 @@ namespace Cassowary
                 foreach (var slackVariable in slackVariables)
                 {
                     // FIXME: decide wether to use equals or !=
-                    if (slackVariable != marker)
+                    if (!Equals(slackVariable, marker))
                     {
                         RemoveColumn(slackVariable);
                     }
@@ -830,7 +830,7 @@ namespace Cassowary
             /* throws ExClRequiredFailure */
         {
             var subject = ChooseSubject(expression);
-            if (subject == null)
+            if (Equals(subject, null))
             {
                 return false;
             }
@@ -909,7 +909,7 @@ namespace Cassowary
                 }
             }
 
-            if (subject != null)
+            if (!Equals(subject, null))
                 return subject;
 
             double coeff = 0.0;
@@ -1061,7 +1061,7 @@ namespace Cassowary
                     }
                 }
 
-                if (objectiveCoeff >= -Epsilon || entryVar == null)
+                if (objectiveCoeff >= -Epsilon || Equals(entryVar, null))
                     return;
 
                 double minRatio = Double.MaxValue;

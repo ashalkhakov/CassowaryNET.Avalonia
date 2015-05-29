@@ -20,6 +20,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using Cassowary.Utils;
 using Cassowary.Variables;
 
@@ -33,8 +34,13 @@ namespace Cassowary.Constraints
 
         #region Constructors
 
-        public ClLinearEquation(ClLinearExpression expression)
-            : this(expression, ClStrength.Required)
+        #region ctor(Expression)
+
+        public ClLinearEquation(
+            ClLinearExpression expression,
+            ClStrength strength,
+            double weight)
+            : base(expression, strength, weight)
         {
         }
 
@@ -45,43 +51,47 @@ namespace Cassowary.Constraints
         {
         }
 
-        public ClLinearEquation(
-            ClLinearExpression expression,
-            ClStrength strength,
-            double weight)
-            : base(expression, strength, weight)
+        public ClLinearEquation(ClLinearExpression expression)
+            : this(expression, ClStrength.Required)
         {
         }
+
+        #endregion
+
+        #region ctor(Variable,Expression)
 
         public ClLinearEquation(
             ClAbstractVariable variable,
             ClLinearExpression expression,
             ClStrength strength,
             double weight)
-            : base(expression, strength, weight)
+            : base(expression.WithVariable(variable, -1d), strength, weight)
         {
-            base.Expression.AddVariable(variable, -1.0);
         }
 
         public ClLinearEquation(
             ClAbstractVariable variable,
             ClLinearExpression expression,
             ClStrength strength)
-            : this(variable, expression, strength, 1.0)
+            : this(variable, expression, strength, 1d)
         {
         }
 
         public ClLinearEquation(
             ClAbstractVariable variable,
             ClLinearExpression expression)
-            : this(variable, expression, ClStrength.Required, 1.0)
+            : this(variable, expression, ClStrength.Required, 1d)
         {
         }
+
+        #endregion
+
+        #region ctor(Variable,double)
 
         public ClLinearEquation(
             ClAbstractVariable variable,
             double value)
-            : this(variable, value, ClStrength.Required, 1.0)
+            : this(variable, value, ClStrength.Required, 1d)
         {
         }
 
@@ -89,7 +99,7 @@ namespace Cassowary.Constraints
             ClAbstractVariable variable,
             double value,
             ClStrength strength)
-            : this(variable, value, strength, 1.0)
+            : this(variable, value, strength, 1d)
         {
         }
 
@@ -98,38 +108,52 @@ namespace Cassowary.Constraints
             double value,
             ClStrength strength,
             double weight)
-            : base(new ClLinearExpression(value), strength, weight)
+            : this(
+                value - variable,
+                strength,
+                weight)
         {
-            Expression.AddVariable(variable, -1.0);
         }
+
+        #endregion
+
+        #region ctor(Expression,Variable)
 
         public ClLinearEquation(
             ClLinearExpression expression,
             ClAbstractVariable variable,
             ClStrength strength,
             double weight)
-            : base(Cloneable.Clone(expression), strength, weight)
+            : this(
+                expression- variable,
+                strength,
+                weight)
         {
-            base.Expression.AddVariable(variable, -1.0);
         }
 
         public ClLinearEquation(
             ClLinearExpression expression,
             ClAbstractVariable variable,
             ClStrength strength)
-            : this(expression, variable, strength, 1.0)
+            : this(expression, variable, strength, 1d)
         {
         }
 
-        public ClLinearEquation(ClLinearExpression expression, ClAbstractVariable variable)
-            : this(expression, variable, ClStrength.Required, 1.0)
+        public ClLinearEquation(
+            ClLinearExpression expression,
+            ClAbstractVariable variable)
+            : this(expression, variable, ClStrength.Required, 1d)
         {
         }
+
+        #endregion
+
+        #region ctor(Expression,Expression)
 
         public ClLinearEquation(
             ClLinearExpression expression1,
             ClLinearExpression expression2)
-            : this(expression1, expression2, ClStrength.Required, 1.0)
+            : this(expression1, expression2, ClStrength.Required, 1d)
         {
         }
 
@@ -137,7 +161,7 @@ namespace Cassowary.Constraints
             ClLinearExpression expression1,
             ClLinearExpression expression2,
             ClStrength strength)
-            : this(expression1, expression2, strength, 1.0)
+            : this(expression1, expression2, strength, 1d)
         {
         }
 
@@ -146,10 +170,12 @@ namespace Cassowary.Constraints
             ClLinearExpression expression2,
             ClStrength strength,
             double weight)
-            : base(Cloneable.Clone(expression1), strength, weight)
+            : this(expression1 - expression2, strength, weight)
         {
-            Expression.AddExpression(expression2, -1.0);
         }
+
+        #endregion
+
 
         #endregion
 

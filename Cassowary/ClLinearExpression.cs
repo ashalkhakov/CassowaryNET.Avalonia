@@ -57,7 +57,7 @@ namespace Cassowary
             this.constant = new ClDouble(constant);
             terms = new Dictionary<ClAbstractVariable, ClDouble>(1);
 
-            if (variable != null)
+            if (!Equals(variable, null))
                 terms.Add(variable, new ClDouble(multiplier));
         }
 
@@ -165,6 +165,32 @@ namespace Cassowary
         public void AddExpression(ClLinearExpression expression)
         {
             AddExpression(expression, 1d);
+        }
+
+        // TODO: to help with making immutable
+
+        public ClLinearExpression WithExpression(
+            ClLinearExpression expression,
+            double multiplier)
+        {
+            return this + (multiplier*expression);
+        }
+
+        public ClLinearExpression WithExpression(ClLinearExpression expression)
+        {
+            return WithExpression(expression, 1d);
+        }
+
+        public ClLinearExpression WithVariable(
+            ClAbstractVariable variable,
+            double multiplier)
+        {
+            return this + new ClLinearExpression(variable, multiplier);
+        }
+
+        public ClLinearExpression WithVariable(ClAbstractVariable variable)
+        {
+            return WithVariable(variable, 1d);
         }
 
         /// <summary>
@@ -463,13 +489,13 @@ namespace Cassowary
 
         public static ClLinearExpression operator +(
             ClLinearExpression a,
-            ClVariable b)
+            ClAbstractVariable b)
         {
             return a + new ClLinearExpression(b);
         }
 
         public static ClLinearExpression operator +(
-            ClVariable a,
+            ClAbstractVariable a,
             ClLinearExpression b)
         {
             return new ClLinearExpression(a) + b;
@@ -503,13 +529,13 @@ namespace Cassowary
 
         public static ClLinearExpression operator -(
             ClLinearExpression a,
-            ClVariable b)
+            ClAbstractVariable b)
         {
             return a - new ClLinearExpression(b);
         }
 
         public static ClLinearExpression operator -(
-            ClVariable a,
+            ClAbstractVariable a,
             ClLinearExpression b)
         {
             return new ClLinearExpression(a) - b;
@@ -565,13 +591,13 @@ namespace Cassowary
 
         public static ClLinearExpression operator *(
             ClLinearExpression a,
-            ClVariable b)
+            ClAbstractVariable b)
         {
             return a * new ClLinearExpression(b);
         }
 
         public static ClLinearExpression operator *(
-            ClVariable a,
+            ClAbstractVariable a,
             ClLinearExpression b)
         {
             return new ClLinearExpression(a) * b;
@@ -606,7 +632,7 @@ namespace Cassowary
         }
 
         public static ClLinearExpression operator /(
-            ClVariable a,
+            ClAbstractVariable a,
             ClLinearExpression b)
         {
             return new ClLinearExpression(a) / b;
@@ -650,27 +676,27 @@ namespace Cassowary
 
         public static ClLinearEquation operator ==(
             ClLinearExpression a,
-            ClVariable b)
+            ClAbstractVariable b)
         {
             return new ClLinearEquation(a, b);
         }
 
         public static ClLinearEquation operator !=(
             ClLinearExpression a,
-            ClVariable b)
+            ClAbstractVariable b)
         {
             throw new NotImplementedException();
         }
 
         public static ClLinearEquation operator ==(
-            ClVariable a,
+            ClAbstractVariable a,
             ClLinearExpression b)
         {
             return new ClLinearEquation(a, b);
         }
 
         public static ClLinearEquation operator !=(
-            ClVariable a,
+            ClAbstractVariable a,
             ClLinearExpression b)
         {
             throw new NotImplementedException();
@@ -726,27 +752,27 @@ namespace Cassowary
 
         public static ClLinearInequality operator <=(
             ClLinearExpression a,
-            ClVariable b)
+            ClAbstractVariable b)
         {
             return new ClLinearInequality(a, InequalityType.LessThanOrEqual, b);
         }
 
         public static ClLinearInequality operator >=(
             ClLinearExpression a,
-            ClVariable b)
+            ClAbstractVariable b)
         {
             return new ClLinearInequality(a, InequalityType.GreaterThanOrEqual, b);
         }
 
         public static ClLinearInequality operator <=(
-            ClVariable a,
+            ClAbstractVariable a,
             ClLinearExpression b)
         {
             return new ClLinearInequality(a, InequalityType.LessThanOrEqual, b);
         }
 
         public static ClLinearInequality operator >=(
-            ClVariable a,
+            ClAbstractVariable a,
             ClLinearExpression b)
         {
             return new ClLinearInequality(a, InequalityType.GreaterThanOrEqual, b);
