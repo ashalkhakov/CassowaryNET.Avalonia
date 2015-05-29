@@ -1,5 +1,32 @@
 ﻿<Window x:Class="AutoLayoutTest.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:layout="clr-namespace:AutoLayoutPanel;assembly=AutoLayoutPanel"
         Title="MainWindow" Height="350" Width="525">
+    <layout:LayoutPanel
+        x:Name="MainPanel">
+        <Button x:Name="Button1">
+
+        </Button>
+        
+        <Button x:Name="Button2">
+            <layout:LayoutPanel.Constraints>
+                <!-- 
+                TODO: Remove the extra level in the xaml... it's ugly
+                We get problems with nulls without it though...
+                -->
+                <layout:LayoutConstraints>
+                    <layout:LayoutConstraint
+                        Property="Left"
+                        Constant="10">
+                        <layout:LayoutLinearExpression 
+                            Source="{Binding ElementName=Button1}"
+                            Property="HCenter"/>
+                    </layout:LayoutConstraint>
+
+                </layout:LayoutConstraints>
+            </layout:LayoutPanel.Constraints>
+
+        </Button>
+    </layout:LayoutPanel>
 </Window>
