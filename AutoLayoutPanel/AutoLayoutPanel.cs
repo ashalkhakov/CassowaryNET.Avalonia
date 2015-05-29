@@ -87,7 +87,8 @@ namespace AutoLayoutPanel
                     ClStrength.Required));
 
             // X = Right - Width
-            solver.AddConstraintNoException(
+            //solver.AddConstraintNoException(
+            solver.AddConstraint(
                 new ClLinearEquation(
                     clX,
                     new ClLinearExpression(clRight) - clWidth,

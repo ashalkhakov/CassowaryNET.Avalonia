@@ -169,14 +169,44 @@ namespace Cassowary
             AddUpperBound(variable, upper);
         }
 
-        /// <summary>
-        /// Add a constraint to the solver.
-        /// <param name="constraint">
-        /// The constraint to be added.
-        /// </param>
-        /// </summary>
+        public void AddConstraint(ClEditConstraint constraint)
+        {
+            AddConstraintCore(constraint);
+        }
+
+        public void AddConstraint(ClStayConstraint constraint)
+        {
+            AddConstraintCore(constraint);
+        }
+
+        public void AddConstraint(ClLinearEquation constraint)
+        {
+            AddConstraintCore(constraint);
+        }
+
+        public void AddConstraint(ClLinearInequality constraint)
+        {
+            AddConstraintCore(constraint);
+        }
+
         public void AddConstraint(ClConstraint constraint)
-            /* throws ExClRequiredFailure, ExClInternalError */
+        /* throws ExClRequiredFailure, ExClInternalError */
+        {
+            // NOTE: really not sure whether I like this...
+
+            if (constraint is ClEditConstraint)
+                AddConstraint((ClEditConstraint)constraint);
+            else if (constraint is ClStayConstraint)
+                AddConstraint((ClStayConstraint)constraint);
+            else if (constraint is ClLinearEquation)
+                AddConstraint((ClLinearEquation)constraint);
+            else if (constraint is ClLinearInequality)
+                AddConstraint((ClLinearInequality)constraint);
+            else
+                throw new ArgumentException();
+        }
+
+        private void AddConstraintCore(ClConstraint constraint)
         {
             ClSlackVariable eplus;
             ClSlackVariable eminus;
@@ -211,25 +241,6 @@ namespace Cassowary
             }
 
             MaybeAutoSolve();
-        }
-
-        /// <summary>
-        /// Same as AddConstraint, throws no exceptions.
-        /// <returns>
-        /// False if the constraint resulted in an unsolvable system, otherwise true.
-        /// </returns>
-        /// </summary>
-        public bool AddConstraintNoException(ClConstraint cn)
-        {
-            try
-            {
-                AddConstraint(cn);
-                return true;
-            }
-            catch (CassowaryRequiredConstraintFailureException)
-            {
-                return false;
-            }
         }
 
         /// <summary>
