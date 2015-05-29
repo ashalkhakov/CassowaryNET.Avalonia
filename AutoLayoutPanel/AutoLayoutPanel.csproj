@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LayoutConstraint.cs" />
+    <Compile Include="LayoutConstraints.cs" />
     <Compile Include="LayoutLinearExpression.cs" />
     <Compile Include="LayoutPanel.cs">
       <SubType>Code</SubType>

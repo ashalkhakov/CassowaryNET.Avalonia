@@ -39,6 +39,11 @@ namespace AutoLayoutPanel
             get { return uiElement; }
         }
 
+        public IEnumerable<ClVariable> AllVariables
+        {
+            get { return variables.Values.Select(o => o.Variable); }
+        }
+
         public ClVariable Left
         {
             get { return variables[LayoutProperty.Left].Variable; }

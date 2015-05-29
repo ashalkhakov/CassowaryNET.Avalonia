@@ -5,28 +5,53 @@
         Title="MainWindow" Height="350" Width="525">
     <layout:LayoutPanel
         x:Name="MainPanel">
-        <Button x:Name="Button1">
 
+        <!-- 
+            TODO: Remove the extra level in the xaml... it's ugly
+            We get problems with nulls without it though...
+         -->
+        <!--
+            Source="{Binding Source={x:Reference Button1}}"
+            Source="{Binding ElementName=MainPanel}"
+        -->
+        
+        <Button x:Name="Button1">
+            Button1
+            <layout:LayoutPanel.Constraints>
+                <layout:LayoutConstraints>
+                    <layout:LayoutConstraint Property="Left" Constant="10">
+                        <layout:LayoutLinearExpression Property="Left"/>
+                    </layout:LayoutConstraint>
+                    <layout:LayoutConstraint Property="VCenter">
+                        <layout:LayoutLinearExpression Property="VCenter"/>
+                    </layout:LayoutConstraint>
+                </layout:LayoutConstraints>
+            </layout:LayoutPanel.Constraints>
         </Button>
         
-        <Button x:Name="Button2">
+        <!--<Button x:Name="Button2">
+            Button1
             <layout:LayoutPanel.Constraints>
-                <!-- 
-                TODO: Remove the extra level in the xaml... it's ugly
-                We get problems with nulls without it though...
-                -->
                 <layout:LayoutConstraints>
                     <layout:LayoutConstraint
                         Property="Left"
                         Constant="10">
                         <layout:LayoutLinearExpression 
-                            Source="{Binding ElementName=Button1}"
+                            ElementName="Button1"
                             Property="HCenter"/>
+                    </layout:LayoutConstraint>
+
+                    <layout:LayoutConstraint
+                        Property="Top"
+                        Constant="10">
+                        <layout:LayoutLinearExpression 
+                            ElementName="Button1"
+                            Property="Bottom"/>
                     </layout:LayoutConstraint>
 
                 </layout:LayoutConstraints>
             </layout:LayoutPanel.Constraints>
 
-        </Button>
+        </Button>-->
     </layout:LayoutPanel>
 </Window>
