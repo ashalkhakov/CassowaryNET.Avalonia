@@ -65,7 +65,7 @@ namespace Cassowary.Constraints
             ClLinearExpression expression,
             ClStrength strength,
             double weight)
-            : base(expression.WithVariable(variable, -1d), strength, weight)
+            : base(expression - variable, strength, weight)
         {
         }
 

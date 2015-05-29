@@ -20,14 +20,10 @@
 */
 
 using System;
-using Cassowary.Constraints;
 
 namespace Cassowary.Variables
 {
-#pragma warning disable 660,661
-    // We are heavily using operator overloading here
     public sealed class ClVariable : ClAbstractVariable
-#pragma warning restore 660,661
     {
         #region Fields
 

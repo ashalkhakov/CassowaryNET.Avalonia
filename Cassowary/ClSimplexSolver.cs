@@ -181,17 +181,16 @@ namespace Cassowary
             ClSlackVariable eplus;
             ClSlackVariable eminus;
             ClDouble prevEConstant;
-            var expr = NewExpression(
+            var expression = NewExpression(
                 constraint,
                 out eplus,
                 out eminus,
                 out prevEConstant);
 
-            var cAddedOkDirectly = TryAddingDirectly(expr);
-            if (!cAddedOkDirectly)
+            var addedDirectly = TryAddingDirectly(expression);
+            if (!addedDirectly)
             {
-                // could not add directly
-                AddWithArtificialVariable(expr);
+                AddWithArtificialVariable(expression);
             }
 
             needsSolving = true;
@@ -452,29 +451,41 @@ namespace Cassowary
             {
                 errorVariables.Remove(constraint);
 
-                var objectiveRowExpression = RowExpression(objective);
+                var objectiveRow = Rows[objective];
 
                 foreach (var variable in slackVariables)
                 {
-                    var coeff =
-                        -constraint.Weight*constraint.Strength.SymbolicWeight.AsDouble();
+                    var coeff = -constraint.Weight*
+                                constraint.Strength.SymbolicWeight.AsDouble();
 
-                    var rowExpression = RowExpression(variable);
-                    if (Equals(rowExpression, null))
+                    var variableRow = Rows.GetOrDefault(variable);
+
+                    ClLinearExpression newObjectiveRow;
+                    if (Equals(variableRow, null))
                     {
-                        objectiveRowExpression.AddVariable(
-                            variable,
-                            coeff,
-                            objective,
-                            this);
+                        newObjectiveRow = objectiveRow + (variable*coeff);
                     }
-                    else // the error variable was in the basis
+                    else
                     {
-                        objectiveRowExpression.AddExpression(
-                            rowExpression,
-                            coeff,
-                            objective,
-                            this);
+                        // the error variable was in the basis
+                        newObjectiveRow = objectiveRow + (variableRow*coeff);
+                    }
+
+                    // overwrite the objective row
+                    Rows[objective] = newObjectiveRow;
+
+                    var addedVariables = newObjectiveRow.Terms.Keys
+                        .Except(objectiveRow.Terms.Keys);
+                    var removedVariables = objectiveRow.Terms.Keys
+                        .Except(newObjectiveRow.Terms.Keys);
+
+                    foreach (var addedVariable in addedVariables)
+                    {
+                        NoteAddedVariable(addedVariable, objective);
+                    }
+                    foreach (var removedVariable in removedVariables)
+                    {
+                        NoteRemovedVariable(removedVariable, objective);
                     }
                 }
             }
@@ -829,19 +840,21 @@ namespace Cassowary
         private bool TryAddingDirectly(ClLinearExpression expression)
             /* throws ExClRequiredFailure */
         {
-            var subject = ChooseSubject(expression);
+            ClLinearExpression modifiedExpression;
+
+            var subject = ChooseSubject(expression, out modifiedExpression);
             if (Equals(subject, null))
             {
                 return false;
             }
 
-            expression.NewSubject(subject);
+            modifiedExpression = modifiedExpression.WithSubject(subject);
             if (ColumnsHasKey(subject))
             {
-                SubstituteOut(subject, expression);
+                SubstituteOut(subject, modifiedExpression);
             }
 
-            AddRow(subject, expression);
+            AddRow(subject, modifiedExpression);
 
             return true; // succesfully added directly
         }
@@ -862,7 +875,9 @@ namespace Cassowary
         /// (In this last case we have to add an artificial variable and use that
         /// variable as the subject -- this is done outside this method though.)
         /// </remarks>
-        private ClAbstractVariable ChooseSubject(ClLinearExpression expr)
+        private ClAbstractVariable ChooseSubject(
+            ClLinearExpression expression,
+            out ClLinearExpression modifiedExpression)
             /* ExClRequiredFailure */
         {
             ClAbstractVariable subject = null; // the current best subject, if any
@@ -870,7 +885,7 @@ namespace Cassowary
             bool foundUnrestricted = false;
             bool foundNewRestricted = false;
 
-            var terms = expr.Terms;
+            var terms = expression.Terms;
 
             foreach (var v in terms.Keys)
             {
@@ -881,7 +896,10 @@ namespace Cassowary
                     if (!v.IsRestricted)
                     {
                         if (!ColumnsHasKey(v))
+                        {
+                            modifiedExpression = expression;
                             return v;
+                        }
                     }
                 }
                 else
@@ -910,7 +928,10 @@ namespace Cassowary
             }
 
             if (!Equals(subject, null))
+            {
+                modifiedExpression = expression;
                 return subject;
+            }
 
             double coeff = 0.0;
 
@@ -919,7 +940,10 @@ namespace Cassowary
                 double c = terms[v].Value;
 
                 if (!v.IsDummy)
+                {
+                    modifiedExpression = expression;
                     return null; // nope, no luck
+                }
 
                 if (!ColumnsHasKey(v))
                 {
@@ -928,13 +952,19 @@ namespace Cassowary
                 }
             }
 
-            if (!CMath.Approx(expr.Constant, 0.0))
+            if (!CMath.Approx(expression.Constant, 0.0))
             {
                 throw new CassowaryRequiredConstraintFailureException();
             }
+
             if (coeff > 0.0)
             {
-                expr.MultiplyMe(-1);
+                modifiedExpression = -expression;
+                //expression.MultiplyMe(-1);
+            }
+            else
+            {
+                modifiedExpression = expression;
             }
 
             return subject;
@@ -959,24 +989,31 @@ namespace Cassowary
                 double c = cnTerms[v].Value;
                 ClLinearExpression e = RowExpression(v);
                 if (Equals(e, null))
-                    expr.AddVariable(v, c);
+                {
+                    expr = expr + (v*c);
+                }
                 else
-                    expr.AddExpression(e, c);
+                {
+                    expr = expr + (c*e);
+                }
             }
 
             if (cn.IsInequality)
             {
                 var slackVar = new ClSlackVariable("s");
-                expr.SetVariable(slackVar, -1);
+                expr = expr.WithVariableSetTo(slackVar, -1);
                 markerVariables.Add(cn, slackVar);
 
                 if (!cn.Strength.IsRequired)
                 {
                     var eminus = new ClSlackVariable("em");
-                    expr.SetVariable(eminus, 1.0);
-                    ClLinearExpression zRow = RowExpression(objective);
-                    ClSymbolicWeight sw = cn.Strength.SymbolicWeight*cn.Weight;
-                    zRow.SetVariable(eminus, sw.AsDouble());
+                    expr = expr.WithVariableSetTo(eminus, 1.0);
+                    var sw = cn.Strength.SymbolicWeight * cn.Weight;
+
+                    var zRow = Rows[objective];
+                    zRow = zRow.WithVariableSetTo(eminus, sw.AsDouble());
+                    Rows[objective] = zRow;
+
                     InsertErrorVar(cn, eminus);
                     NoteAddedVariable(eminus, objective);
                 }
@@ -987,7 +1024,7 @@ namespace Cassowary
                 if (cn.Strength.IsRequired)
                 {
                     var dummyVar = new ClDummyVariable("d");
-                    expr.SetVariable(dummyVar, 1.0);
+                    expr = expr.WithVariableSetTo(dummyVar, 1.0);
                     markerVariables.Add(cn, dummyVar);
                 }
                 else
@@ -995,17 +1032,20 @@ namespace Cassowary
                     var eplus = new ClSlackVariable("ep");
                     var eminus = new ClSlackVariable("em");
 
-                    expr.SetVariable(eplus, -1.0);
-                    expr.SetVariable(eminus, 1.0);
+                    expr = expr.WithVariableSetTo(eplus, -1.0);
+                    expr = expr.WithVariableSetTo(eminus, 1.0);
                     markerVariables.Add(cn, eplus);
-                    ClLinearExpression zRow = RowExpression(objective);
                     ClSymbolicWeight sw = cn.Strength.SymbolicWeight*cn.Weight;
                     double swCoeff = sw.AsDouble();
 
-                    zRow.SetVariable(eplus, swCoeff);
+                    var zRow = Rows[objective];
+                    zRow = zRow.WithVariableSetTo(eplus, swCoeff);
+                    zRow = zRow.WithVariableSetTo(eminus, swCoeff);
+                    Rows[objective] = zRow;
+
                     NoteAddedVariable(eplus, objective);
-                    zRow.SetVariable(eminus, swCoeff);
                     NoteAddedVariable(eminus, objective);
+
                     InsertErrorVar(cn, eminus);
                     InsertErrorVar(cn, eplus);
 
@@ -1121,45 +1161,47 @@ namespace Cassowary
         /// </remarks>
         private void DeltaEditConstant(
             double delta,
-            ClAbstractVariable plusErrorVar,
-            ClAbstractVariable minusErrorVar)
+            ClAbstractVariable plusErrorVariable,
+            ClAbstractVariable minusErrorVariable)
         {
-            ClLinearExpression exprPlus = RowExpression(plusErrorVar);
-            if (!Equals(exprPlus, null))
+            var plusErrorRow = Rows.GetOrDefault(plusErrorVariable);
+            if (!Equals(plusErrorRow, null))
             {
-                exprPlus.IncrementConstant(delta);
+                plusErrorRow = plusErrorRow.WithConstantIncrementedBy(delta);
+                Rows[plusErrorVariable] = plusErrorRow;
 
-                if (exprPlus.Constant < 0.0)
+                if (plusErrorRow.Constant < 0d)
                 {
-                    InfeasibleRows.Add(plusErrorVar);
+                    InfeasibleRows.Add(plusErrorVariable);
                 }
                 return;
             }
 
-            ClLinearExpression exprMinus = RowExpression(minusErrorVar);
-            if (!Equals(exprMinus, null))
+            var minusErrorRow = Rows.GetOrDefault(minusErrorVariable);
+            if (!Equals(minusErrorRow, null))
             {
-                exprMinus.IncrementConstant(-delta);
-                if (exprMinus.Constant < 0.0)
+                minusErrorRow = minusErrorRow.WithConstantIncrementedBy(-delta);
+                Rows[minusErrorVariable] = minusErrorRow;
+
+                if (minusErrorRow.Constant < 0d)
                 {
-                    InfeasibleRows.Add(minusErrorVar);
+                    InfeasibleRows.Add(minusErrorVariable);
                 }
                 return;
             }
 
-            var columnVars = Columns[minusErrorVar];
-
-            foreach (ClAbstractVariable basicVar in columnVars)
+            var minusErrorColumn = Columns[minusErrorVariable];
+            foreach (var variable in minusErrorColumn)
             {
-                ClLinearExpression expr = RowExpression(basicVar);
-                Debug.Assert(!Equals(expr, null), "expr != null");
+                var variableRow = Rows[variable];
 
-                double c = expr.CoefficientFor(minusErrorVar);
-                expr.IncrementConstant(c*delta);
+                var coefficient = variableRow.CoefficientFor(minusErrorVariable);
+                variableRow = variableRow.WithConstantIncrementedBy(coefficient*delta);
+                Rows[variable] = variableRow;
 
-                if (basicVar.IsRestricted && expr.Constant < 0.0)
+                if (variable.IsRestricted && variableRow.Constant < 0d)
                 {
-                    InfeasibleRows.Add(basicVar);
+                    InfeasibleRows.Add(variable);
                 }
             }
         }
@@ -1240,7 +1282,8 @@ namespace Cassowary
 
             var expression = RemoveRow(exitVariable);
 
-            expression.ChangeSubject(exitVariable, entryVariable);
+            expression = expression.WithSubjectChangedTo(exitVariable, entryVariable);
+
             SubstituteOut(entryVariable, expression);
             AddRow(entryVariable, expression);
         }
@@ -1267,18 +1310,26 @@ namespace Cassowary
         {
             for (int i = 0; i < stayPlusErrorVars.Count; i++)
             {
-                var stayPlusErrorVar = stayPlusErrorVars[i];
-                var expression = RowExpression(stayPlusErrorVar);
-
-                if (Equals(expression, null))
                 {
-                    var stayMinusErrorVar = stayMinusErrorVars[i];
-                    expression = RowExpression(stayMinusErrorVar);
+                    var stayPlusErrorVar = stayPlusErrorVars[i];
+                    var expression = Rows.GetOrDefault(stayPlusErrorVar);
+                    if (!Equals(expression, null))
+                    {
+                        expression = expression.WithConstantSetTo(0d);
+                        Rows[stayPlusErrorVar] = expression;
+                        continue;
+                    }
                 }
 
-                if (!Equals(expression, null))
                 {
-                    expression.Constant = 0d;
+                    var stayMinusErrorVar = stayMinusErrorVars[i];
+                    var expression = Rows.GetOrDefault(stayMinusErrorVar);
+                    if (!Equals(expression, null))
+                    {
+                        expression = expression.WithConstantSetTo(0d);
+                        Rows[stayMinusErrorVar] = expression;
+                        continue;
+                    }
                 }
             }
         }

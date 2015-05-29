@@ -24,7 +24,7 @@ using System.Globalization;
 
 namespace Cassowary
 {
-    // TODO: inline this class to System.Double
+    // TODO: inline this class to System.Double?
 
     public class ClDouble
     {
@@ -63,12 +63,11 @@ namespace Cassowary
         {
             return value.ToString(CultureInfo.InvariantCulture);
         }
-
-
-        public static implicit operator ClDouble(double value)
-        {
-            return new ClDouble(value);
-        }
+        
+        //public static implicit operator ClDouble(double value)
+        //{
+        //    return new ClDouble(value);
+        //}
 
         public static ClDouble operator +(ClDouble a, double b)
         {

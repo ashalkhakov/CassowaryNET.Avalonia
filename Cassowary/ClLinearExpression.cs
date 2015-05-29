@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Cassowary.Constraints;
@@ -45,8 +46,9 @@ namespace Cassowary
         #region Constructors
 
         public ClLinearExpression(double constant)
-            : this(null, 0d, constant)
         {
+            this.constant = new ClDouble(constant);
+            this.terms = new Dictionary<ClAbstractVariable, ClDouble>();
         }
 
         public ClLinearExpression(
@@ -54,11 +56,14 @@ namespace Cassowary
             double multiplier = 1d,
             double constant = 0d)
         {
-            this.constant = new ClDouble(constant);
-            terms = new Dictionary<ClAbstractVariable, ClDouble>(1);
+            if (Equals(variable, null))
+                throw new ArgumentNullException();
 
-            if (!Equals(variable, null))
-                terms.Add(variable, new ClDouble(multiplier));
+            this.constant = new ClDouble(constant);
+            this.terms = new Dictionary<ClAbstractVariable, ClDouble>
+            {
+                {variable, new ClDouble(multiplier)},
+            };
         }
 
         /// <summary>
@@ -66,17 +71,11 @@ namespace Cassowary
         /// </summary>
         private ClLinearExpression(
             ClDouble constant,
-            Dictionary<ClAbstractVariable, ClDouble> terms)
+            IDictionary<ClAbstractVariable, ClDouble> terms)
         {
             this.constant = constant;
-            this.terms = new Dictionary<ClAbstractVariable, ClDouble>();
-
-            // need to unalias the ClDouble-s that we clone (do a deep clone)
-            foreach (var clv in terms.Keys)
-            {
-                var clDouble = terms[clv];
-                this.terms.Add(clv, clDouble);
-            }
+            this.terms = new Dictionary<ClAbstractVariable, ClDouble>(
+                terms);
         }
 
         #endregion
@@ -86,7 +85,6 @@ namespace Cassowary
         public double Constant
         {
             get { return constant.Value; }
-            set { constant = new ClDouble(value); }
         }
 
         public Dictionary<ClAbstractVariable, ClDouble> Terms
@@ -108,168 +106,41 @@ namespace Cassowary
             return new ClLinearExpression(constant, terms);
         }
 
-        public void MultiplyMe(double x)
-        {
-            constant *= x;
-
-            var newTerms = terms
-                .Select(
-                    kvp => new
-                    {
-                        kvp.Key,
-                        Value = kvp.Value*x,
-                    })
-                .ToList();
-
-            terms.Clear();
-            foreach (var item in newTerms)
-            {
-                terms.Add(item.Key, item.Value);
-            }
-        }
-
-        /// <summary>
-        /// Add n*expr to this expression from another expression expr.
-        /// Notify the solver if a variable is added or deleted from this
-        /// expression.
-        /// </summary>
-        public void AddExpression(
-            ClLinearExpression expression,
-            double multiplier,
-            ClAbstractVariable subject,
-            ClTableau solver)
-        {
-            IncrementConstant(multiplier*expression.Constant);
-
-            foreach (var clv in expression.Terms.Keys)
-            {
-                double coeff = expression.Terms[clv].Value;
-                AddVariable(clv, coeff*multiplier, subject, solver);
-            }
-        }
-
-        /// <summary>
-        /// Add n*expr to this expression from another expression expr.
-        /// </summary>
-        public void AddExpression(ClLinearExpression expression, double multiplier)
-        {
-            IncrementConstant(multiplier*expression.Constant);
-
-            foreach (var clv in expression.Terms.Keys)
-            {
-                double coeff = expression.Terms[clv].Value;
-                AddVariable(clv, coeff*multiplier);
-            }
-        }
-
-        public void AddExpression(ClLinearExpression expression)
-        {
-            AddExpression(expression, 1d);
-        }
-
-        // TODO: to help with making immutable
-
-        public ClLinearExpression WithExpression(
-            ClLinearExpression expression,
-            double multiplier)
-        {
-            return this + (multiplier*expression);
-        }
-
-        public ClLinearExpression WithExpression(ClLinearExpression expression)
-        {
-            return WithExpression(expression, 1d);
-        }
-
-        public ClLinearExpression WithVariable(
+        public ClLinearExpression WithVariableSetTo(
             ClAbstractVariable variable,
-            double multiplier)
+            double newCoefficient)
         {
-            return this + new ClLinearExpression(variable, multiplier);
+            var coefficient = new ClDouble(newCoefficient);
+
+            var newConstant = constant;
+            var newTerms = new Dictionary<ClAbstractVariable, ClDouble>(terms);
+
+            //if (!coefficient.IsApproxZero)
+                newTerms[variable] = coefficient;
+
+            return new ClLinearExpression(newConstant, newTerms);
         }
 
-        public ClLinearExpression WithVariable(ClAbstractVariable variable)
+        public ClLinearExpression WithConstantIncrementedBy(
+            double increment)
         {
-            return WithVariable(variable, 1d);
+            return WithConstantSetTo(constant + increment);
         }
 
-        /// <summary>
-        /// Add a term c*v to this expression.  If the expression already
-        /// contains a term involving v, add c to the existing coefficient.
-        /// If the new coefficient is approximately 0, delete v.
-        /// </summary>
-        public void AddVariable(ClAbstractVariable variable, double multiplier)
+        public ClLinearExpression WithConstantSetTo(
+            double newConstant)
         {
-            var coefficient = terms.GetOrAdd(variable, _ => new ClDouble(0d));
-            var newCoefficient = coefficient + multiplier;
-
-            if (newCoefficient.IsApproxZero)
-            {
-                // if now coeff is zero
-                terms.Remove(variable);
-            }
-            else
-            {
-                terms[variable] = newCoefficient;
-            }
+            return WithConstantSetTo(new ClDouble(newConstant));
         }
 
-        public void AddVariable(ClAbstractVariable variable)
+        public ClLinearExpression WithConstantSetTo(
+            ClDouble newConstant)
         {
-            AddVariable(variable, 1d);
+            var newTerms = new Dictionary<ClAbstractVariable, ClDouble>(terms);
+
+            return new ClLinearExpression(newConstant, newTerms);
         }
-
-        public void SetVariable(ClAbstractVariable variable, double c)
-        {
-            // Assert(c != 0.0);
-            var coefficient = terms.GetOrDefault(variable);
-
-            if (coefficient != null)
-            {
-                terms[variable] = new ClDouble(c);
-            }
-            else
-            {
-                terms.Add(variable, new ClDouble(c));
-            }
-        }
-
-        /// <summary>
-        /// Add a term c*v to this expression.  If the expression already
-        /// contains a term involving v, add c to the existing coefficient.
-        /// If the new coefficient is approximately 0, delete v.  Notify the
-        /// solver if v appears or disappears from this expression.
-        /// </summary>
-        public void AddVariable(ClAbstractVariable variable, double multiplier, ClAbstractVariable subject, ClTableau solver)
-        {
-            // body largely duplicated above
-
-            var coeff = terms.GetOrDefault(variable);
-
-            if (coeff != null)
-            {
-                var newCoefficient = coeff + multiplier;
-
-                if (CMath.Approx(newCoefficient.Value, 0.0))
-                {
-                    solver.NoteRemovedVariable(variable, subject);
-                    terms.Remove(variable);
-                }
-                else
-                {
-                    terms[variable] = newCoefficient;
-                }
-            }
-            else
-            {
-                if (!CMath.Approx(multiplier, 0.0))
-                {
-                    terms.Add(variable, new ClDouble(multiplier));
-                    solver.NoteAddedVariable(variable, subject);
-                }
-            }
-        }
-
+        
         /// <summary>
         /// Return a pivotable variable in this expression.  (It is an error
         /// if this expression is constant -- signal ExCLInternalError in
@@ -280,10 +151,34 @@ namespace Cassowary
         {
             if (IsConstant)
             {
-                throw new CassowaryInternalException("anyPivotableVariable called on a constant");
+                throw new CassowaryInternalException(
+                    "anyPivotableVariable called on a constant");
             }
 
             return terms.Keys.FirstOrDefault(clv => clv.IsPivotable);
+        }
+
+        /// <summary>
+        /// Returns a new linear expression with the given variable substituted
+        /// by the given expression (which should be because the expression and
+        /// variable are equal to each other).
+        /// </summary>
+        public ClLinearExpression WithVariableSubstitutedBy(
+            ClAbstractVariable variable,
+            ClLinearExpression expression)
+        {
+            // need variable to occur with a non-zero coefficient in this expression
+            var coefficient = terms[variable];
+            if (coefficient.IsApproxZero)
+                throw new CassowaryInternalException("Coefficient was zero");
+
+            var newConstant = constant;
+            var newTerms = new Dictionary<ClAbstractVariable, ClDouble>(terms);
+
+            newTerms.Remove(variable);
+            
+            var expressionWithoutVariable = new ClLinearExpression(newConstant, newTerms);
+            return expressionWithoutVariable + coefficient.Value*expression;
         }
 
         /// <summary>
@@ -300,9 +195,11 @@ namespace Cassowary
             ClAbstractVariable subject,
             ClTableau solver)
         {
+            // NOTE: doesn't inform of removal of the substituted variable...
+
             double multiplier = terms[variable].Value;
             terms.Remove(variable);
-            IncrementConstant(multiplier*expression.Constant);
+            this.constant += multiplier * expression.Constant;
 
             foreach (var clv in expression.Terms.Keys)
             {
@@ -326,7 +223,7 @@ namespace Cassowary
                 else
                 {
                     // did not have that variable already
-                    terms.Add(clv, multiplier*coeff);
+                    terms.Add(clv, multiplier * coeff);
                     solver.NoteAddedVariable(clv, subject);
                 }
             }
@@ -334,7 +231,7 @@ namespace Cassowary
 
         /// <summary>
         /// This linear expression currently represents the equation
-        /// oldSubject=self.  Destructively modify it so that it represents
+        /// oldSubject=self.  NON-Destructively modify it so that it represents
         /// the equation newSubject=self.
         ///
         /// Precondition: newSubject currently has a nonzero coefficient in
@@ -349,24 +246,20 @@ namespace Cassowary
         ///        newSubject = -c/a + oldSubject/a - (a1/a)*v1 - ... - (an/a)*vn.
         ///   Note that the term involving newSubject has been dropped.
         /// </summary>
-        public void ChangeSubject(
+        public ClLinearExpression WithSubjectChangedTo(
             ClAbstractVariable oldSubject,
             ClAbstractVariable newSubject)
         {
-            var cld = terms.GetOrDefault(oldSubject);
+            double reciprocal;
+            var expression = this.WithSubject(newSubject, out reciprocal);
 
-            if (cld != null)
-            {
-                terms[oldSubject] = new ClDouble(NewSubject(newSubject));
-            }
-            else
-            {
-                terms.Add(oldSubject, new ClDouble(NewSubject(newSubject)));
-            }
+            return expression.WithVariableSetTo(oldSubject, reciprocal);
         }
 
+
         /// <summary>
-        /// This linear expression currently represents the equation self=0.  Destructively modify it so 
+        /// This linear expression currently represents the equation self=0.  
+        /// NON-Destructively modify it so 
         /// that subject=self represents an equivalent equation.  
         ///
         /// Precondition: subject must be one of the variables in this expression.
@@ -383,15 +276,27 @@ namespace Cassowary
         /// Note that the term involving subject has been dropped.
         /// Returns the reciprocal, so changeSubject can use it, too
         /// </summary>
-        public double NewSubject(ClAbstractVariable subject)
+        public ClLinearExpression WithSubject(ClAbstractVariable subject)
         {
-            var coeff = terms[subject];
-            terms.Remove(subject);
+            double reciprocal;
+            return WithSubject(subject, out reciprocal);
+        }
+        public ClLinearExpression WithSubject(
+            ClAbstractVariable subject,
+            out double reciprocal)
+        {
+            var newConstant = constant;
+            var newTerms = new Dictionary<ClAbstractVariable, ClDouble>(terms);
 
-            double reciprocal = 1.0/coeff.Value;
-            MultiplyMe(-reciprocal);
+            newTerms.Remove(subject);
 
-            return reciprocal;
+            var coefficient = terms[subject];
+            reciprocal = 1d / coefficient.Value;
+
+            var expressionWithoutSubject = new ClLinearExpression(
+                newConstant,
+                newTerms);
+            return expressionWithoutSubject*-reciprocal;
         }
 
         /// <summary>
@@ -407,11 +312,6 @@ namespace Cassowary
                 return coeff.Value;
             else
                 return 0.0;
-        }
-
-        public void IncrementConstant(double c)
-        {
-            constant += c;
         }
 
         public override string ToString()
@@ -567,6 +467,7 @@ namespace Cassowary
                     Key = kvp.Key,
                     Value = kvp.Value*b,
                 })
+                .Where(o => !o.Value.IsApproxZero)
                 .ToDictionary(o => o.Key, o => o.Value);
 
             return new ClLinearExpression(

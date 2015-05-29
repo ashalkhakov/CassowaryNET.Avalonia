@@ -773,18 +773,18 @@ namespace Cassowary.Tests
             Assert.That(topRight_height.Value, IsX.Approx(381d));
             Assert.That(topRight_width.Value, IsX.Approx(400d));
 
-            Assert.That(bottomRight_top.Value, IsX.Approx(381d));
-            Assert.That(bottomRight_bottom.Value, IsX.Approx(404d));
+            Assert.That(bottomRight_top.Value, IsX.Approx(415d)); //381d
+            Assert.That(bottomRight_bottom.Value, IsX.Approx(438d)); //404d
             Assert.That(bottomRight_left.Value, IsX.Approx(175d)); //0d
             Assert.That(bottomRight_right.Value, IsX.Approx(400d)); //225d
             Assert.That(bottomRight_height.Value, IsX.Approx(23d));
             Assert.That(bottomRight_width.Value, IsX.Approx(225d));
 
             Assert.That(right_top.Value, IsX.Approx(0d));
-            Assert.That(right_bottom.Value, IsX.Approx(404d));
+            Assert.That(right_bottom.Value, IsX.Approx(438d)); //404d
             Assert.That(right_left.Value, IsX.Approx(100d));
             Assert.That(right_right.Value, IsX.Approx(500d));
-            Assert.That(right_height.Value, IsX.Approx(404d));
+            Assert.That(right_height.Value, IsX.Approx(438d)); //404d
             Assert.That(right_width.Value, IsX.Approx(400d));
 
             Assert.That(left_top.Value, IsX.Approx(0d));

@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Cassowary.Utils;
 using Cassowary.Variables;
 using JetBrains.Annotations;
@@ -274,9 +275,34 @@ namespace Cassowary
             foreach (var variable in oldVarColumnSet)
             {
                 var row = rows[variable];
-                row.SubstituteOut(oldVariable, expression, variable, this);
 
-                if (variable.IsRestricted && row.Constant < 0.0)
+                row.SubstituteOut(oldVariable, expression, variable, this);
+                var newRow = row;
+
+                // NOTE: we have later problems with KeyNotFound if we do this...
+                // I believe it is because the same expresion is being referred to
+                // from mulitple places.
+
+                //var newRow = row.WithVariableSubstitutedBy(oldVariable, expression);
+                //// don't include the substituted variable in the removals here
+                //var addedVariables = newRow.Terms.Keys
+                //    .Except(row.Terms.Keys)
+                //    .ToList();
+                //var removedVariables = row.Terms.Keys
+                //    .Except(newRow.Terms.Keys)
+                //    .Where(v => !Equals(v, oldVariable))
+                //    .ToList();
+                //foreach (var addedVariable in addedVariables)
+                //{
+                //    NoteAddedVariable(addedVariable, variable);
+                //}
+                //foreach (var removedVariable in removedVariables)
+                //{
+                //    NoteRemovedVariable(removedVariable, variable);
+                //}
+                //rows[variable] = newRow;
+
+                if (variable.IsRestricted && newRow.Constant < 0d)
                 {
                     infeasibleRows.Add(variable);
                 }
@@ -304,7 +330,7 @@ namespace Cassowary
         [Pure]
         protected ClLinearExpression RowExpression(ClAbstractVariable v)
         {
-            return rows.GetOrDefault(v);
+            return Rows.GetOrDefault(v);
         }
 
         /// <summary>
