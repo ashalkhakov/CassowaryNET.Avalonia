@@ -19,7 +19,9 @@ namespace AutoLayoutPanel
         {
             this.uiElement = uiElement;
             this.property = property;
-            variable = new ClVariable();
+
+            var elementName = ((FrameworkElement) uiElement).Name ?? "???";
+            variable = new ClVariable(elementName + property);
         }
 
         #endregion

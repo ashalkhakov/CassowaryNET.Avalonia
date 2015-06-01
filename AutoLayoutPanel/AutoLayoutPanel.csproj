@@ -51,12 +51,14 @@
   <ItemGroup>
     <Compile Include="LayoutConstraint.cs" />
     <Compile Include="LayoutConstraints.cs" />
+    <Compile Include="LayoutConstraintStrength.cs" />
     <Compile Include="LayoutLinearExpression.cs" />
     <Compile Include="LayoutPanel.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DictionaryEx.cs" />
     <Compile Include="LayoutProperty.cs" />
+    <Compile Include="LayoutRelationship.cs" />
     <Compile Include="LayoutVariable.cs" />
     <Compile Include="LayoutVariableSet.cs" />
   </ItemGroup>

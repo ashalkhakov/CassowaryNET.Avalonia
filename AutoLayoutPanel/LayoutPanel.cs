@@ -38,6 +38,7 @@ namespace AutoLayoutPanel
         private readonly ClSimplexSolver solver;
         private readonly Dictionary<ClVariable, ClLinearEquation> variableConstraints;
         private readonly Dictionary<UIElement, LayoutVariableSet> elementVariables;
+        private readonly List<UIElement> processedChildren;
 
         #endregion
 
@@ -46,12 +47,11 @@ namespace AutoLayoutPanel
         public LayoutPanel()
         {
             solver = new ClSimplexSolver();
+            solver.AutoSolve = false;
             variableConstraints = new Dictionary<ClVariable, ClLinearEquation>();
 
             elementVariables = new Dictionary<UIElement, LayoutVariableSet>();
-
-            // Register ourselves.
-            //FindClControlByUIElement(this);
+            processedChildren = new List<UIElement>();
         }
 
         #endregion
@@ -80,50 +80,100 @@ namespace AutoLayoutPanel
                 InitialiseElementVariables(uiElement);
             }
 
-            // force our (X,Y) to be (0,0)
-            var thisX = FindClVariable(this, LayoutProperty.Left);
-            var thisY = FindClVariable(this, LayoutProperty.Top);
-
-            solver.AddConstraint((thisX == 0d).WithStrength(ClStrength.Required));
-            solver.AddConstraint((thisY == 0d).WithStrength(ClStrength.Required));
+            // force our (Left,Top) to be (0,0)
+            var thisLeft = FindClVariable(this, LayoutProperty.Left);
+            var thisTop = FindClVariable(this, LayoutProperty.Top);
+            solver.AddConstraint((thisLeft == 0d).WithStrength(ClStrength.Required));
+            solver.AddConstraint((thisTop == 0d).WithStrength(ClStrength.Required));
 
             // find xaml constraints
             foreach (var uiElement in ChildElements)
             {
-                var elementConstraints = GetConstraints(uiElement);
-                if (elementConstraints == null)
-                    continue;
-
-                foreach (var layoutConstraint in elementConstraints.Constraints)
-                {
-                    var variable = elementVariables[uiElement]
-                        .GetVariable(layoutConstraint.Property);
-
-                    var expression = layoutConstraint.Expressions
-                        .Select(
-                            lle => new
-                            {
-                                //Variable = elementVariables[lle.Source]
-                                //    .GetVariable(lle.Property),
-                                Variable = elementVariables[
-                                    (lle.ElementName == null)
-                                        ? this
-                                        : ChildElements.Single(
-                                            ce =>
-                                                ((FrameworkElement) ce).Name ==
-                                                lle.ElementName)]
-                                    .GetVariable(lle.Property),
-                                Multiplier = lle.Multiplier,
-                            })
-                        .Aggregate(
-                            new ClLinearExpression(layoutConstraint.Constant),
-                            (agg, o) => agg + o.Variable*o.Multiplier
-                        );
-
-                    var constraint = variable == expression;
-                    solver.AddConstraint(constraint);
-                }
+                InitialiseElementConstraints(uiElement);
             }
+        }
+
+        private void InitialiseElementConstraints(UIElement uiElement)
+        {
+            processedChildren.Add(uiElement);
+
+            var elementConstraints = GetConstraints(uiElement);
+            if (elementConstraints == null)
+                return;
+
+            foreach (var layoutConstraint in elementConstraints.Constraints)
+            {
+                var variable = elementVariables[uiElement]
+                    .GetVariable(layoutConstraint.Property);
+
+                var expression = layoutConstraint.Expressions
+                    .Select(
+                        lle => new
+                        {
+                            Variable = GetElementVariable(lle)
+                                .GetVariable(lle.Property),
+                            Multiplier = lle.Multiplier,
+                        })
+                    .Aggregate(
+                        new ClLinearExpression(layoutConstraint.Constant),
+                        (agg, o) => agg + o.Variable*o.Multiplier
+                    );
+
+                var strength = GetStrength(layoutConstraint.Strength);
+
+                var constraint = GetClLinearEquation(
+                    variable,
+                    expression,
+                    strength,
+                    layoutConstraint.Relationship);
+
+                solver.AddConstraint(constraint);
+            }
+        }
+
+        private static ClLinearConstraint GetClLinearEquation(
+            ClVariable variable,
+            ClLinearExpression expression,
+            ClStrength strength,
+            LayoutRelationship relationship)
+        {
+            switch (relationship)
+            {
+                case LayoutRelationship.EqualTo:
+                    return (variable == expression).WithStrength(strength);
+                case LayoutRelationship.LessThanOrEqualTo:
+                    return (variable <= expression).WithStrength(strength);
+                case LayoutRelationship.GreaterThanOrEqualTo:
+                    return (variable >= expression).WithStrength(strength);
+                default:
+                    throw new ArgumentOutOfRangeException("relationship");
+            }
+        }
+
+        private ClStrength GetStrength(
+            LayoutConstraintStrength layoutConstraintStrength)
+        {
+            switch (layoutConstraintStrength)
+            {
+                case LayoutConstraintStrength.Weak:
+                    return ClStrength.Weak;
+                case LayoutConstraintStrength.Medium:
+                    return ClStrength.Medium;
+                case LayoutConstraintStrength.Strong:
+                    return ClStrength.Strong;
+                case LayoutConstraintStrength.Required:
+                    return ClStrength.Required;
+                default:
+                    throw new ArgumentOutOfRangeException("layoutConstraintStrength");
+            }
+        }
+
+        private LayoutVariableSet GetElementVariable(
+            LayoutLinearExpression layoutLinearExpression)
+        {
+            //var uiElement = layoutLinearExpression.Source;
+            var uiElement = (UIElement) FindName(layoutLinearExpression.ElementName);
+            return elementVariables[uiElement];
         }
 
         private void InitialiseElementVariables(UIElement uiElement)
@@ -133,102 +183,48 @@ namespace AutoLayoutPanel
                 k => new LayoutVariableSet(k));
 
             solver.AddConstraint(
-                (variables.Width >= 0d).WithStrength(ClStrength.Required));
-            solver.AddConstraint(
-                (variables.Height >= 0d).WithStrength(ClStrength.Required));
-
-            // X = Center - (Width/2)
-            // X = Right - Width
-            solver.AddConstraint(
-                (variables.HCenter == variables.Left + 0.5d*variables.Width)
+                (variables.Width >= 0d)
                     .WithStrength(ClStrength.Required));
             solver.AddConstraint(
-                (variables.Left == variables.Right - variables.Width).WithStrength(
-                    ClStrength.Required));
+                (variables.Height >= 0d)
+                    .WithStrength(ClStrength.Required));
 
-            // Y = Middle - (Height/2)
-            // Y = Bottom - Height
             solver.AddConstraint(
-                (variables.VCenter == variables.Top + 0.5d*variables.Height)
+                (variables.Top >= 0d)
                     .WithStrength(ClStrength.Required));
             solver.AddConstraint(
-                (variables.Top == variables.Bottom - variables.Height).WithStrength(
-                    ClStrength.Required));
+                (variables.Left >= 0d)
+                    .WithStrength(ClStrength.Required));
+
+            // HCenter == Left + 0.5*Width
+            // Right == Left + Width
+            solver.AddConstraint(
+                (variables.HCenter == variables.Left + 0.5d * variables.Width)
+                    .WithStrength(ClStrength.Required));
+            solver.AddConstraint(
+                (variables.Right == variables.Left + variables.Width)
+                    .WithStrength(ClStrength.Required));
+
+            // VCenter == Top + 0.5*Height
+            // Bottom = Top + Height
+            solver.AddConstraint(
+                (variables.VCenter == variables.Top + 0.5d * variables.Height)
+                    .WithStrength(ClStrength.Required));
+            solver.AddConstraint(
+                (variables.Bottom == variables.Top + variables.Height)
+                    .WithStrength(ClStrength.Required));
         }
-        
+
         private ClVariable FindClVariable(
             UIElement uiElement,
             LayoutProperty property)
         {
+            if (!elementVariables.ContainsKey(uiElement))
+                return new ClVariable();
+
             return elementVariables[uiElement].GetVariable(property);
         }
-
-        //public void AddLayoutConstraint(
-        //    UIElement controlFirst,
-        //    LayoutProperty propertyFirst,
-        //    string relatedBy,
-        //    UIElement controlSecond,
-        //    LayoutProperty propertySecond,
-        //    double multiplier,
-        //    double constant)
-        //{
-        //    controlFirst = FindClControlByUIElement(controlFirst);
-        //    var propertyFirstVariable = FindClVariable(
-        //        controlFirst,
-        //        propertyFirst);
-
-        //    var equality = relatedBy.Equals("<")
-        //        ? InequalityType.LessThanOrEqual
-        //        : relatedBy.Equals(">")
-        //            ? InequalityType.GreaterThanOrEqual
-        //            : 0;
-
-        //    ClLinearConstraint constraint;
-        //    if (controlSecond == null)
-        //    {
-        //        if (equality == 0)
-        //            constraint = new ClLinearEquation(
-        //                propertyFirstVariable,
-        //                constant,
-        //                ClStrength.Required);
-        //        else
-        //            constraint =
-        //                new ClLinearInequality(
-        //                    propertyFirstVariable,
-        //                    equality,
-        //                    constant,
-        //                    ClStrength.Required);
-        //    }
-        //    else
-        //    {
-        //        controlSecond = FindClControlByUIElement(controlSecond);
-        //        var propertySecondVariable =
-        //            FindClVariable(controlSecond, propertySecond);
-
-        //        if (equality == 0)
-        //        {
-        //            // y = m*x + c
-        //            constraint = new ClLinearEquation(
-        //                propertyFirstVariable,
-        //                new ClLinearExpression(propertySecondVariable)*multiplier +
-        //                new ClLinearExpression(constant),
-        //                ClStrength.Required);
-        //        }
-        //        else
-        //        {
-        //            // y < m*x + c ||  y > m*x + c
-        //            constraint = new ClLinearInequality(
-        //                propertyFirstVariable,
-        //                equality,
-        //                new ClLinearExpression(propertySecondVariable)*multiplier +
-        //                new ClLinearExpression(constant),
-        //                ClStrength.Required);
-        //        }
-        //    }
-
-        //    solver.AddConstraint(constraint);
-        //}
-
+        
         private void SetValue(
             ClVariable variable,
             double value,
@@ -256,11 +252,24 @@ namespace AutoLayoutPanel
                 if (!child.IsMeasureValid)
                     child.Measure(availableSize);
             }
+
             return availableSize;
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            var addedChildren = ChildElements.Except(processedChildren).ToList();
+            var removedChildren = processedChildren.Except(ChildElements);
+
+            foreach (var child in addedChildren)
+            {
+                InitialiseElementVariables(child);
+            }
+            foreach (var child in addedChildren)
+            {
+                InitialiseElementConstraints(child);
+            }
+
             SetValue(
                 FindClVariable(this, LayoutProperty.Width),
                 finalSize.Width,
@@ -297,6 +306,5 @@ namespace AutoLayoutPanel
         }
 
         #endregion
-
     }
 }
