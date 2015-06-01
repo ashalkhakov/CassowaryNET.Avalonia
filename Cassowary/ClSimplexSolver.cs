@@ -1038,64 +1038,74 @@ namespace Cassowary
         /// <remarks>
         /// The tableau should already be feasible.
         /// </remarks>
-        private void Optimize(ClObjectiveVariable zVar)
+        private void Optimize(ClObjectiveVariable zVariable)
             /* throws ExClInternalError */
         {
-            ClLinearExpression zRow = RowExpression(zVar);
+            var zRow = RowExpression(zVariable);
             Debug.Assert(!Equals(zRow, null), "zRow != null");
 
-            ClAbstractVariable entryVar = null;
-            ClAbstractVariable exitVar = null;
+            // NOTE: should this be inside the loop?
+            ClAbstractVariable entryVariable = null;
 
             while (true)
             {
-                double objectiveCoeff = 0;
+                var objectiveCoeff = 0d;
                 var terms = zRow.Terms;
-                foreach (ClAbstractVariable v in terms.Keys)
+                foreach (var v in terms.Keys)
                 {
                     double c = terms[v].Value;
                     if (v.IsPivotable && c < objectiveCoeff)
                     {
                         objectiveCoeff = c;
-                        entryVar = v;
+                        entryVariable = v;
                     }
                 }
 
-                if (objectiveCoeff >= -Epsilon || Equals(entryVar, null))
+                if (objectiveCoeff >= -Epsilon || Equals(entryVariable, null))
                     return;
 
-                double minRatio = Double.MaxValue;
-                var columnVars = Columns[entryVar];
-                double r = 0.0;
+                var exitVariable = GetExitVariable(entryVariable);
 
-                foreach (ClAbstractVariable v in columnVars)
-                {
-                    if (v.IsPivotable)
-                    {
-                        ClLinearExpression expr = RowExpression(v);
-                        double coeff = expr.CoefficientFor(entryVar);
+                Debug.Assert(!Equals(exitVariable, null));
 
-                        if (coeff < 0.0)
-                        {
-                            r = - expr.Constant/coeff;
-                            if (r < minRatio)
-                            {
-                                // New minRatio... of r
-                                minRatio = r;
-                                exitVar = v;
-                            }
-                        }
-                    }
-                }
-
-                if (minRatio == double.MaxValue)
-                {
-                    throw new CassowaryInternalException(
-                        "Objective function is unbounded in Optimize");
-                }
-
-                Pivot(entryVar, exitVar);
+                Pivot(entryVariable, exitVariable);
             }
+        }
+
+        private ClAbstractVariable GetExitVariable(ClAbstractVariable entryVariable)
+        {
+            ClAbstractVariable exitVariable = null;
+            var minRatio = double.MaxValue;
+            var minFound = false;
+
+            var columnVariables = Columns[entryVariable];
+            foreach (var variable in columnVariables)
+            {
+                if (!variable.IsPivotable)
+                    continue;
+
+                var rowExpression = RowExpression(variable);
+                var coefficient = rowExpression.CoefficientFor(entryVariable);
+
+                if (coefficient >= 0d)
+                    continue;
+
+                var ratio = - rowExpression.Constant/coefficient;
+                if (ratio < minRatio)
+                {
+                    minFound = true;
+                    minRatio = ratio;
+                    exitVariable = variable;
+                }
+            }
+
+            if (!minFound)
+            {
+                throw new CassowaryInternalException(
+                    "Objective function is unbounded in Optimize");
+            }
+
+            return exitVariable;
         }
 
         /// <summary>

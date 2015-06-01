@@ -270,18 +270,18 @@ namespace Cassowary
             ClAbstractVariable oldVariable,
             ClLinearExpression expression)
         {
-            var oldVarColumnSet = columns[oldVariable];
+            var oldVariableColumn = columns[oldVariable];
 
-            foreach (var variable in oldVarColumnSet)
+            foreach (var variable in oldVariableColumn)
             {
                 var row = rows[variable];
 
                 row.SubstituteOut(oldVariable, expression, variable, this);
                 var newRow = row;
+                
+                // NOTE: we have later problems with KeyNotFound if we do this, 
+                // when looking for a slack variable in Columns
 
-                // NOTE: we have later problems with KeyNotFound if we do this...
-                // I believe it is because the same expresion is being referred to
-                // from mulitple places.
 
                 //var newRow = row.WithVariableSubstitutedBy(oldVariable, expression);
                 //// don't include the substituted variable in the removals here
