@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,7 +19,7 @@ namespace AutoLayoutPanel
 
         public static readonly DependencyProperty ConstraintsProperty =
             DependencyProperty.RegisterAttached(
-                "ConstraintsInternal",
+                "Constraints",
                 typeof(LayoutConstraints),
                 typeof(LayoutPanel));
 
@@ -91,6 +92,45 @@ namespace AutoLayoutPanel
             {
                 InitialiseElementConstraints(uiElement);
             }
+        }
+
+        private void InitialiseElementVariables(UIElement uiElement)
+        {
+            var variables = elementVariables.GetOrAdd(
+                uiElement,
+                k => new LayoutVariableSet(k));
+
+            solver.AddConstraint(
+                (variables.Width >= 0d)
+                    .WithStrength(ClStrength.Required));
+            solver.AddConstraint(
+                (variables.Height >= 0d)
+                    .WithStrength(ClStrength.Required));
+
+            solver.AddConstraint(
+                (variables.Top >= 0d)
+                    .WithStrength(ClStrength.Required));
+            solver.AddConstraint(
+                (variables.Left >= 0d)
+                    .WithStrength(ClStrength.Required));
+
+            // HCenter == Left + 0.5*Width
+            // Right == Left + Width
+            solver.AddConstraint(
+                (variables.HCenter == variables.Left + 0.5d * variables.Width)
+                    .WithStrength(ClStrength.Required));
+            solver.AddConstraint(
+                (variables.Right == variables.Left + variables.Width)
+                    .WithStrength(ClStrength.Required));
+
+            // VCenter == Top + 0.5*Height
+            // Bottom = Top + Height
+            solver.AddConstraint(
+                (variables.VCenter == variables.Top + 0.5d * variables.Height)
+                    .WithStrength(ClStrength.Required));
+            solver.AddConstraint(
+                (variables.Bottom == variables.Top + variables.Height)
+                    .WithStrength(ClStrength.Required));
         }
 
         private void InitialiseElementConstraints(UIElement uiElement)
@@ -176,45 +216,6 @@ namespace AutoLayoutPanel
             return elementVariables[uiElement];
         }
 
-        private void InitialiseElementVariables(UIElement uiElement)
-        {
-            var variables = elementVariables.GetOrAdd(
-                uiElement,
-                k => new LayoutVariableSet(k));
-
-            solver.AddConstraint(
-                (variables.Width >= 0d)
-                    .WithStrength(ClStrength.Required));
-            solver.AddConstraint(
-                (variables.Height >= 0d)
-                    .WithStrength(ClStrength.Required));
-
-            solver.AddConstraint(
-                (variables.Top >= 0d)
-                    .WithStrength(ClStrength.Required));
-            solver.AddConstraint(
-                (variables.Left >= 0d)
-                    .WithStrength(ClStrength.Required));
-
-            // HCenter == Left + 0.5*Width
-            // Right == Left + Width
-            solver.AddConstraint(
-                (variables.HCenter == variables.Left + 0.5d * variables.Width)
-                    .WithStrength(ClStrength.Required));
-            solver.AddConstraint(
-                (variables.Right == variables.Left + variables.Width)
-                    .WithStrength(ClStrength.Required));
-
-            // VCenter == Top + 0.5*Height
-            // Bottom = Top + Height
-            solver.AddConstraint(
-                (variables.VCenter == variables.Top + 0.5d * variables.Height)
-                    .WithStrength(ClStrength.Required));
-            solver.AddConstraint(
-                (variables.Bottom == variables.Top + variables.Height)
-                    .WithStrength(ClStrength.Required));
-        }
-
         private ClVariable FindClVariable(
             UIElement uiElement,
             LayoutProperty property)
@@ -292,6 +293,7 @@ namespace AutoLayoutPanel
             }
 
             solver.Resolve();
+            solver.Solve();
 
             foreach (var child in ChildElements)
             {

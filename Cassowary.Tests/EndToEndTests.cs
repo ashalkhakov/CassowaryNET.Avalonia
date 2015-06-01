@@ -983,5 +983,82 @@ namespace Cassowary.Tests
             Assert.That(middle.Value, IsX.Approx(45d));
             Assert.That(right.Value, IsX.Approx(50d));
         }
+
+        [Test]
+        public void test_2_buttons()
+        {
+            var panelLeft = new ClVariable("panel.Left");
+            var panelMiddle = new ClVariable("panel.Middle");
+            var panelRight = new ClVariable("panel.Right");
+            var panelWidth = new ClVariable("panel.Width");
+
+            var button1Left = new ClVariable("button1.Left");
+            var button1Middle = new ClVariable("button1.Middle");
+            var button1Right = new ClVariable("button1.Right");
+            var button1Width = new ClVariable("button1.Width");
+
+            var button2Left = new ClVariable("button2.Left");
+            var button2Middle = new ClVariable("button2.Middle");
+            var button2Right = new ClVariable("button2.Right");
+            var button2Width = new ClVariable("button2.Width");
+
+            var target = GetTarget();
+
+            // left,width >= 0
+            target.AddConstraint((panelLeft >= 0d).WithStrength(ClStrength.Required));
+            target.AddConstraint((panelWidth >= 0d).WithStrength(ClStrength.Required));
+            target.AddConstraint((button1Left >= 0d).WithStrength(ClStrength.Required));
+            target.AddConstraint((button1Width >= 0d).WithStrength(ClStrength.Required));
+            target.AddConstraint((button2Left >= 0d).WithStrength(ClStrength.Required));
+            target.AddConstraint((button2Width >= 0d).WithStrength(ClStrength.Required));
+
+            // panel
+            target.AddConstraint((panelLeft == 0d).WithStrength(ClStrength.Required));
+
+            // Middle == Left + 0.5*Width
+            // Right == Left + Width
+            target.AddConstraint(
+                (panelMiddle == panelLeft + 0.5d*panelWidth)
+                    .WithStrength(ClStrength.Required));
+            target.AddConstraint(
+                (panelRight == panelLeft + panelWidth)
+                    .WithStrength(ClStrength.Required));
+            target.AddConstraint(
+                (button1Middle == button1Left + 0.5d*button1Width)
+                    .WithStrength(ClStrength.Required));
+            target.AddConstraint(
+                (button1Right == button1Left + button1Width)
+                    .WithStrength(ClStrength.Required));
+            target.AddConstraint(
+                (button2Middle == button2Left + 0.5d*button2Width)
+                    .WithStrength(ClStrength.Required));
+            target.AddConstraint(
+                (button2Right == button2Left + button2Width)
+                    .WithStrength(ClStrength.Required));
+
+            // 'real' constraints
+            target.AddConstraint(
+                (button1Left == panelLeft + 10d)
+                    .WithStrength(ClStrength.Required));
+            target.AddConstraint(
+                (button2Left == button1Right)
+                    .WithStrength(ClStrength.Required));
+
+            // layout arrange pass
+            target.AddConstraint((panelWidth == 500d).WithStrength(ClStrength.Required));
+
+            target.AddConstraint((button1Width == 50d).WithStrength(ClStrength.Strong));
+            target.AddConstraint((button2Width == 50d).WithStrength(ClStrength.Strong));
+
+            Assert.That(button1Left.Value, IsX.Approx(10d));
+            Assert.That(button1Width.Value, IsX.Approx(50d));
+            Assert.That(button1Right.Value, IsX.Approx(60d));
+
+            Assert.That(button2Left.Value, IsX.Approx(60d));
+            Assert.That(button2Width.Value, IsX.Approx(50d));
+            Assert.That(button2Right.Value, IsX.Approx(110d));
+
+
+        }
     }
 }

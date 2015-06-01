@@ -17,7 +17,7 @@
             Source="{Binding ElementName=MainPanel}"
             ElementName="MainPanel"
         -->
-        
+
         <Button x:Name="Button1">
             Button1
             <layout:LayoutPanel.Constraints>
@@ -25,28 +25,22 @@
                     <layout:LayoutConstraint Property="Left" Constant="10">
                         <layout:LayoutLinearExpression ElementName="MainPanel" Property="Left"/>
                     </layout:LayoutConstraint>
-                    <layout:LayoutConstraint Property="VCenter" Strength="Strong">
+                    <layout:LayoutConstraint Property="VCenter">
                         <layout:LayoutLinearExpression ElementName="MainPanel" Property="VCenter"/>
                     </layout:LayoutConstraint>
                 </layout:LayoutConstraints>
             </layout:LayoutPanel.Constraints>
         </Button>
-        
+
         <Button x:Name="Button2">
             Button2
             <layout:LayoutPanel.Constraints>
                 <layout:LayoutConstraints>
-                    <layout:LayoutConstraint
-                        Property="Left">
-                        <layout:LayoutLinearExpression 
-                            ElementName="Button1"
-                            Property="Right"/>
+                    <layout:LayoutConstraint Property="Left">
+                        <layout:LayoutLinearExpression ElementName="Button1" Property="Right"/>
                     </layout:LayoutConstraint>
-                    <layout:LayoutConstraint
-                        Property="Top">
-                        <layout:LayoutLinearExpression 
-                            ElementName="Button1"
-                            Property="Bottom"/>
+                    <layout:LayoutConstraint Property="Top">
+                        <layout:LayoutLinearExpression ElementName="Button1" Property="Bottom"/>
                     </layout:LayoutConstraint>
                 </layout:LayoutConstraints>
             </layout:LayoutPanel.Constraints>
