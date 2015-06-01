@@ -49,6 +49,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConstraintParser.cs" />
     <Compile Include="LayoutConstraint.cs" />
     <Compile Include="LayoutConstraints.cs" />
     <Compile Include="LayoutConstraintStrength.cs" />

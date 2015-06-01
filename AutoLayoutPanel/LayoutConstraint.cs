@@ -19,6 +19,7 @@ namespace AutoLayoutPanel
             Constant = 0d;
             Relationship = LayoutRelationship.EqualTo;
             Strength = LayoutConstraintStrength.Required;
+            Weight = 1d;
             Expressions = new List<LayoutLinearExpression>();
         }
 
@@ -30,6 +31,7 @@ namespace AutoLayoutPanel
         public double Constant { get; set; }
         public LayoutRelationship Relationship { get; set; }
         public LayoutConstraintStrength Strength { get; set; }
+        public double Weight { get; set; }
         public List<LayoutLinearExpression> Expressions { get; set; }
 
         #endregion

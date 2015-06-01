@@ -20,6 +20,12 @@ namespace AutoLayoutPanel
         //    get { return (UIElement) GetValue(SourceProperty); }
         //    set { SetValue(SourceProperty, value); }
         //}
+        
+        //First works but is ugly; second returns null; third is crappy. :(
+        
+        //Source="{Binding Source={x:Reference MainPanel}}"
+        //Source="{Binding ElementName=MainPanel}"
+        //ElementName="MainPanel"
 
         public string ElementName { get; set; }
         public LayoutProperty Property { get; set; }

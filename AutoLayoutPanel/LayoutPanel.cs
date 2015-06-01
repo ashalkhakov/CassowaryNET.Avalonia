@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Windows.Documents;
 using Cassowary;
 using Cassowary.Constraints;
+using Cassowary.Exceptions;
 using Cassowary.Variables;
 
 namespace AutoLayoutPanel
@@ -17,19 +18,36 @@ namespace AutoLayoutPanel
     {
         #region Dependency Properties
 
-        public static readonly DependencyProperty ConstraintsProperty =
+        // long-hand
+        public static readonly DependencyProperty LayoutConstraintsProperty =
             DependencyProperty.RegisterAttached(
-                "Constraints",
+                "LayoutConstraints",
                 typeof(LayoutConstraints),
                 typeof(LayoutPanel));
 
-        public static void SetConstraints(UIElement element, LayoutConstraints value)
+        public static void SetLayoutConstraints(UIElement element, LayoutConstraints value)
+        {
+            element.SetValue(LayoutConstraintsProperty, value);
+        }
+        public static LayoutConstraints GetLayoutConstraints(UIElement element)
+        {
+            return (LayoutConstraints)element.GetValue(LayoutConstraintsProperty);
+        }
+
+        // short-hand
+        public static readonly DependencyProperty ConstraintsProperty =
+            DependencyProperty.RegisterAttached(
+                "Constraints",
+                typeof(string),
+                typeof(LayoutPanel));
+
+        public static void SetConstraints(UIElement element, string value)
         {
             element.SetValue(ConstraintsProperty, value);
         }
-        public static LayoutConstraints GetConstraints(UIElement element)
+        public static string GetConstraints(UIElement element)
         {
-            return (LayoutConstraints)element.GetValue(ConstraintsProperty);
+            return (string)element.GetValue(ConstraintsProperty);
         }
 
         #endregion
@@ -72,26 +90,18 @@ namespace AutoLayoutPanel
         {
             base.OnInitialized(e);
 
-            // only children added in xaml are present...
-            // two passes to make sure all elements are present before adding constraints.
-
             InitialiseElementVariables(this);
-            foreach (var uiElement in ChildElements)
-            {
-                InitialiseElementVariables(uiElement);
-            }
 
             // force our (Left,Top) to be (0,0)
-            var thisLeft = FindClVariable(this, LayoutProperty.Left);
-            var thisTop = FindClVariable(this, LayoutProperty.Top);
-            solver.AddConstraint((thisLeft == 0d).WithStrength(ClStrength.Required));
-            solver.AddConstraint((thisTop == 0d).WithStrength(ClStrength.Required));
+            var thisVariables = elementVariables[this];
+            solver.AddConstraint(
+                (thisVariables.Left == 0d)
+                    .WithStrength(ClStrength.Required));
+            solver.AddConstraint(
+                (thisVariables.Top == 0d)
+                    .WithStrength(ClStrength.Required));
 
-            // find xaml constraints
-            foreach (var uiElement in ChildElements)
-            {
-                InitialiseElementConstraints(uiElement);
-            }
+            HandleChangedChildren();
         }
 
         private void InitialiseElementVariables(UIElement uiElement)
@@ -137,11 +147,18 @@ namespace AutoLayoutPanel
         {
             processedChildren.Add(uiElement);
 
-            var elementConstraints = GetConstraints(uiElement);
-            if (elementConstraints == null)
+            var inlineConstraints = GetConstraints(uiElement);
+            if (inlineConstraints == null)
                 return;
 
-            foreach (var layoutConstraint in elementConstraints.Constraints)
+            var constraints = ConstraintParser.Parse(inlineConstraints);
+
+            //var elementConstraints = GetConstraints(uiElement);
+            //if (elementConstraints == null)
+            //    return;
+            //constraints = elementConstraints.Constraints;
+
+            foreach (var layoutConstraint in constraints)
             {
                 var variable = elementVariables[uiElement]
                     .GetVariable(layoutConstraint.Property);
@@ -160,12 +177,15 @@ namespace AutoLayoutPanel
                     );
 
                 var strength = GetStrength(layoutConstraint.Strength);
+                var weight = layoutConstraint.Weight;
+                var relationship = layoutConstraint.Relationship;
 
                 var constraint = GetClLinearEquation(
                     variable,
                     expression,
                     strength,
-                    layoutConstraint.Relationship);
+                    weight,
+                    relationship);
 
                 solver.AddConstraint(constraint);
             }
@@ -175,16 +195,17 @@ namespace AutoLayoutPanel
             ClVariable variable,
             ClLinearExpression expression,
             ClStrength strength,
+            double weight,
             LayoutRelationship relationship)
         {
             switch (relationship)
             {
                 case LayoutRelationship.EqualTo:
-                    return (variable == expression).WithStrength(strength);
+                    return (variable == expression).WithStrength(strength).WithWeight(weight);
                 case LayoutRelationship.LessThanOrEqualTo:
-                    return (variable <= expression).WithStrength(strength);
+                    return (variable <= expression).WithStrength(strength).WithWeight(weight);
                 case LayoutRelationship.GreaterThanOrEqualTo:
-                    return (variable >= expression).WithStrength(strength);
+                    return (variable >= expression).WithStrength(strength).WithWeight(weight);
                 default:
                     throw new ArgumentOutOfRangeException("relationship");
             }
@@ -220,9 +241,6 @@ namespace AutoLayoutPanel
             UIElement uiElement,
             LayoutProperty property)
         {
-            if (!elementVariables.ContainsKey(uiElement))
-                return new ClVariable();
-
             return elementVariables[uiElement].GetVariable(property);
         }
         
@@ -234,16 +252,26 @@ namespace AutoLayoutPanel
             // TODO: Find a better way then manually adding/removing constriants.
 
             // if it is already there, remove from the solver...
-            ClLinearEquation equation;
-            if (variableConstraints.TryGetValue(variable, out equation))
+            ClLinearEquation constraint;
+            if (variableConstraints.TryGetValue(variable, out constraint))
             {
-                solver.RemoveConstraint(equation);
+                if (constraint != null)
+                    solver.RemoveConstraint(constraint);
             }
 
             // ... and add a new equation
-            var newEquation = (variable == value).WithStrength(strength);
-            solver.AddConstraint(newEquation);
-            variableConstraints[variable] = newEquation;
+            var newConstraint = (variable == value).WithStrength(strength);
+
+            try
+            {
+                solver.AddConstraint(newConstraint);
+                variableConstraints[variable] = newConstraint;
+            }
+            catch //(Exception exception)
+            {
+                variableConstraints[variable] = null;
+                throw;
+            }
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -257,40 +285,61 @@ namespace AutoLayoutPanel
             return availableSize;
         }
 
-        protected override Size ArrangeOverride(Size finalSize)
+        private void HandleChangedChildren()
         {
             var addedChildren = ChildElements.Except(processedChildren).ToList();
-            var removedChildren = processedChildren.Except(ChildElements);
+            var removedChildren = processedChildren.Except(ChildElements).ToList();
 
             foreach (var child in addedChildren)
             {
                 InitialiseElementVariables(child);
+                processedChildren.Add(child);
             }
+
             foreach (var child in addedChildren)
             {
                 InitialiseElementConstraints(child);
+                processedChildren.Remove(child);
             }
+        }
+
+        private void SetPanelValues(Size finalSize)
+        {
+            var thisVariables = elementVariables[this];
 
             SetValue(
-                FindClVariable(this, LayoutProperty.Width),
+                thisVariables.Width,
                 finalSize.Width,
                 ClStrength.Required);
             SetValue(
-                FindClVariable(this, LayoutProperty.Height),
+                thisVariables.Height,
                 finalSize.Height,
                 ClStrength.Required);
+        }
 
+        private void SetChildValues()
+        {
             foreach (var child in ChildElements)
             {
+                var variables = elementVariables[child];
+
                 SetValue(
-                    FindClVariable(child, LayoutProperty.Width),
+                    variables.Width,
                     child.DesiredSize.Width,
                     ClStrength.Strong);
                 SetValue(
-                    FindClVariable(child, LayoutProperty.Height),
+                    variables.Height,
                     child.DesiredSize.Height,
                     ClStrength.Strong);
             }
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            HandleChangedChildren();
+
+            SetPanelValues(finalSize);
+            SetChildValues();
 
             solver.Solve();
 

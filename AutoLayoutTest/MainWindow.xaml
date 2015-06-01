@@ -6,45 +6,70 @@
     <layout:LayoutPanel
         x:Name="MainPanel">
 
-        <!-- 
-            TODO: Remove the extra level in the xaml... it's ugly
-            We get problems with nulls without it though...
-         -->
         <!--
-            First works but is ugly; second returns null; third is crappy. :(
+        TODO: Find a way to ease adding multiple constraints?
+        For example, it is common to want Top & Height, Left & Width, Width & Height, &c
+        equal to that of another control.
+        -->        
         
-            Source="{Binding Source={x:Reference MainPanel}}"
-            Source="{Binding ElementName=MainPanel}"
-            ElementName="MainPanel"
-        -->
+        <Label
+            x:Name="NameLabel"
+            Content="Name:"
+            layout:LayoutPanel.Constraints="
+                [Left] equalto [10];"/>
+        <Label
+            x:Name="AgeLabel"
+            Content="Age:"
+            layout:LayoutPanel.Constraints="
+                [Left] equalto [NameLabel.Left];
+                [Width] equalto [NameLabel.Width];
+                [Top] equalto [NameLabel.Bottom + 10];"/>
+        <Label
+            x:Name="HeightLabel"
+            Content="Height:"
+            layout:LayoutPanel.Constraints="
+                [Left] equalto [NameLabel.Left];
+                [Width] equalto [NameLabel.Width];
+                [Top] equalto [AgeLabel.Bottom + 10];"/>
+        
+        <TextBox
+            x:Name="NameValue"
+            layout:LayoutPanel.Constraints="
+                [Width] greaterthan [50];
+                [Left] equalto [NameLabel.Right + 10];
+                [VCenter] equalto [NameLabel.VCenter];"/>
+        <TextBox
+            x:Name="AgeValue"
+            layout:LayoutPanel.Constraints="
+                [Left] equalto [NameValue.Left];
+                [Width] equalto [NameValue.Width];
+                [VCenter] equalto [AgeLabel.VCenter];"/>
+        <TextBox
+            x:Name="HeightValue"
+            layout:LayoutPanel.Constraints="
+                [Left] equalto [NameValue.Left];
+                [Width] equalto [NameValue.Width];
+                [VCenter] equalto [HeightLabel.VCenter];"/>
+        
+        
+        
+        <Button 
+            x:Name="Button1"
+            Content="Button1"
+            layout:LayoutPanel.Constraints="
+                [Left] equalto [MainPanel.Left + 10];
+                [Width] lessthan(strong) [300];
+                [Width] greaterthan(weak) [100];
+                [VCenter] equalto [MainPanel.VCenter];"/>
 
-        <Button x:Name="Button1">
-            Button1
-            <layout:LayoutPanel.Constraints>
-                <layout:LayoutConstraints>
-                    <layout:LayoutConstraint Property="Left" Constant="10">
-                        <layout:LayoutLinearExpression ElementName="MainPanel" Property="Left"/>
-                    </layout:LayoutConstraint>
-                    <layout:LayoutConstraint Property="VCenter">
-                        <layout:LayoutLinearExpression ElementName="MainPanel" Property="VCenter"/>
-                    </layout:LayoutConstraint>
-                </layout:LayoutConstraints>
-            </layout:LayoutPanel.Constraints>
-        </Button>
-
-        <Button x:Name="Button2">
-            Button2
-            <layout:LayoutPanel.Constraints>
-                <layout:LayoutConstraints>
-                    <layout:LayoutConstraint Property="Left">
-                        <layout:LayoutLinearExpression ElementName="Button1" Property="Right"/>
-                    </layout:LayoutConstraint>
-                    <layout:LayoutConstraint Property="Top">
-                        <layout:LayoutLinearExpression ElementName="Button1" Property="Bottom"/>
-                    </layout:LayoutConstraint>
-                </layout:LayoutConstraints>
-            </layout:LayoutPanel.Constraints>
-        </Button>
+        <Button 
+            x:Name="Button2"
+            Content="Button2"
+            layout:LayoutPanel.Constraints="
+                [Left] equalto [Button1.Right + 10];
+                [Width] greaterthan(weak) [200];
+                [Right] equalto [MainPanel.Right - 10];
+                [VCenter] equalto [Button1.VCenter];"/>
 
     </layout:LayoutPanel>
 </Window>

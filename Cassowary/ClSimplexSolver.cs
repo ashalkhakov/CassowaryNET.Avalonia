@@ -533,7 +533,6 @@ namespace Cassowary
             {
                 foreach (var slackVariable in slackVariables)
                 {
-                    // FIXME: decide wether to use equals or !=
                     if (!Equals(slackVariable, marker))
                     {
                         RemoveColumn(slackVariable);
