@@ -362,57 +362,7 @@ namespace Cassowary
             var constraint = editInfo.Constraint;
             RemoveConstraint(constraint);
         }
-
-        /// <summary>
-        /// Add weak stays to the x and y parts of each point. These
-        /// have increasing weights so that the solver will try to satisfy
-        /// the x and y stays on the same point, rather than the x stay on
-        /// one and the y stay on another.
-        /// <param name="listOfPoints">
-        /// List of points to add weak stay constraints for.
-        /// </param>
-        /// </summary>
-        public void AddPointStays(IEnumerable<ClPoint> listOfPoints)
-            /* throws ExClRequiredFailure, ExClInternalError */
-        {
-            double weight = 1.0;
-            const double multiplier = 2.0;
-
-            foreach (var p in listOfPoints)
-            {
-                AddPointStay(p, weight);
-                weight *= multiplier;
-            }
-        }
-
-        public void AddPointStay(ClVariable vx, ClVariable vy, double weight)
-            /* throws ExClRequiredFailure, ExClInternalError */
-        {
-            AddStay(vx, ClStrength.Weak, weight);
-            AddStay(vy, ClStrength.Weak, weight);
-        }
-
-        public void AddPointStay(
-            ClVariable vx,
-            ClVariable vy)
-            /* throws ExClRequiredFailure, ExClInternalError */
-        {
-            AddPointStay(vx, vy, 1.0);
-        }
-
-        public void AddPointStay(ClPoint clp, double weight)
-            /* throws ExClRequiredFailure, ExClInternalError */
-        {
-            AddStay(clp.X, ClStrength.Weak, weight);
-            AddStay(clp.Y, ClStrength.Weak, weight);
-        }
-
-        public void AddPointStay(ClPoint clp)
-            /* throws ExClRequiredFailure, ExClInternalError */
-        {
-            AddPointStay(clp, 1.0);
-        }
-
+        
         /// <summary>
         /// Add a stay of the given strength (default to ClStrength#Weak)
         /// of a variable to the tableau..

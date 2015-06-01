@@ -8,11 +8,6 @@ namespace AutoLayoutPanel
     [ContentProperty("Constraints")]
     public class LayoutConstraints : DependencyObject
     {
-        public LayoutConstraints()
-        {
-            Debug.WriteLine("LayoutConstraints");
-        }
-
         public static readonly DependencyProperty ConstraintsProperty =
             DependencyProperty.Register(
                 "Constraints",

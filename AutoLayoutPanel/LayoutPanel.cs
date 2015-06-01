@@ -292,7 +292,6 @@ namespace AutoLayoutPanel
                     ClStrength.Strong);
             }
 
-            solver.Resolve();
             solver.Solve();
 
             foreach (var child in ChildElements)

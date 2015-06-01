@@ -969,6 +969,7 @@ namespace Cassowary.Tests
             // set the middle value to a stay
             middle.Value = 45d;
             //target.SetEditedValue(middle, 45d);
+            
             target.AddStay(middle);
 
             // check that all the required constraints are true
