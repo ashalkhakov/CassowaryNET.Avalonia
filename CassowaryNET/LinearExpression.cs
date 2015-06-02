@@ -37,8 +37,8 @@ namespace CassowaryNET
     {
         #region Fields
 
-        private ClDouble constant;
-        private readonly Dictionary<AbstractVariable, ClDouble> terms;
+        private double constant;
+        private readonly Dictionary<AbstractVariable, double> terms;
 
         #endregion
 
@@ -46,8 +46,8 @@ namespace CassowaryNET
 
         public LinearExpression(double constant)
         {
-            this.constant = new ClDouble(constant);
-            this.terms = new Dictionary<AbstractVariable, ClDouble>();
+            this.constant = constant;
+            this.terms = new Dictionary<AbstractVariable, double>();
         }
 
         internal LinearExpression(
@@ -58,10 +58,10 @@ namespace CassowaryNET
             if (Equals(variable, null))
                 throw new ArgumentNullException();
 
-            this.constant = new ClDouble(constant);
-            this.terms = new Dictionary<AbstractVariable, ClDouble>
+            this.constant = constant;
+            this.terms = new Dictionary<AbstractVariable, double>
             {
-                {variable, new ClDouble(multiplier)},
+                {variable, multiplier},
             };
         }
 
@@ -69,11 +69,11 @@ namespace CassowaryNET
         /// For use by the clone method.
         /// </summary>
         private LinearExpression(
-            ClDouble constant,
-            IDictionary<AbstractVariable, ClDouble> terms)
+            double constant,
+            IDictionary<AbstractVariable, double> terms)
         {
             this.constant = constant;
-            this.terms = new Dictionary<AbstractVariable, ClDouble>(
+            this.terms = new Dictionary<AbstractVariable, double>(
                 terms);
         }
 
@@ -83,10 +83,10 @@ namespace CassowaryNET
 
         public double Constant
         {
-            get { return constant.Value; }
+            get { return constant; }
         }
 
-        internal Dictionary<AbstractVariable, ClDouble> Terms
+        internal Dictionary<AbstractVariable, double> Terms
         {
             get { return terms; }
         }
@@ -109,10 +109,10 @@ namespace CassowaryNET
             AbstractVariable variable,
             double newCoefficient)
         {
-            var coefficient = new ClDouble(newCoefficient);
+            var coefficient = newCoefficient;
 
             var newConstant = constant;
-            var newTerms = new Dictionary<AbstractVariable, ClDouble>(terms);
+            var newTerms = new Dictionary<AbstractVariable, double>(terms);
 
             //if (!coefficient.IsApproxZero)
                 newTerms[variable] = coefficient;
@@ -129,13 +129,7 @@ namespace CassowaryNET
         internal LinearExpression WithConstantSetTo(
             double newConstant)
         {
-            return WithConstantSetTo(new ClDouble(newConstant));
-        }
-
-        internal LinearExpression WithConstantSetTo(
-            ClDouble newConstant)
-        {
-            var newTerms = new Dictionary<AbstractVariable, ClDouble>(terms);
+            var newTerms = new Dictionary<AbstractVariable, double>(terms);
 
             return new LinearExpression(newConstant, newTerms);
         }
@@ -168,16 +162,16 @@ namespace CassowaryNET
         {
             // need variable to occur with a non-zero coefficient in this expression
             var coefficient = terms[variable];
-            if (coefficient.IsApproxZero)
+            if (MathHelper.Approx(coefficient, 0d))
                 throw new CassowaryInternalException("Coefficient was zero");
 
             var newConstant = constant;
-            var newTerms = new Dictionary<AbstractVariable, ClDouble>(terms);
+            var newTerms = new Dictionary<AbstractVariable, double>(terms);
 
             newTerms.Remove(variable);
             
             var expressionWithoutVariable = new LinearExpression(newConstant, newTerms);
-            return expressionWithoutVariable + coefficient.Value*expression;
+            return expressionWithoutVariable + coefficient*expression;
         }
 
         /// <summary>
@@ -196,20 +190,21 @@ namespace CassowaryNET
         {
             // NOTE: doesn't inform of removal of the substituted variable...
 
-            double multiplier = terms[variable].Value;
+            double multiplier = terms[variable];
             terms.Remove(variable);
             this.constant += multiplier * expression.Constant;
 
             foreach (var clv in expression.Terms.Keys)
             {
                 var coeff = expression.Terms[clv];
-                var oldCoefficient = terms.GetOrDefault(clv);
+                double oldCoefficient;
+                var oldCoefficientFound = terms.TryGetValue(clv, out oldCoefficient);
 
-                if (oldCoefficient != null)
+                if (oldCoefficientFound)
                 {
                     var newCoefficient = oldCoefficient + multiplier * coeff;
 
-                    if (MathHelper.Approx(newCoefficient.Value, 0.0))
+                    if (MathHelper.Approx(newCoefficient, 0.0))
                     {
                         solver.NoteRemovedVariable(clv, subject);
                         terms.Remove(clv);
@@ -285,12 +280,12 @@ namespace CassowaryNET
             out double reciprocal)
         {
             var newConstant = constant;
-            var newTerms = new Dictionary<AbstractVariable, ClDouble>(terms);
+            var newTerms = new Dictionary<AbstractVariable, double>(terms);
 
             newTerms.Remove(subject);
 
             var coefficient = terms[subject];
-            reciprocal = 1d / coefficient.Value;
+            reciprocal = 1d / (double) coefficient;
 
             var expressionWithoutSubject = new LinearExpression(
                 newConstant,
@@ -305,10 +300,11 @@ namespace CassowaryNET
         /// </summary>
         internal double CoefficientFor(AbstractVariable variable)
         {
-            var coeff = terms.GetOrDefault(variable);
+            double coeff;
+            var coeffFound = terms.TryGetValue(variable, out coeff);
 
-            if (coeff != null)
-                return coeff.Value;
+            if (coeffFound)
+                return coeff;
             else
                 return 0.0;
         }
@@ -317,7 +313,7 @@ namespace CassowaryNET
         {
             var builder = new StringBuilder();
 
-            if (!MathHelper.Approx(constant.Value, 0d))
+            if (!MathHelper.Approx(constant, 0d))
             {
                 builder.Append(constant);
                 builder.Append(" + ");
@@ -343,16 +339,16 @@ namespace CassowaryNET
         {
             var constant = aMultiplier*a.constant + bMultiplier*b.constant;
 
-            var terms = new Dictionary<AbstractVariable, ClDouble>();
+            var terms = new Dictionary<AbstractVariable, double>();
 
             var variables = a.Terms.Keys.Union(b.Terms.Keys);
             foreach (var variable in variables)
             {
-                var bCoefficient = b.Terms.GetOrDefault(variable, new ClDouble(0d));
-                var aCoefficient = a.Terms.GetOrDefault(variable, new ClDouble(0d));
+                var bCoefficient = b.Terms.GetOrDefault(variable, 0d);
+                var aCoefficient = a.Terms.GetOrDefault(variable, 0d);
 
                 var coefficient = aMultiplier*aCoefficient + bMultiplier*bCoefficient;
-                if (!coefficient.IsApproxZero)
+                if (!MathHelper.Approx(coefficient, 0d))
                 {
                     terms.Add(variable, coefficient);
                 }
@@ -466,7 +462,7 @@ namespace CassowaryNET
                     Key = kvp.Key,
                     Value = kvp.Value*b,
                 })
-                .Where(o => !o.Value.IsApproxZero)
+                .Where(o => !MathHelper.Approx(o.Value, 0d))
                 .ToDictionary(o => o.Key, o => o.Value);
 
             return new LinearExpression(
@@ -481,10 +477,10 @@ namespace CassowaryNET
             LinearExpression b)
         {
             if (a.IsConstant)
-                return a.constant.Value*b;
+                return a.constant*b;
 
             if (b.IsConstant)
-                return a*b.constant.Value;
+                return a*b.constant;
 
             throw new CassowaryNonLinearExpressionException();
         }
@@ -528,7 +524,7 @@ namespace CassowaryNET
             if (!b.IsConstant) 
                 throw new CassowaryNonLinearExpressionException();
 
-            return a/b.constant.Value;
+            return a/b.constant;
         }
 
         public static LinearExpression operator /(

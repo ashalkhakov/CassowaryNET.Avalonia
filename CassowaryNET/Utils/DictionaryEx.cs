@@ -12,7 +12,6 @@ namespace CassowaryNET.Utils
             this IDictionary<TKey, TValue> dictionary,
             TKey key,
             TValue defaultValue = default(TValue))
-            where TValue : class
         {
             TValue value;
             if (dictionary.TryGetValue(key, out value))

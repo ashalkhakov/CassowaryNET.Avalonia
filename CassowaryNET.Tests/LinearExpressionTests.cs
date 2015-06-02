@@ -146,8 +146,8 @@ namespace CassowaryNET.Tests
                     var termCoefficientNew = substitutedNew.Terms[term];
 
                     Assert.That(
-                        termCoefficientNew.Value,
-                        IsX.Approx(termCoefficientOld.Value));
+                        (double) termCoefficientNew,
+                        IsX.Approx(termCoefficientOld));
                 }
 
                 Assert.That(substitutedNew.Constant, Is.EqualTo(substitutedOld.Constant));

@@ -212,7 +212,7 @@ namespace CassowaryNET
         {
             SlackVariable eplus;
             SlackVariable eminus;
-            ClDouble prevEConstant;
+            double prevEConstant;
             var expression = NewExpression(
                 constraint,
                 out eplus,
@@ -238,7 +238,7 @@ namespace CassowaryNET
                         cnEdit,
                         eplus,
                         eminus,
-                        prevEConstant.Value,
+                        prevEConstant,
                         i));
             }
 
@@ -851,7 +851,7 @@ namespace CassowaryNET
 
             foreach (var v in terms.Keys)
             {
-                double c = terms[v].Value;
+                double c = terms[v];
 
                 if (foundUnrestricted)
                 {
@@ -899,7 +899,7 @@ namespace CassowaryNET
 
             foreach (var v in terms.Keys)
             {
-                double c = terms[v].Value;
+                double c = terms[v];
 
                 if (!v.IsDummy)
                 {
@@ -936,11 +936,11 @@ namespace CassowaryNET
             Constraint cn,
             out SlackVariable eplus_,
             out SlackVariable eminus_,
-            out ClDouble prevEConstant)
+            out double prevEConstant)
         {
             eplus_ = null;
             eminus_ = null;
-            prevEConstant = new ClDouble(0d);
+            prevEConstant = 0d;
 
             var cnExpr = cn.Expression;
             var expr = new LinearExpression(cnExpr.Constant);
@@ -948,7 +948,7 @@ namespace CassowaryNET
 
             foreach (AbstractVariable v in cnTerms.Keys)
             {
-                double c = cnTerms[v].Value;
+                double c = cnTerms[v];
                 LinearExpression e = tableau.RowExpression(v);
                 if (Equals(e, null))
                 {
@@ -1021,7 +1021,7 @@ namespace CassowaryNET
                         eplus_ = eplus;
                         eminus_ = eminus;
 
-                        prevEConstant = new ClDouble(cnExpr.Constant);
+                        prevEConstant = cnExpr.Constant;
                     }
                 }
             }
@@ -1055,7 +1055,7 @@ namespace CassowaryNET
                 var terms = zRow.Terms;
                 foreach (var v in terms.Keys)
                 {
-                    double c = terms[v].Value;
+                    double c = terms[v];
                     if (v.IsPivotable && c < objectiveCoeff)
                     {
                         objectiveCoeff = c;
@@ -1211,7 +1211,7 @@ namespace CassowaryNET
 
                 foreach (AbstractVariable v in terms.Keys)
                 {
-                    double c = terms[v].Value;
+                    double c = terms[v];
                     if (c > 0.0 && v.IsPivotable)
                     {
                         double zc = zRow.CoefficientFor(v);
