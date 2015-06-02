@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C39B66CB-F285-4EE9-9109-7C4B2339AF3E}</ProjectGuid>
+    <ProjectGuid>{B5A96E5C-7F21-4183-8643-61FD55291BB5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cassowary.Tests</RootNamespace>
-    <AssemblyName>Cassowary.Tests</AssemblyName>
+    <RootNamespace>CassowaryNET.Tests</RootNamespace>
+    <AssemblyName>CassowaryNET.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -26,7 +26,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,7 +34,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Moq, Version=4.2.1502.911, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
@@ -50,15 +48,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClLinearExpressionTests.cs" />
-    <Compile Include="HugeTest.cs" />
-    <Compile Include="Variables\ClObjectiveVariableTests.cs" />
-    <Compile Include="Variables\ClSlackVariableTests.cs" />
     <Compile Include="ClSimplexSolverTests.cs" />
-    <Compile Include="Variables\ClDummyVariableTests.cs" />
+    <Compile Include="ClTests.cs" />
     <Compile Include="EndToEndTests.cs" />
+    <Compile Include="HugeTest.cs" />
     <Compile Include="IsX.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ClTests.cs" />
+    <Compile Include="Variables\ClDummyVariableTests.cs" />
+    <Compile Include="Variables\ClObjectiveVariableTests.cs" />
+    <Compile Include="Variables\ClSlackVariableTests.cs" />
     <Compile Include="Variables\ClVariableTests.cs" />
     <Compile Include="_Class1Tests.cs" />
   </ItemGroup>
@@ -66,9 +64,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Cassowary\Cassowary.csproj">
-      <Project>{c6cbf386-082e-4b4f-a897-09f393d2e30a}</Project>
-      <Name>Cassowary</Name>
+    <ProjectReference Include="..\CassowaryNET\CassowaryNET.csproj">
+      <Project>{081d5457-6212-451c-a9de-d035aaefc94a}</Project>
+      <Name>CassowaryNET</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
