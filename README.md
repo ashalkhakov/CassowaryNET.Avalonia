@@ -13,18 +13,20 @@ of complex constraints.
 
 ## Example
 
-    var x = new ClVariable(20d);
-    var y = new ClVariable(10d);
+```csharp
+var x = new ClVariable(20d);
+var y = new ClVariable(10d);
 
-    var solver = new CassowarySolver();
+var solver = new CassowarySolver();
     
-    solver.AddConstraint(x <= 5d);
-    solver.AddConstraint(x == y);
+solver.AddConstraint(x <= 5d);
+solver.AddConstraint(x == y);
 
-    solver.Solve();
+solver.Solve();
     
-    // x.Value == 5d
-    // y.Value == 5d
+// x.Value == 5d
+// y.Value == 5d
+```
 
 
 ---
@@ -41,27 +43,27 @@ Width and Height properties of controls.
 
 ## Example
 
-
-    <layout:AutoLayoutPanel
-        x:Name="MainPanel">
+```xml
+<layout:AutoLayoutPanel
+    x:Name="MainPanel">
         
-        <!-- Horizontally and vertically centered in the panel. Width is between 100 and 300. -->
-        <Button 
-            x:Name="Button1"
-            Content="Button1"
-            layoutNet:AutoLayoutPanel.Constraints="
-                [VCenter] equalto [MainPanel.VCenter];
-                [HCenter] equalto [MainPanel.HCenter];
-                [Width] greaterthan [100];
-                [Width] lessthan [300];"/>
+    <!-- Horizontally and vertically centered in the panel. Width is between 100 and 300. -->
+    <Button 
+        x:Name="Button1"
+        Content="Button1"
+        layoutNet:AutoLayoutPanel.Constraints="
+            [VCenter] equalto [MainPanel.VCenter];
+            [HCenter] equalto [MainPanel.HCenter];
+            [Width] greaterthan [100];
+            [Width] lessthan [300];"/>
 
-        <!-- Horizontally centred with Button1. Top is 10 below the bottom of Button1. -->
-        <Button 
-            x:Name="Button2"
-            Content="Button2"
-            layoutNet:AutoLayoutPanel.Constraints="
-                [Top] equalto [Button1.Bottom + 10];
-                [HCenter] equalto [Button1.HCenter];"/>
+    <!-- Horizontally centred with Button1. Top is 10 below the bottom of Button1. -->
+    <Button 
+        x:Name="Button2"
+        Content="Button2"
+        layoutNet:AutoLayoutPanel.Constraints="
+            [Top] equalto [Button1.Bottom + 10];
+            [HCenter] equalto [Button1.HCenter];"/>
 
-    </layout:AutoLayoutPanel>
-
+</layout:AutoLayoutPanel>
+```
