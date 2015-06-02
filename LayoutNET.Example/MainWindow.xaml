@@ -1,9 +1,9 @@
 ﻿<Window x:Class="LayoutNET.Example.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:layout="clr-namespace:AutoLayoutPanel;assembly=LayoutNET"
+        xmlns:layoutNet="clr-namespace:LayoutNET;assembly=LayoutNET"
         Title="MainWindow" Height="350" Width="525">
-    <layout:LayoutPanel
+    <layoutNet:AutoLayoutPanel
         x:Name="MainPanel">
 
         <!--
@@ -15,38 +15,38 @@
         <Label
             x:Name="NameLabel"
             Content="Name:"
-            layout:LayoutPanel.Constraints="
+            layoutNet:AutoLayoutPanel.Constraints="
                 [Left] equalto [10];"/>
         <Label
             x:Name="AgeLabel"
             Content="Age:"
-            layout:LayoutPanel.Constraints="
+            layoutNet:AutoLayoutPanel.Constraints="
                 [Left] equalto [NameLabel.Left];
                 [Width] equalto [NameLabel.Width];
                 [Top] equalto [NameLabel.Bottom + 10];"/>
         <Label
             x:Name="HeightLabel"
             Content="Height:"
-            layout:LayoutPanel.Constraints="
+            layoutNet:AutoLayoutPanel.Constraints="
                 [Left] equalto [NameLabel.Left];
                 [Width] equalto [NameLabel.Width];
                 [Top] equalto [AgeLabel.Bottom + 10];"/>
 
         <TextBox
             x:Name="NameValue"
-            layout:LayoutPanel.Constraints="
+            layoutNet:AutoLayoutPanel.Constraints="
                 [Width] greaterthan [50];
                 [Left] equalto [NameLabel.Right + 10];
                 [VCenter] equalto [NameLabel.VCenter];"/>
         <TextBox
             x:Name="AgeValue"
-            layout:LayoutPanel.Constraints="
+            layoutNet:AutoLayoutPanel.Constraints="
                 [Left] equalto [NameValue.Left];
                 [Width] equalto [NameValue.Width];
                 [VCenter] equalto [AgeLabel.VCenter];"/>
         <TextBox
             x:Name="HeightValue"
-            layout:LayoutPanel.Constraints="
+            layoutNet:AutoLayoutPanel.Constraints="
                 [Left] equalto [NameValue.Left];
                 [Width] equalto [NameValue.Width];
                 [VCenter] equalto [HeightLabel.VCenter];"/>
@@ -56,7 +56,7 @@
         <Button 
             x:Name="Button1"
             Content="Button1"
-            layout:LayoutPanel.Constraints="
+            layoutNet:AutoLayoutPanel.Constraints="
                 [Left] equalto [MainPanel.Left + 10];
                 [Width] lessthan(strong) [300];
                 [Width] greaterthan(weak) [100];
@@ -65,11 +65,11 @@
         <Button 
             x:Name="Button2"
             Content="Button2"
-            layout:LayoutPanel.Constraints="
+            layoutNet:AutoLayoutPanel.Constraints="
                 [Left] equalto [Button1.Right + 10];
                 [Width] greaterthan(weak) [200];
                 [Right] equalto [MainPanel.Right - 10];
                 [VCenter] equalto [Button1.VCenter];"/>
 
-    </layout:LayoutPanel>
+    </layoutNet:AutoLayoutPanel>
 </Window>

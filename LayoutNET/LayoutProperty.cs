@@ -1,4 +1,4 @@
-﻿namespace AutoLayoutPanel
+﻿namespace LayoutNET
 {
     public enum LayoutProperty
     {

@@ -21,7 +21,7 @@
 
 using System;
 
-namespace Cassowary.Exceptions
+namespace CassowaryNET.Exceptions
 {
     public class CassowaryRequiredConstraintFailureException : CassowaryException
     {

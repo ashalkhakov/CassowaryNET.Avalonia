@@ -19,15 +19,13 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+using System.Collections;
 using System.IO;
 using System.Text;
-using System.Collections;
-using Cassowary;
-using Cassowary.Constraints;
-using Cassowary.Parsing;
-using Cassowary.Variables;
+using CassowaryNET.Constraints;
+using CassowaryNET.Variables;
 
-namespace Cassowary.Parsing
+namespace CassowaryNET.Parsing
 {
     public class ClParser
     {

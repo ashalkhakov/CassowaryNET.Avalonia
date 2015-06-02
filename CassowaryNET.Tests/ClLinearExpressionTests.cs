@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
-using Cassowary.Utils;
-using Cassowary.Variables;
-using NUnit.Framework;
+using CassowaryNET.Utils;
+using CassowaryNET.Variables;
 using Moq;
+using NUnit.Framework;
 
-namespace Cassowary.Tests
+namespace CassowaryNET.Tests
 {
     [TestFixture]
     public class ClLinearExpressionTests

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using NUnit.Framework;
-using Moq;
 
-namespace Cassowary.Tests
+namespace CassowaryNET.Tests
 {
     [TestFixture]
     public class ClSimplexSolverTests
@@ -32,7 +30,7 @@ namespace Cassowary.Tests
             [Test]
             public void can_be_created()
             {
-                var target = new ClSimplexSolver();
+                var target = new CassowarySolver();
                 Assert.Pass();
             }
         }

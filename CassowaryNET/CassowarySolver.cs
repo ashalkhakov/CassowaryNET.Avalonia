@@ -20,18 +20,17 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Cassowary.Constraints;
-using Cassowary.Exceptions;
-using Cassowary.Utils;
-using Cassowary.Variables;
+using CassowaryNET.Constraints;
+using CassowaryNET.Exceptions;
+using CassowaryNET.Utils;
+using CassowaryNET.Variables;
 
-namespace Cassowary
+namespace CassowaryNET
 {
-    public sealed class ClSimplexSolver
+    public sealed class CassowarySolver
     {
         #region Fields
 
@@ -94,7 +93,7 @@ namespace Cassowary
         /// <remarks>
         /// Constructor initializes the fields, and creaties the objective row.
         /// </remarks>
-        public ClSimplexSolver()
+        public CassowarySolver()
         {
             tableau = new ClTableau();
 

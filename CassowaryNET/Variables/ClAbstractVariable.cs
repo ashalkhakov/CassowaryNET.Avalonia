@@ -20,9 +20,9 @@
 */
 
 using System;
-using Cassowary.Constraints;
+using CassowaryNET.Constraints;
 
-namespace Cassowary.Variables
+namespace CassowaryNET.Variables
 {
     // Type      => Dummy | External | Pivotable | Restricted
     // Variable  => false | true     | false     | false

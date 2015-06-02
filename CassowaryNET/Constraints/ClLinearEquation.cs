@@ -20,11 +20,9 @@
 */
 
 using System;
-using System.Diagnostics;
-using Cassowary.Utils;
-using Cassowary.Variables;
+using CassowaryNET.Variables;
 
-namespace Cassowary.Constraints
+namespace CassowaryNET.Constraints
 {
     public sealed class ClLinearEquation : ClLinearConstraint
     {

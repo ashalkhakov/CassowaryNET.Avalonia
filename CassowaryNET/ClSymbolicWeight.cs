@@ -20,13 +20,11 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Cassowary.Utils;
 
-namespace Cassowary
+namespace CassowaryNET
 {
     public class ClSymbolicWeight : ICloneable
     {

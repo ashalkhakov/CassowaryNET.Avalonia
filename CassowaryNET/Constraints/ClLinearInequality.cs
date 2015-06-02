@@ -20,11 +20,10 @@
 */
 
 using System;
-using Cassowary.Exceptions;
-using Cassowary.Utils;
-using Cassowary.Variables;
+using CassowaryNET.Exceptions;
+using CassowaryNET.Variables;
 
-namespace Cassowary.Constraints
+namespace CassowaryNET.Constraints
 {
     public sealed class ClLinearInequality : ClLinearConstraint
     {

@@ -20,9 +20,9 @@
 */
 
 using System;
-using Cassowary.Variables;
+using CassowaryNET.Variables;
 
-namespace Cassowary.Constraints
+namespace CassowaryNET.Constraints
 {
     public sealed class ClStayConstraint : ClEditOrStayConstraint
     {

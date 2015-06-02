@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Reflection;
-using System.Windows.Documents;
-using Cassowary;
-using Cassowary.Constraints;
-using Cassowary.Exceptions;
-using Cassowary.Variables;
+using CassowaryNET;
+using CassowaryNET.Constraints;
+using CassowaryNET.Variables;
 
-namespace AutoLayoutPanel
+namespace LayoutNET
 {
-    public class LayoutPanel : Panel
+    public class AutoLayoutPanel : Panel
     {
         #region Dependency Properties
 
@@ -23,7 +18,7 @@ namespace AutoLayoutPanel
             DependencyProperty.RegisterAttached(
                 "LayoutConstraints",
                 typeof(LayoutConstraints),
-                typeof(LayoutPanel));
+                typeof(AutoLayoutPanel));
 
         public static void SetLayoutConstraints(UIElement element, LayoutConstraints value)
         {
@@ -39,7 +34,7 @@ namespace AutoLayoutPanel
             DependencyProperty.RegisterAttached(
                 "Constraints",
                 typeof(string),
-                typeof(LayoutPanel));
+                typeof(AutoLayoutPanel));
 
         public static void SetConstraints(UIElement element, string value)
         {
@@ -54,7 +49,7 @@ namespace AutoLayoutPanel
 
         #region Fields
 
-        private readonly ClSimplexSolver solver;
+        private readonly CassowarySolver solver;
         private readonly Dictionary<ClVariable, ClLinearEquation> variableConstraints;
         private readonly Dictionary<UIElement, LayoutVariableSet> elementVariables;
         private readonly List<UIElement> processedChildren;
@@ -63,9 +58,9 @@ namespace AutoLayoutPanel
 
         #region Constructors
 
-        public LayoutPanel()
+        public AutoLayoutPanel()
         {
-            solver = new ClSimplexSolver();
+            solver = new CassowarySolver();
             solver.AutoSolve = false;
             variableConstraints = new Dictionary<ClVariable, ClLinearEquation>();
 

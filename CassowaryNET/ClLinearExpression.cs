@@ -21,15 +21,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Cassowary.Constraints;
-using Cassowary.Exceptions;
-using Cassowary.Utils;
-using Cassowary.Variables;
+using CassowaryNET.Constraints;
+using CassowaryNET.Exceptions;
+using CassowaryNET.Utils;
+using CassowaryNET.Variables;
 
-namespace Cassowary
+namespace CassowaryNET
 {
 #pragma warning disable 660,661
     // We are heavily using operator overloading here

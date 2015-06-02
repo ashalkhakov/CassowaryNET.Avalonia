@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace AutoLayoutPanel
+namespace LayoutNET
 {
     public class LayoutLinearExpression : DependencyObject
     {

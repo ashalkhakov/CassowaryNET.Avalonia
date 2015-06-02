@@ -19,10 +19,9 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-using Cassowary;
-using Cassowary.Exceptions;
+using CassowaryNET.Exceptions;
 
-namespace Cassowary.Parsing
+namespace CassowaryNET.Parsing
 {
     public class ExClParseError : CassowaryException
     {

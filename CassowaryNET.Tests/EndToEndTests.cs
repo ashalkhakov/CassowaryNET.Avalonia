@@ -1,20 +1,20 @@
 using System;
 using System.Linq;
-using Cassowary.Constraints;
-using Cassowary.Exceptions;
-using Cassowary.Variables;
+using CassowaryNET.Constraints;
+using CassowaryNET.Exceptions;
+using CassowaryNET.Variables;
 using NUnit.Framework;
 
-namespace Cassowary.Tests
+namespace CassowaryNET.Tests
 {
     [TestFixture]
     public class EndToEndTests
     {
         private static readonly Random random = new Random();
 
-        private static ClSimplexSolver GetTarget()
+        private static CassowarySolver GetTarget()
         {
-            return new ClSimplexSolver();
+            return new CassowarySolver();
         }
 
         [Test]

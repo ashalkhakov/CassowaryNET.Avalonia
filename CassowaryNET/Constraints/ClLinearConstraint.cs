@@ -21,7 +21,7 @@
 
 using System;
 
-namespace Cassowary.Constraints
+namespace CassowaryNET.Constraints
 {
     public abstract class ClLinearConstraint : ClConstraint
     {

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Markup;
 
-namespace AutoLayoutPanel
+namespace LayoutNET
 {
     [ContentProperty("Constraints")]
     public class LayoutConstraints : DependencyObject

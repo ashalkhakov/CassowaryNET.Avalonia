@@ -23,11 +23,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Cassowary.Utils;
-using Cassowary.Variables;
+using CassowaryNET.Utils;
+using CassowaryNET.Variables;
 using JetBrains.Annotations;
 
-namespace Cassowary
+namespace CassowaryNET
 {
     public interface INoteVariableChanges
     {

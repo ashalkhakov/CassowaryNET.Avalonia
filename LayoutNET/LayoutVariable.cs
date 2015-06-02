@@ -1,7 +1,7 @@
 using System.Windows;
-using Cassowary.Variables;
+using CassowaryNET.Variables;
 
-namespace AutoLayoutPanel
+namespace LayoutNET
 {
     public class LayoutVariable
     {

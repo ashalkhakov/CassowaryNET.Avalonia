@@ -1,43 +1,67 @@
-<h1>wpf-autolayout</h1>
+# CassowaryNET
 
-An implementation of Cassowary contraint based system.  It contains a Windows WPF control called AutoLayoutPanel that allows you to add controls and define their layout in y=m*x + c model. Where y and x are either the Left, Center, Right, Top, Middle, Bottom, Width and Height property of the control listed previously.
+A pure .NET implementation of the Cassowary incremental linear constraint solver.
+See this [link](http://constraints.cs.washington.edu/cassowary/).
 
-<h2>Features</h2>
+Incremental solving results in signficantly better performance than fully 
+re-solving all constraints every time, making UI layout an ideal application
+for this solver.
 
-* Ability to express nearly any layout by describing layout in terms of relationships with math.
-* Support for RTL, LTR auto layouts for localization and cross-lingual interfaces.
-* Incremental solving that's signficantly faster than resolving on each render loop.
+This library makes use of operator overloading to allow for simple expression
+of complex constraints.
 
-<h2>API & Example</h2>
 
-```C#
-AutoLayoutPanel panel = new AutoLayoutPanel();
-Window.Content = panel;
-Button b = new Button();
-b.Content = "Button Title";
-panel.Children.Add(b);
+## Example
 
-// Assign the left (X) value to the left panel.
-// panel.AddLayoutConstraint(b,"Left",panel,"Left",0,0);
+    var x = new ClVariable(20d);
+    var y = new ClVariable(10d);
 
-// Vertically and horizontally center:
-// panel.AddLayoutConstraint(button, "Middle", "=", panel, "Middle", 1, 0);
-// panel.AddLayoutConstraint(button, "Center", "=", panel, "Center", 1, 0);
+    var solver = new CassowarySolver();
+    
+    solver.AddConstraint(x <= 5d);
+    solver.AddConstraint(x == y);
 
-// Set the width by defining where the left and right values of the button
-// should be set.  The button will always have 30 pixel margin on left and right sides.
-// panel.AddLayoutConstraint(button, "Left", "=", panel, "Left", 0, 30);
-// panel.AddLayoutConstraint(button, "Right", "=", panel, "Right", 0, -30);
-```
+    solver.Solve();
+    
+    // x.Value == 5d
+    // y.Value == 5d
 
-<h3>API</H3>
 
-Dead simple, AutoLayoutPanel inherits from System.Windows.Controls.Panel and adds two new methods:
+---
 
-``int AutoLayoutPanel.AddLayoutConstraint(UIElement firstProperty, String firstPropertyName, String equality, UIElement secondProperty, String secondPropertyName, double multiplier, double constant);``
 
-Equality can be "=", "<", or ">"
+# LayoutNET
 
-The returned integer is an ID that can be passed back into RemoveLayoutConstraint to remove the constraint.
+A WPF control (AutoLayoutPanel) that allows you to add child controls and define 
+their layout in terms of linear relationships and constraints with other controls.
 
-``void AutoLayoutPanel.RemoveLayoutConstraint(int constraintId);``
+Constraints can be created between Left, HCenter, Right, Top, VCenter, Bottom, 
+Width and Height properties of controls.
+
+
+## Example
+
+
+    <layout:AutoLayoutPanel
+        x:Name="MainPanel">
+        
+        <!-- Horizontally and vertically centered in the panel. Width is between 100 and 300. -->
+        <Button 
+            x:Name="Button1"
+            Content="Button1"
+            layoutNet:AutoLayoutPanel.Constraints="
+                [VCenter] equalto [MainPanel.VCenter];
+                [HCenter] equalto [MainPanel.HCenter];
+                [Width] greaterthan [100];
+                [Width] lessthan [300];"/>
+
+        <!-- Horizontally centred with Button1. Top is 10 below the bottom of Button1. -->
+        <Button 
+            x:Name="Button2"
+            Content="Button2"
+            layoutNet:AutoLayoutPanel.Constraints="
+                [Top] equalto [Button1.Bottom + 10];
+                [HCenter] equalto [Button1.HCenter];"/>
+
+    </layout:AutoLayoutPanel>
+

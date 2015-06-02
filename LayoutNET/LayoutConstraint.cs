@@ -1,9 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Markup;
 
-namespace AutoLayoutPanel
+namespace LayoutNET
 {
     [ContentProperty("Expressions")]
     public class LayoutConstraint

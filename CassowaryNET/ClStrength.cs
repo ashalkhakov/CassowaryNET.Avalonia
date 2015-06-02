@@ -21,7 +21,7 @@
 
 using System;
 
-namespace Cassowary
+namespace CassowaryNET
 {
     public class ClStrength
     {

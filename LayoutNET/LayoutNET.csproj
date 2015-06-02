@@ -52,7 +52,7 @@
     <Compile Include="LayoutConstraints.cs" />
     <Compile Include="LayoutConstraintStrength.cs" />
     <Compile Include="LayoutLinearExpression.cs" />
-    <Compile Include="LayoutPanel.cs" />
+    <Compile Include="AutoLayoutPanel.cs" />
     <Compile Include="LayoutProperty.cs" />
     <Compile Include="LayoutRelationship.cs" />
     <Compile Include="LayoutVariable.cs" />

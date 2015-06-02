@@ -49,7 +49,7 @@
     <Compile Include="ClDouble.cs" />
     <Compile Include="ClEditInfo.cs" />
     <Compile Include="ClLinearExpression.cs" />
-    <Compile Include="ClSimplexSolver.cs" />
+    <Compile Include="CassowarySolver.cs" />
     <Compile Include="ClStrength.cs" />
     <Compile Include="ClSymbolicWeight.cs" />
     <Compile Include="ClTableau.cs" />

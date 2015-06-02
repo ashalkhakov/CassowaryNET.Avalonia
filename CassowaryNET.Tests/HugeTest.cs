@@ -1,11 +1,10 @@
 using System;
 using System.Linq;
-using Cassowary.Constraints;
-using Cassowary.Exceptions;
-using Cassowary.Variables;
+using CassowaryNET.Constraints;
+using CassowaryNET.Variables;
 using NUnit.Framework;
 
-namespace Cassowary.Tests
+namespace CassowaryNET.Tests
 {
     [TestFixture]
     public class HugeTest
@@ -147,7 +146,7 @@ namespace Cassowary.Tests
 
             #endregion
 
-            var target = new ClSimplexSolver(); // GetTarget();
+            var target = new CassowarySolver(); // GetTarget();
 
             #region Stay Constraints
 

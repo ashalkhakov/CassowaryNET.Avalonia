@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Cassowary.Parsing
+namespace CassowaryNET.Parsing
 {
     public class Token
     {

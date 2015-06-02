@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using JetBrains.Annotations;
 
-namespace Cassowary.Utils
+namespace CassowaryNET.Utils
 {
     internal static class DictionaryEx
     {

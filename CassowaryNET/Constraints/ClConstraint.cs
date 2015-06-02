@@ -21,7 +21,7 @@
 
 using System;
 
-namespace Cassowary.Constraints
+namespace CassowaryNET.Constraints
 {
     // Type         => Edit  | Stay  | Equality | Inequality
     // IsEdit       => true  | false | false    | false

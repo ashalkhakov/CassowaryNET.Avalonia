@@ -1,8 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
-using Moq;
 
-namespace Cassowary.Tests
+namespace CassowaryNET.Tests
 {
     public class Class1
     {

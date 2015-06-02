@@ -21,7 +21,7 @@
 
 using System;
 
-namespace Cassowary.Variables
+namespace CassowaryNET.Variables
 {
     public sealed class ClObjectiveVariable : ClAbstractVariable
     {

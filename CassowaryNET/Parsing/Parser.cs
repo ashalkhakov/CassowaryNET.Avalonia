@@ -1,11 +1,10 @@
 using System;
 using System.Collections;
 using System.Globalization;
-using Cassowary;
-using Cassowary.Constraints;
-using Cassowary.Variables;
+using CassowaryNET.Constraints;
+using CassowaryNET.Variables;
 
-namespace Cassowary.Parsing
+namespace CassowaryNET.Parsing
 {
     public class Parser
     {

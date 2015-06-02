@@ -20,10 +20,10 @@
 */
 
 using System;
-using Cassowary.Constraints;
-using Cassowary.Variables;
+using CassowaryNET.Constraints;
+using CassowaryNET.Variables;
 
-namespace Cassowary
+namespace CassowaryNET
 {
     /// <summary>
     /// ClEditInfo is privately-used class

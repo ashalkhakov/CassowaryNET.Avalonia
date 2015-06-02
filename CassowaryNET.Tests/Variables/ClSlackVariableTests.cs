@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Cassowary.Variables;
+using CassowaryNET.Variables;
 using NUnit.Framework;
-using Moq;
 
-namespace Cassowary.Tests
+namespace CassowaryNET.Tests.Variables
 {
     [TestFixture]
     public class ClSlackVariableTests

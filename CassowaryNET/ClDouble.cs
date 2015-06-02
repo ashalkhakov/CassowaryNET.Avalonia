@@ -22,7 +22,7 @@
 using System;
 using System.Globalization;
 
-namespace Cassowary
+namespace CassowaryNET
 {
     // TODO: inline this class to System.Double?
 

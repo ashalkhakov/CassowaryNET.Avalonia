@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Documents;
-using Cassowary.Variables;
+using CassowaryNET.Variables;
 
-namespace AutoLayoutPanel
+namespace LayoutNET
 {
     public class LayoutVariableSet
     {

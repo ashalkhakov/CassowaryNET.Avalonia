@@ -21,7 +21,7 @@
 
 using System;
 
-namespace Cassowary.Variables
+namespace CassowaryNET.Variables
 {
     internal sealed class ClSlackVariable : ClAbstractVariable
     {
