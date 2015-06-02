@@ -29,7 +29,18 @@ using JetBrains.Annotations;
 
 namespace Cassowary
 {
-    public class ClTableau
+    public interface INoteVariableChanges
+    {
+        void NoteRemovedVariable(
+            ClAbstractVariable v,
+            ClAbstractVariable subject);
+
+        void NoteAddedVariable(
+            ClAbstractVariable v,
+            ClAbstractVariable subject);
+    }
+
+    public class ClTableau : INoteVariableChanges
     {
         #region Fields
 
@@ -278,10 +289,9 @@ namespace Cassowary
 
                 row.SubstituteOut(oldVariable, expression, variable, this);
                 var newRow = row;
-                
+
                 // NOTE: we have later problems with KeyNotFound if we do this, 
                 // when looking for a slack variable in Columns
-
 
                 //var newRow = row.WithVariableSubstitutedBy(oldVariable, expression);
                 //// don't include the substituted variable in the removals here
@@ -301,6 +311,7 @@ namespace Cassowary
                 //    NoteRemovedVariable(removedVariable, variable);
                 //}
                 //rows[variable] = newRow;
+
 
                 if (variable.IsRestricted && newRow.Constant < 0d)
                 {

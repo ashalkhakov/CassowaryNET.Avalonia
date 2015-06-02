@@ -49,6 +49,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClLinearExpressionTests.cs" />
     <Compile Include="HugeTest.cs" />
     <Compile Include="Variables\ClObjectiveVariableTests.cs" />
     <Compile Include="Variables\ClSlackVariableTests.cs" />

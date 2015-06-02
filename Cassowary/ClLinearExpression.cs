@@ -193,7 +193,7 @@ namespace Cassowary
             ClAbstractVariable variable,
             ClLinearExpression expression,
             ClAbstractVariable subject,
-            ClTableau solver)
+            INoteVariableChanges solver)
         {
             // NOTE: doesn't inform of removal of the substituted variable...
 

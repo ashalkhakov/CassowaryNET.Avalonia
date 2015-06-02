@@ -16,7 +16,9 @@ namespace Cassowary.Tests
             var min = (1d - delta)*expected;
             var max = (1d + delta)*expected;
 
-            return Is.InRange(min, max);
+            return (expected < 0)
+                ? Is.InRange(max, min)
+                : Is.InRange(min, max);
         }
     }
 }
