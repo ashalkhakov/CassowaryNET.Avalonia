@@ -31,12 +31,13 @@ using Cassowary.Variables;
 
 namespace Cassowary
 {
-    public sealed class ClSimplexSolver : ClTableau
+    public sealed class ClSimplexSolver
     {
         #region Fields
 
         private const double Epsilon = 1e-8;
 
+        private readonly ClTableau tableau;
         private readonly ClObjectiveVariable objective;
 
         /// <summary>
@@ -95,8 +96,10 @@ namespace Cassowary
         /// </remarks>
         public ClSimplexSolver()
         {
+            tableau = new ClTableau();
+
             objective = new ClObjectiveVariable("Z");
-            Rows.Add(objective, new ClLinearExpression(0d));
+            tableau.Rows.Add(objective, new ClLinearExpression(0d));
 
             stayMinusErrorVars = new List<ClSlackVariable>();
             stayPlusErrorVars = new List<ClSlackVariable>();
@@ -289,7 +292,7 @@ namespace Cassowary
 
             Debug.Assert(editVarMap.Count > 0, "_editVarMap.Count > 0");
             // may later want to do more in here
-            InfeasibleRows.Clear();
+            tableau.InfeasibleRows.Clear();
             ResetStayConstants();
             editVariablesCountStack.Push(editVarMap.Count);
         }
@@ -412,14 +415,14 @@ namespace Cassowary
             {
                 errorVariables.Remove(constraint);
 
-                var objectiveRow = Rows[objective];
+                var objectiveRow = tableau.Rows[objective];
 
                 foreach (var variable in slackVariables)
                 {
                     var coeff = -constraint.Weight*
                                 constraint.Strength.SymbolicWeight.AsDouble();
 
-                    var variableRow = Rows.GetOrDefault(variable);
+                    var variableRow = tableau.Rows.GetOrDefault(variable);
 
                     ClLinearExpression newObjectiveRow;
                     if (Equals(variableRow, null))
@@ -433,7 +436,7 @@ namespace Cassowary
                     }
 
                     // overwrite the objective row
-                    Rows[objective] = newObjectiveRow;
+                    tableau.Rows[objective] = newObjectiveRow;
 
                     var addedVariables = newObjectiveRow.Terms.Keys
                         .Except(objectiveRow.Terms.Keys);
@@ -442,11 +445,11 @@ namespace Cassowary
 
                     foreach (var addedVariable in addedVariables)
                     {
-                        NoteAddedVariable(addedVariable, objective);
+                        tableau.NoteAddedVariable(addedVariable, objective);
                     }
                     foreach (var removedVariable in removedVariables)
                     {
-                        NoteRemovedVariable(removedVariable, objective);
+                        tableau.NoteRemovedVariable(removedVariable, objective);
                     }
                 }
             }
@@ -457,10 +460,10 @@ namespace Cassowary
 
             markerVariables.Remove(constraint);
 
-            if (Equals(RowExpression(marker), null))
+            if (Equals(tableau.RowExpression(marker), null))
             {
                 // not in the basis, so need to do some more work
-                var markerColumn = Columns[marker];
+                var markerColumn = tableau.Columns[marker];
 
                 // must pivot...
                 ClAbstractVariable exitVar = null;
@@ -470,7 +473,7 @@ namespace Cassowary
                 {
                     if (variable.IsRestricted)
                     {
-                        var rowExpression = RowExpression(variable);
+                        var rowExpression = tableau.RowExpression(variable);
                         var coefficient = rowExpression.CoefficientFor(marker);
 
                         if (coefficient >= 0d)
@@ -494,7 +497,7 @@ namespace Cassowary
                         if (!variable.IsRestricted)
                             continue;
 
-                        var rowExpression = RowExpression(variable);
+                        var rowExpression = tableau.RowExpression(variable);
                         var coefficient = rowExpression.CoefficientFor(marker);
 
                         var ratio = rowExpression.Constant/coefficient;
@@ -510,7 +513,7 @@ namespace Cassowary
                 {
                     if (markerColumn.Count == 0)
                     {
-                        RemoveColumn(marker);
+                        tableau.RemoveColumn(marker);
                     }
                     else
                     {
@@ -524,9 +527,9 @@ namespace Cassowary
                 }
             }
 
-            if (!Equals(RowExpression(marker), null))
+            if (!Equals(tableau.RowExpression(marker), null))
             {
-                RemoveRow(marker);
+                tableau.RemoveRow(marker);
             }
 
             if (slackVariables != null)
@@ -535,7 +538,7 @@ namespace Cassowary
                 {
                     if (!Equals(slackVariable, marker))
                     {
-                        RemoveColumn(slackVariable);
+                        tableau.RemoveColumn(slackVariable);
                     }
                 }
             }
@@ -558,7 +561,7 @@ namespace Cassowary
                 var variable = editConstraint.Variable;
                 var editInfo = editVarMap[variable];
                 var clvEditMinus = editInfo.ClvEditMinus;
-                RemoveColumn(clvEditMinus);
+                tableau.RemoveColumn(clvEditMinus);
                 editVarMap.Remove(variable);
             }
 
@@ -597,7 +600,7 @@ namespace Cassowary
         {
             DualOptimize();
             SetExternalVariables();
-            InfeasibleRows.Clear();
+            tableau.InfeasibleRows.Clear();
             ResetStayConstants();
         }
 
@@ -670,7 +673,7 @@ namespace Cassowary
         public bool ContainsVariable(ClVariable v)
             /* throws ExClInternalError */
         {
-            return ColumnsHasKey(v) || !Equals(RowExpression(v), null);
+            return tableau.ColumnsHasKey(v) || !Equals(tableau.RowExpression(v), null);
         }
 
         public void AddVar(ClVariable v)
@@ -700,9 +703,9 @@ namespace Cassowary
         /// <returns>
         /// String containing the information.
         /// </returns>
-        public override string GetInternalInfo()
+        public string GetInternalInfo()
         {
-            string result = base.GetInternalInfo();
+            string result = tableau.GetInternalInfo();
 
             result += "\nSolver info:\n";
             result += "Stay Error Variables: ";
@@ -717,7 +720,7 @@ namespace Cassowary
 
         public override string ToString()
         {
-            string result = base.ToString();
+            string result = tableau.ToString();
 
             result += "\n_stayPlusErrorVars: ";
             result += stayPlusErrorVars;
@@ -745,22 +748,22 @@ namespace Cassowary
 
             var expressionClone = Cloneable.Clone(expression);
 
-            AddRow(az, expressionClone);
-            AddRow(av, expression);
+            tableau.AddRow(az, expressionClone);
+            tableau.AddRow(av, expression);
 
             Optimize(az);
 
-            var azRowExpression = RowExpression(az);
+            var azRowExpression = tableau.RowExpression(az);
 
             if (!CMath.Approx(azRowExpression.Constant, 0.0))
             {
-                RemoveRow(az);
-                RemoveColumn(av);
+                tableau.RemoveRow(az);
+                tableau.RemoveColumn(av);
                 throw new CassowaryRequiredConstraintFailureException();
             }
 
             // see if av is a basic variable
-            var avRowExpression = RowExpression(av);
+            var avRowExpression = tableau.RowExpression(av);
 
             if (!Equals(avRowExpression, null))
             {
@@ -771,8 +774,8 @@ namespace Cassowary
                     // if there isn't another variable in the row
                     // then the tableau contains the equation av=0 --
                     // just delete av's row
-                    RemoveRow(av);
-                    RemoveRow(az);
+                    tableau.RemoveRow(av);
+                    tableau.RemoveRow(az);
                     return;
                 }
 
@@ -780,10 +783,10 @@ namespace Cassowary
                 Pivot(entryVar, av);
             }
 
-            Debug.Assert(Equals(RowExpression(av), null), "RowExpression(av) == null)");
+            Debug.Assert(Equals(tableau.RowExpression(av), null), "tableau.RowExpression(av) == null)");
 
-            RemoveColumn(av);
-            RemoveRow(az);
+            tableau.RemoveColumn(av);
+            tableau.RemoveRow(az);
         }
 
         /// <summary>
@@ -809,12 +812,12 @@ namespace Cassowary
             }
 
             modifiedExpression = modifiedExpression.WithSubject(subject);
-            if (ColumnsHasKey(subject))
+            if (tableau.ColumnsHasKey(subject))
             {
-                SubstituteOut(subject, modifiedExpression);
+                tableau.SubstituteOut(subject, modifiedExpression);
             }
 
-            AddRow(subject, modifiedExpression);
+            tableau.AddRow(subject, modifiedExpression);
 
             return true; // succesfully added directly
         }
@@ -855,7 +858,7 @@ namespace Cassowary
                 {
                     if (!v.IsRestricted)
                     {
-                        if (!ColumnsHasKey(v))
+                        if (!tableau.ColumnsHasKey(v))
                         {
                             modifiedExpression = expression;
                             return v;
@@ -869,10 +872,10 @@ namespace Cassowary
                     {
                         if (!foundNewRestricted && !v.IsDummy && c < 0.0)
                         {
-                            var col = Columns.GetOrDefault(v);
+                            var col = tableau.Columns.GetOrDefault(v);
 
                             if (col == null ||
-                                (col.Count == 1 && ColumnsHasKey(objective)))
+                                (col.Count == 1 && tableau.ColumnsHasKey(objective)))
                             {
                                 subject = v;
                                 foundNewRestricted = true;
@@ -905,7 +908,7 @@ namespace Cassowary
                     return null; // nope, no luck
                 }
 
-                if (!ColumnsHasKey(v))
+                if (!tableau.ColumnsHasKey(v))
                 {
                     subject = v;
                     coeff = c;
@@ -947,7 +950,7 @@ namespace Cassowary
             foreach (ClAbstractVariable v in cnTerms.Keys)
             {
                 double c = cnTerms[v].Value;
-                ClLinearExpression e = RowExpression(v);
+                ClLinearExpression e = tableau.RowExpression(v);
                 if (Equals(e, null))
                 {
                     expr = expr + (v*c);
@@ -970,12 +973,12 @@ namespace Cassowary
                     expr = expr.WithVariableSetTo(eminus, 1.0);
                     var sw = cn.Strength.SymbolicWeight * cn.Weight;
 
-                    var zRow = Rows[objective];
+                    var zRow = tableau.Rows[objective];
                     zRow = zRow.WithVariableSetTo(eminus, sw.AsDouble());
-                    Rows[objective] = zRow;
+                    tableau.Rows[objective] = zRow;
 
                     InsertErrorVar(cn, eminus);
-                    NoteAddedVariable(eminus, objective);
+                    tableau.NoteAddedVariable(eminus, objective);
                 }
             }
             else
@@ -998,13 +1001,13 @@ namespace Cassowary
                     ClSymbolicWeight sw = cn.Strength.SymbolicWeight*cn.Weight;
                     double swCoeff = sw.AsDouble();
 
-                    var zRow = Rows[objective];
+                    var zRow = tableau.Rows[objective];
                     zRow = zRow.WithVariableSetTo(eplus, swCoeff);
                     zRow = zRow.WithVariableSetTo(eminus, swCoeff);
-                    Rows[objective] = zRow;
+                    tableau.Rows[objective] = zRow;
 
-                    NoteAddedVariable(eplus, objective);
-                    NoteAddedVariable(eminus, objective);
+                    tableau.NoteAddedVariable(eplus, objective);
+                    tableau.NoteAddedVariable(eminus, objective);
 
                     InsertErrorVar(cn, eminus);
                     InsertErrorVar(cn, eplus);
@@ -1041,7 +1044,7 @@ namespace Cassowary
         private void Optimize(ClObjectiveVariable zVariable)
             /* throws ExClInternalError */
         {
-            var zRow = RowExpression(zVariable);
+            var zRow = tableau.RowExpression(zVariable);
             Debug.Assert(!Equals(zRow, null), "zRow != null");
 
             // NOTE: should this be inside the loop?
@@ -1078,13 +1081,13 @@ namespace Cassowary
             var minRatio = double.MaxValue;
             var minFound = false;
 
-            var columnVariables = Columns[entryVariable];
+            var columnVariables = tableau.Columns[entryVariable];
             foreach (var variable in columnVariables)
             {
                 if (!variable.IsPivotable)
                     continue;
 
-                var rowExpression = RowExpression(variable);
+                var rowExpression = tableau.RowExpression(variable);
                 var coefficient = rowExpression.CoefficientFor(entryVariable);
 
                 if (coefficient >= 0d)
@@ -1134,44 +1137,44 @@ namespace Cassowary
             ClAbstractVariable plusErrorVariable,
             ClAbstractVariable minusErrorVariable)
         {
-            var plusErrorRow = Rows.GetOrDefault(plusErrorVariable);
+            var plusErrorRow = tableau.Rows.GetOrDefault(plusErrorVariable);
             if (!Equals(plusErrorRow, null))
             {
                 plusErrorRow = plusErrorRow.WithConstantIncrementedBy(delta);
-                Rows[plusErrorVariable] = plusErrorRow;
+                tableau.Rows[plusErrorVariable] = plusErrorRow;
 
                 if (plusErrorRow.Constant < 0d)
                 {
-                    InfeasibleRows.Add(plusErrorVariable);
+                    tableau.InfeasibleRows.Add(plusErrorVariable);
                 }
                 return;
             }
 
-            var minusErrorRow = Rows.GetOrDefault(minusErrorVariable);
+            var minusErrorRow = tableau.Rows.GetOrDefault(minusErrorVariable);
             if (!Equals(minusErrorRow, null))
             {
                 minusErrorRow = minusErrorRow.WithConstantIncrementedBy(-delta);
-                Rows[minusErrorVariable] = minusErrorRow;
+                tableau.Rows[minusErrorVariable] = minusErrorRow;
 
                 if (minusErrorRow.Constant < 0d)
                 {
-                    InfeasibleRows.Add(minusErrorVariable);
+                    tableau.InfeasibleRows.Add(minusErrorVariable);
                 }
                 return;
             }
 
-            var minusErrorColumn = Columns[minusErrorVariable];
+            var minusErrorColumn = tableau.Columns[minusErrorVariable];
             foreach (var variable in minusErrorColumn)
             {
-                var variableRow = Rows[variable];
+                var variableRow = tableau.Rows[variable];
 
                 var coefficient = variableRow.CoefficientFor(minusErrorVariable);
                 variableRow = variableRow.WithConstantIncrementedBy(coefficient*delta);
-                Rows[variable] = variableRow;
+                tableau.Rows[variable] = variableRow;
 
                 if (variable.IsRestricted && variableRow.Constant < 0d)
                 {
-                    InfeasibleRows.Add(variable);
+                    tableau.InfeasibleRows.Add(variable);
                 }
             }
         }
@@ -1185,17 +1188,17 @@ namespace Cassowary
         private void DualOptimize()
             /* throws ExClInternalError */
         {
-            ClLinearExpression zRow = RowExpression(objective);
+            ClLinearExpression zRow = tableau.RowExpression(objective);
 
-            while (InfeasibleRows.Count != 0)
+            while (tableau.InfeasibleRows.Count != 0)
             {
-                var enumIfRows = InfeasibleRows.GetEnumerator();
+                var enumIfRows = tableau.InfeasibleRows.GetEnumerator();
                 enumIfRows.MoveNext();
                 var exitVar = enumIfRows.Current;
 
-                InfeasibleRows.Remove(exitVar);
+                tableau.InfeasibleRows.Remove(exitVar);
                 ClAbstractVariable entryVar = null;
-                ClLinearExpression expr = RowExpression(exitVar);
+                ClLinearExpression expr = tableau.RowExpression(exitVar);
 
                 if (Equals(expr, null))
                     continue;
@@ -1250,12 +1253,12 @@ namespace Cassowary
             // RemoveConstraint -- otherwise it should be a pivotable
             // variable -- enforced at call sites, hopefully
 
-            var expression = RemoveRow(exitVariable);
+            var expression = tableau.RemoveRow(exitVariable);
 
             expression = expression.WithSubjectChangedTo(exitVariable, entryVariable);
 
-            SubstituteOut(entryVariable, expression);
-            AddRow(entryVariable, expression);
+            tableau.SubstituteOut(entryVariable, expression);
+            tableau.AddRow(entryVariable, expression);
         }
 
         /// <summary>
@@ -1282,22 +1285,22 @@ namespace Cassowary
             {
                 {
                     var stayPlusErrorVar = stayPlusErrorVars[i];
-                    var expression = Rows.GetOrDefault(stayPlusErrorVar);
+                    var expression = tableau.Rows.GetOrDefault(stayPlusErrorVar);
                     if (!Equals(expression, null))
                     {
                         expression = expression.WithConstantSetTo(0d);
-                        Rows[stayPlusErrorVar] = expression;
+                        tableau.Rows[stayPlusErrorVar] = expression;
                         continue;
                     }
                 }
 
                 {
                     var stayMinusErrorVar = stayMinusErrorVars[i];
-                    var expression = Rows.GetOrDefault(stayMinusErrorVar);
+                    var expression = tableau.Rows.GetOrDefault(stayMinusErrorVar);
                     if (!Equals(expression, null))
                     {
                         expression = expression.WithConstantSetTo(0d);
-                        Rows[stayMinusErrorVar] = expression;
+                        tableau.Rows[stayMinusErrorVar] = expression;
                         continue;
                     }
                 }
@@ -1318,9 +1321,9 @@ namespace Cassowary
         /// </remarks>
         private void SetExternalVariables()
         {
-            foreach (var variable in ExternalParametricVars)
+            foreach (var variable in tableau.ExternalParametricVars)
             {
-                var rowExpression = RowExpression(variable);
+                var rowExpression = tableau.RowExpression(variable);
 
                 if (!Equals(rowExpression, null))
                 {
@@ -1333,9 +1336,9 @@ namespace Cassowary
                 variable.Value = 0d;
             }
 
-            foreach (var variable in ExternalRows)
+            foreach (var variable in tableau.ExternalRows)
             {
-                var rowExpression = RowExpression(variable);
+                var rowExpression = tableau.RowExpression(variable);
                 variable.Value = rowExpression.Constant;
             }
 

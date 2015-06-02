@@ -40,7 +40,7 @@ namespace Cassowary
             ClAbstractVariable subject);
     }
 
-    public class ClTableau : INoteVariableChanges
+    internal class ClTableau : INoteVariableChanges
     {
         #region Fields
 
@@ -83,7 +83,7 @@ namespace Cassowary
         /// Constructor is protected, since this only supports an ADT for
         /// the ClSimplexSolver class.
         /// </summary>
-        protected ClTableau()
+        public ClTableau()
         {
             columns = new Dictionary<ClAbstractVariable, HashSet<ClAbstractVariable>>();
             rows = new Dictionary<ClAbstractVariable, ClLinearExpression>();
@@ -96,27 +96,27 @@ namespace Cassowary
 
         #region Properties
 
-        protected Dictionary<ClAbstractVariable, HashSet<ClAbstractVariable>> Columns
+        public Dictionary<ClAbstractVariable, HashSet<ClAbstractVariable>> Columns
         {
             get { return columns; }
         }
 
-        protected Dictionary<ClAbstractVariable, ClLinearExpression> Rows
+        public Dictionary<ClAbstractVariable, ClLinearExpression> Rows
         {
             get { return rows; }
         }
 
-        protected HashSet<ClAbstractVariable> InfeasibleRows
+        public HashSet<ClAbstractVariable> InfeasibleRows
         {
             get { return infeasibleRows; }
         }
 
-        protected IEnumerable<ClVariable> ExternalRows
+        public IEnumerable<ClVariable> ExternalRows
         {
             get { return externalRows; }
         }
 
-        protected IEnumerable<ClVariable> ExternalParametricVars
+        public IEnumerable<ClVariable> ExternalParametricVars
         {
             get { return externalParametricVars; }
         }
@@ -180,7 +180,7 @@ namespace Cassowary
         // expr is now owned by ClTableau class, 
         // and ClTableau is responsible for deleting it
         // (also, expr better be allocated on the heap!).
-        protected void AddRow(ClAbstractVariable variable, ClLinearExpression expression)
+        public void AddRow(ClAbstractVariable variable, ClLinearExpression expression)
         {
             // for each variable in expr, add var to the set of rows which
             // have that variable in their expression
@@ -209,7 +209,7 @@ namespace Cassowary
         /// Remove v from the tableau -- remove the column cross indices for v
         /// and remove v from every expression in rows in which v occurs
         /// </summary>
-        protected void RemoveColumn(ClAbstractVariable variable)
+        public void RemoveColumn(ClAbstractVariable variable)
         {
             // remove the rows with the variables in varset
 
@@ -241,7 +241,7 @@ namespace Cassowary
         /// Remove the basic variable v from the tableau row v=expr
         /// Then update column cross indices.
         /// </summary>
-        protected ClLinearExpression RemoveRow(ClAbstractVariable variable)
+        public ClLinearExpression RemoveRow(ClAbstractVariable variable)
             /*throws ExCLInternalError*/
         {
             var expression = rows[variable];
@@ -277,7 +277,7 @@ namespace Cassowary
         /// Replace all occurrences of oldVar with expr, and update column cross indices
         /// oldVar should now be a basic variable.
         /// </summary> 
-        protected void SubstituteOut(
+        public void SubstituteOut(
             ClAbstractVariable oldVariable,
             ClLinearExpression expression)
         {
@@ -292,6 +292,7 @@ namespace Cassowary
 
                 // NOTE: we have later problems with KeyNotFound if we do this, 
                 // when looking for a slack variable in Columns
+                // "casso1" is a good, simple test that shows this behaviour
 
                 //var newRow = row.WithVariableSubstitutedBy(oldVariable, expression);
                 //// don't include the substituted variable in the removals here
@@ -333,13 +334,13 @@ namespace Cassowary
         /// Return true if and only if the variable subject is in the columns keys 
         /// </summary>
         [Pure]
-        protected bool ColumnsHasKey(ClAbstractVariable subject)
+        public bool ColumnsHasKey(ClAbstractVariable subject)
         {
             return columns.ContainsKey(subject);
         }
 
         [Pure]
-        protected ClLinearExpression RowExpression(ClAbstractVariable v)
+        public ClLinearExpression RowExpression(ClAbstractVariable v)
         {
             return Rows.GetOrDefault(v);
         }
@@ -353,7 +354,7 @@ namespace Cassowary
         /// <returns>
         /// String containing the information.
         /// </returns>
-        public virtual string GetInternalInfo()
+        public string GetInternalInfo()
         {
             string s = "Tableau Information:\n";
             s += string.Format(
