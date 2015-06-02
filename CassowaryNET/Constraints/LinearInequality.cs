@@ -25,7 +25,7 @@ using CassowaryNET.Variables;
 
 namespace CassowaryNET.Constraints
 {
-    public sealed class ClLinearInequality : ClLinearConstraint
+    public sealed class LinearInequality : LinearConstraint
     {
         #region Fields
 
@@ -35,23 +35,23 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Expression)
 
-        public ClLinearInequality(
-            ClLinearExpression expression,
-            ClStrength strength,
+        public LinearInequality(
+            LinearExpression expression,
+            Strength strength,
             double weight)
             : base(expression, strength, weight)
         {
         }
 
-        public ClLinearInequality(
-            ClLinearExpression expression,
-            ClStrength strength)
+        public LinearInequality(
+            LinearExpression expression,
+            Strength strength)
             : this(expression, strength, 1d)
         {
         }
 
-        public ClLinearInequality(ClLinearExpression expression)
-            : this(expression, ClStrength.Required)
+        public LinearInequality(LinearExpression expression)
+            : this(expression, Strength.Required)
         {
         }
 
@@ -59,30 +59,30 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Variable,Variable)
 
-        private ClLinearInequality(
-            ClAbstractVariable variable1,
+        private LinearInequality(
+            AbstractVariable variable1,
             InequalityType inequalityType,
-            ClAbstractVariable variable2,
-            ClStrength strength,
+            AbstractVariable variable2,
+            Strength strength,
             double weight)
             : this(Create(variable1, inequalityType, variable2), strength, weight)
         {
         }
 
-        public ClLinearInequality(
-            ClAbstractVariable variable1,
+        public LinearInequality(
+            AbstractVariable variable1,
             InequalityType inequalityType,
-            ClAbstractVariable variable2,
-            ClStrength strength)
+            AbstractVariable variable2,
+            Strength strength)
             : this(variable1, inequalityType, variable2, strength, 1d)
         {
         }
 
-        public ClLinearInequality(
-            ClAbstractVariable variable1,
+        public LinearInequality(
+            AbstractVariable variable1,
             InequalityType inequalityType,
-            ClAbstractVariable variable2)
-            : this(variable1, inequalityType, variable2, ClStrength.Required, 1d)
+            AbstractVariable variable2)
+            : this(variable1, inequalityType, variable2, Strength.Required, 1d)
         {
         }
 
@@ -90,30 +90,30 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Variable,double)
 
-        public ClLinearInequality(
-            ClAbstractVariable variable,
+        public LinearInequality(
+            AbstractVariable variable,
             InequalityType inequalityType,
             double value,
-            ClStrength strength,
+            Strength strength,
             double weight)
             : this(Create(variable, inequalityType, value), strength, weight)
         {
         }
 
-        public ClLinearInequality(
-            ClAbstractVariable variable,
+        public LinearInequality(
+            AbstractVariable variable,
             InequalityType inequalityType,
             double value,
-            ClStrength strength)
+            Strength strength)
             : this(variable, inequalityType, value, strength, 1d)
         {
         }
 
-        public ClLinearInequality(
-            ClAbstractVariable variable,
+        public LinearInequality(
+            AbstractVariable variable,
             InequalityType inequalityType,
             double value)
-            : this(variable, inequalityType, value, ClStrength.Required, 1d)
+            : this(variable, inequalityType, value, Strength.Required, 1d)
         {
         }
 
@@ -121,30 +121,30 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Expression,Expression)
 
-        public ClLinearInequality(
-            ClLinearExpression expression1,
+        public LinearInequality(
+            LinearExpression expression1,
             InequalityType inequalityType,
-            ClLinearExpression expression2,
-            ClStrength strength,
+            LinearExpression expression2,
+            Strength strength,
             double weight)
             : base(Create(expression1, inequalityType, expression2), strength, weight)
         {
         }
 
-        public ClLinearInequality(
-            ClLinearExpression expression1,
+        public LinearInequality(
+            LinearExpression expression1,
             InequalityType inequalityType,
-            ClLinearExpression expression2,
-            ClStrength strength)
+            LinearExpression expression2,
+            Strength strength)
             : this(expression1, inequalityType, expression2, strength, 1d)
         {
         }
 
-        public ClLinearInequality(
-            ClLinearExpression expression1,
+        public LinearInequality(
+            LinearExpression expression1,
             InequalityType inequalityType,
-            ClLinearExpression expression2)
-            : this(expression1, inequalityType, expression2, ClStrength.Required, 1d)
+            LinearExpression expression2)
+            : this(expression1, inequalityType, expression2, Strength.Required, 1d)
         {
         }
 
@@ -152,30 +152,30 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Variable,Expression)
 
-        public ClLinearInequality(
-            ClAbstractVariable variable,
+        public LinearInequality(
+            AbstractVariable variable,
             InequalityType inequalityType,
-            ClLinearExpression expression,
-            ClStrength strength,
+            LinearExpression expression,
+            Strength strength,
             double weight)
             : this(Create(variable, inequalityType, expression), strength, weight)
         {
         }
 
-        public ClLinearInequality(
-            ClAbstractVariable variable,
+        public LinearInequality(
+            AbstractVariable variable,
             InequalityType inequalityType,
-            ClLinearExpression expression,
-            ClStrength strength)
+            LinearExpression expression,
+            Strength strength)
             : this(variable, inequalityType, expression, strength, 1d)
         {
         }
 
-        public ClLinearInequality(
-            ClAbstractVariable variable,
+        public LinearInequality(
+            AbstractVariable variable,
             InequalityType inequalityType,
-            ClLinearExpression expression)
-            : this(variable, inequalityType, expression, ClStrength.Required, 1d)
+            LinearExpression expression)
+            : this(variable, inequalityType, expression, Strength.Required, 1d)
         {
         }
 
@@ -183,30 +183,30 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Expression,Variable)
 
-        public ClLinearInequality(
-            ClLinearExpression expression,
+        public LinearInequality(
+            LinearExpression expression,
             InequalityType inequalityType,
-            ClAbstractVariable variable,
-            ClStrength strength,
+            AbstractVariable variable,
+            Strength strength,
             double weight)
             : this(Create(expression, inequalityType, variable), strength, weight)
         {
         }
 
-        public ClLinearInequality(
-            ClLinearExpression expression,
+        public LinearInequality(
+            LinearExpression expression,
             InequalityType inequalityType,
-            ClAbstractVariable variable,
-            ClStrength strength)
+            AbstractVariable variable,
+            Strength strength)
             : this(expression, inequalityType, variable, strength, 1d)
         {
         }
 
-        public ClLinearInequality(
-            ClLinearExpression expression,
+        public LinearInequality(
+            LinearExpression expression,
             InequalityType inequalityType,
-            ClAbstractVariable variable)
-            : this(expression, inequalityType, variable, ClStrength.Required, 1d)
+            AbstractVariable variable)
+            : this(expression, inequalityType, variable, Strength.Required, 1d)
         {
         }
 
@@ -225,10 +225,10 @@ namespace CassowaryNET.Constraints
 
         #region Methods
 
-        private static ClLinearExpression Create(
-            ClAbstractVariable variable1,
+        private static LinearExpression Create(
+            AbstractVariable variable1,
             InequalityType inequalityType,
-            ClAbstractVariable variable2)
+            AbstractVariable variable2)
         {
             switch (inequalityType)
             {
@@ -242,8 +242,8 @@ namespace CassowaryNET.Constraints
             }
         }
 
-        private static ClLinearExpression Create(
-            ClAbstractVariable variable,
+        private static LinearExpression Create(
+            AbstractVariable variable,
             InequalityType inequalityType,
             double value)
         {
@@ -259,10 +259,10 @@ namespace CassowaryNET.Constraints
             }
         }
 
-        private static ClLinearExpression Create(
-            ClLinearExpression expression1,
+        private static LinearExpression Create(
+            LinearExpression expression1,
             InequalityType inequalityType,
-            ClLinearExpression expression2)
+            LinearExpression expression2)
         {
             switch (inequalityType)
             {
@@ -276,10 +276,10 @@ namespace CassowaryNET.Constraints
             }
         }
 
-        private static ClLinearExpression Create(
-            ClAbstractVariable variable,
+        private static LinearExpression Create(
+            AbstractVariable variable,
             InequalityType inequalityType,
-            ClLinearExpression expression)
+            LinearExpression expression)
         {
             switch (inequalityType)
             {
@@ -293,10 +293,10 @@ namespace CassowaryNET.Constraints
             }
         }
 
-        private static ClLinearExpression Create(
-            ClLinearExpression expression,
+        private static LinearExpression Create(
+            LinearExpression expression,
             InequalityType inequalityType,
-            ClAbstractVariable variable)
+            AbstractVariable variable)
         {
             switch (inequalityType)
             {
@@ -310,14 +310,14 @@ namespace CassowaryNET.Constraints
             }
         }
 
-        public ClLinearInequality WithStrength(ClStrength strength)
+        public LinearInequality WithStrength(Strength strength)
         {
-            return new ClLinearInequality(Expression, strength, Weight);
+            return new LinearInequality(Expression, strength, Weight);
         }
 
-        public ClLinearInequality WithWeight(double weight)
+        public LinearInequality WithWeight(double weight)
         {
-            return new ClLinearInequality(Expression, Strength, weight);
+            return new LinearInequality(Expression, Strength, weight);
         }
 
         public override string ToString()

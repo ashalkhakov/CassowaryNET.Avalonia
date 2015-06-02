@@ -1,9 +1,9 @@
 /*
   Cassowary.net: an incremental constraint solver for .NET
   (http://lumumba.uhasselt.be/jo/projects/cassowary.net/)
-  
-  Copyright (C) 2005-2006  Jo Vermeulen (jo.vermeulen@uhasselt.be)
-  
+    
+  Copyright (C) 2005  Jo Vermeulen (jo.vermeulen@uhasselt.be)
+    
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public License
   as published by the Free Software Foundation; either version 2.1
@@ -20,45 +20,44 @@
 */
 
 using System;
+using CassowaryNET.Variables;
 
-namespace CassowaryNET.Variables
+namespace CassowaryNET.Constraints
 {
-    internal sealed class ClSlackVariable : ClAbstractVariable
+    public abstract class EditOrStayConstraint : Constraint
     {
         #region Fields
 
-        private static long slackCounter = 0;
+        private readonly Variable variable;
+        // cache the expression
+        private readonly LinearExpression expression;
 
         #endregion
 
         #region Constructors
 
-        public ClSlackVariable(string name)
-            : base(name + (++slackCounter))
+        protected EditOrStayConstraint(
+            Variable variable,
+            Strength strength,
+            double weight)
+            : base(strength, weight)
         {
-        }
-
-        public ClSlackVariable()
-        {
+            this.variable = variable;
+            expression = new LinearExpression(this.variable, -1d, this.variable.Value);
         }
 
         #endregion
 
         #region Properties
 
-        public override bool IsExternal
+        public Variable Variable
         {
-            get { return false; }
+            get { return variable; }
         }
 
-        public override bool IsPivotable
+        public override sealed LinearExpression Expression
         {
-            get { return true; }
-        }
-
-        public override bool IsRestricted
-        {
-            get { return true; }
+            get { return expression; }
         }
 
         #endregion
@@ -67,7 +66,8 @@ namespace CassowaryNET.Variables
 
         public override string ToString()
         {
-            return string.Format("[{0}:slack]", Name);
+            // add missing bracket -> see ClConstraint#ToString(...)
+            return base.ToString() + ")";
         }
 
         #endregion

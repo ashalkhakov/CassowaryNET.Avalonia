@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace CassowaryNET.Tests.Variables
 {
     [TestFixture]
-    public class ClVariableTests
+    public class VariableTests
     {
         #region Helpers
 
@@ -23,9 +23,9 @@ namespace CassowaryNET.Tests.Variables
             {
             }
 
-            internal ClVariable GetTarget()
+            internal Variable GetTarget()
             {
-                var target = new ClVariable();
+                var target = new Variable();
                 return target;
             }
         }
@@ -38,7 +38,7 @@ namespace CassowaryNET.Tests.Variables
             [Test]
             public void can_be_created()
             {
-                var target = new ClVariable();
+                var target = new Variable();
 
                 Assert.That(target.Name, Is.Not.Null);
                 Assert.That(target.Value, Is.EqualTo(0d));
@@ -56,7 +56,7 @@ namespace CassowaryNET.Tests.Variables
             [Test]
             public void can_be_created()
             {
-                var target = new ClVariable("foo");
+                var target = new Variable("foo");
 
                 Assert.That(target.Name, Is.EqualTo("foo"));
                 Assert.That(target.Value, Is.EqualTo(0d));
@@ -74,7 +74,7 @@ namespace CassowaryNET.Tests.Variables
             [Test]
             public void can_be_created()
             {
-                var target = new ClVariable(43.2d);
+                var target = new Variable(43.2d);
 
                 Assert.That(target.Name, Is.Not.Null);
                 Assert.That(target.Value, Is.EqualTo(43.2d));
@@ -92,7 +92,7 @@ namespace CassowaryNET.Tests.Variables
             [Test]
             public void can_be_created()
             {
-                var target = new ClVariable("foo", 43.2d);
+                var target = new Variable("foo", 43.2d);
 
                 Assert.That(target.Name, Is.EqualTo("foo"));
                 Assert.That(target.Value, Is.EqualTo(43.2d));

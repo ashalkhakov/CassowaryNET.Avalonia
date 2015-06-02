@@ -17,132 +17,132 @@ namespace CassowaryNET.Tests
             ////////////////////////////////////////////////////////////////
             //                 Individual widgets                         // 
             ////////////////////////////////////////////////////////////////
-            var update_top = new ClVariable("update.top", 0);
-            var update_bottom = new ClVariable("update.bottom", 23);
-            var update_left = new ClVariable("update.left", 0);
-            var update_right = new ClVariable("update.right", 75);
-            var update_height = new ClVariable("update.height", 23);
-            var update_width = new ClVariable("update.width", 75);
+            var update_top = new Variable("update.top", 0);
+            var update_bottom = new Variable("update.bottom", 23);
+            var update_left = new Variable("update.left", 0);
+            var update_right = new Variable("update.right", 75);
+            var update_height = new Variable("update.height", 23);
+            var update_width = new Variable("update.width", 75);
 
-            var newpost_top = new ClVariable("newpost.top", 0);
-            var newpost_bottom = new ClVariable("newpost.bottom", 23);
-            var newpost_left = new ClVariable("newpost.left", 0);
-            var newpost_right = new ClVariable("newpost.right", 75);
-            var newpost_width = new ClVariable("newpost.width", 75);
-            var newpost_height = new ClVariable("newpost.height", 23);
+            var newpost_top = new Variable("newpost.top", 0);
+            var newpost_bottom = new Variable("newpost.bottom", 23);
+            var newpost_left = new Variable("newpost.left", 0);
+            var newpost_right = new Variable("newpost.right", 75);
+            var newpost_width = new Variable("newpost.width", 75);
+            var newpost_height = new Variable("newpost.height", 23);
 
-            var quit_bottom = new ClVariable("quit.bottom", 23);
-            var quit_right = new ClVariable("quit.right", 75);
-            var quit_height = new ClVariable("quit.height", 23);
-            var quit_width = new ClVariable("quit.width", 75);
-            var quit_left = new ClVariable("quit.left", 0);
-            var quit_top = new ClVariable("quit.top", 0);
+            var quit_bottom = new Variable("quit.bottom", 23);
+            var quit_right = new Variable("quit.right", 75);
+            var quit_height = new Variable("quit.height", 23);
+            var quit_width = new Variable("quit.width", 75);
+            var quit_left = new Variable("quit.left", 0);
+            var quit_top = new Variable("quit.top", 0);
 
-            var l_title_top = new ClVariable("l_title.top", 0);
-            var l_title_bottom = new ClVariable("l_title.bottom", 23);
-            var l_title_left = new ClVariable("l_title.left", 0);
-            var l_title_right = new ClVariable("l_title.right", 100);
-            var l_title_height = new ClVariable("l_title.height", 23);
-            var l_title_width = new ClVariable("l_title.width", 100);
+            var l_title_top = new Variable("l_title.top", 0);
+            var l_title_bottom = new Variable("l_title.bottom", 23);
+            var l_title_left = new Variable("l_title.left", 0);
+            var l_title_right = new Variable("l_title.right", 100);
+            var l_title_height = new Variable("l_title.height", 23);
+            var l_title_width = new Variable("l_title.width", 100);
 
-            var title_top = new ClVariable("title.top", 0);
-            var title_bottom = new ClVariable("title.bottom", 20);
-            var title_left = new ClVariable("title.left.", 0);
-            var title_right = new ClVariable("title.right", 100);
-            var title_height = new ClVariable("title.height", 20);
-            var title_width = new ClVariable("title.width", 100);
+            var title_top = new Variable("title.top", 0);
+            var title_bottom = new Variable("title.bottom", 20);
+            var title_left = new Variable("title.left.", 0);
+            var title_right = new Variable("title.right", 100);
+            var title_height = new Variable("title.height", 20);
+            var title_width = new Variable("title.width", 100);
 
-            var l_body_top = new ClVariable("l_body.top", 0);
-            var l_body_bottom = new ClVariable("l_body.bottom", 23);
-            var l_body_left = new ClVariable("l_body.left", 0);
-            var l_body_right = new ClVariable("l_body.right", 100);
-            var l_body_height = new ClVariable("l_body.height.", 23);
-            var l_body_width = new ClVariable("l_body.width", 100);
+            var l_body_top = new Variable("l_body.top", 0);
+            var l_body_bottom = new Variable("l_body.bottom", 23);
+            var l_body_left = new Variable("l_body.left", 0);
+            var l_body_right = new Variable("l_body.right", 100);
+            var l_body_height = new Variable("l_body.height.", 23);
+            var l_body_width = new Variable("l_body.width", 100);
 
-            var blogentry_top = new ClVariable("blogentry.top", 0);
-            var blogentry_bottom = new ClVariable("blogentry.bottom", 315);
-            var blogentry_left = new ClVariable("blogentry.left", 0);
-            var blogentry_right = new ClVariable("blogentry.right", 400);
-            var blogentry_height = new ClVariable("blogentry.height", 315);
-            var blogentry_width = new ClVariable("blogentry.width", 400);
+            var blogentry_top = new Variable("blogentry.top", 0);
+            var blogentry_bottom = new Variable("blogentry.bottom", 315);
+            var blogentry_left = new Variable("blogentry.left", 0);
+            var blogentry_right = new Variable("blogentry.right", 400);
+            var blogentry_height = new Variable("blogentry.height", 315);
+            var blogentry_width = new Variable("blogentry.width", 400);
 
-            var l_recent_top = new ClVariable("l_recent.top", 0);
-            var l_recent_bottom = new ClVariable("l_recent.bottom", 23);
-            var l_recent_left = new ClVariable("l_recent.left", 0);
-            var l_recent_right = new ClVariable("l_recent.right", 100);
-            var l_recent_height = new ClVariable("l_recent.height", 23);
-            var l_recent_width = new ClVariable("l_recent.width", 100);
+            var l_recent_top = new Variable("l_recent.top", 0);
+            var l_recent_bottom = new Variable("l_recent.bottom", 23);
+            var l_recent_left = new Variable("l_recent.left", 0);
+            var l_recent_right = new Variable("l_recent.right", 100);
+            var l_recent_height = new Variable("l_recent.height", 23);
+            var l_recent_width = new Variable("l_recent.width", 100);
 
-            var articles_top = new ClVariable("articles.top", 0);
-            var articles_bottom = new ClVariable("articles.bottom", 415);
-            var articles_left = new ClVariable("articles.left", 0);
-            var articles_right = new ClVariable("articles.right", 180);
-            var articles_height = new ClVariable("articles.height", 415);
-            var articles_width = new ClVariable("articles.width", 100);
+            var articles_top = new Variable("articles.top", 0);
+            var articles_bottom = new Variable("articles.bottom", 415);
+            var articles_left = new Variable("articles.left", 0);
+            var articles_right = new Variable("articles.right", 180);
+            var articles_height = new Variable("articles.height", 415);
+            var articles_width = new Variable("articles.width", 100);
             ////////////////////////////////////////////////////////////////
             //                  Container widgets                         // 
             ////////////////////////////////////////////////////////////////
-            var topRight_top = new ClVariable("topRight.top", 0);
+            var topRight_top = new Variable("topRight.top", 0);
             //topRight_top = new ClVariable("topRight.top", 0);
-            var topRight_bottom = new ClVariable("topRight.bottom", 100);
+            var topRight_bottom = new Variable("topRight.bottom", 100);
             //topRight_bottom = new ClVariable("topRight.bottom", 100);
-            var topRight_left = new ClVariable("topRight.left", 0);
+            var topRight_left = new Variable("topRight.left", 0);
             //topRight_left = new ClVariable("topRight.left", 0);
-            var topRight_right = new ClVariable("topRight.right", 200);
+            var topRight_right = new Variable("topRight.right", 200);
             //topRight_right = new ClVariable("topRight.right", 200);
-            var topRight_height = new ClVariable("topRight.height", 100);
+            var topRight_height = new Variable("topRight.height", 100);
             //topRight_height = new ClVariable("topRight.height", 100);
-            var topRight_width = new ClVariable("topRight.width", 200);
+            var topRight_width = new Variable("topRight.width", 200);
             //topRight_width = new ClVariable("topRight.width", 200);
             //topRight_width = new ClVariable("topRight.width", 200);
 
-            var bottomRight_top = new ClVariable("bottomRight.top", 0);
+            var bottomRight_top = new Variable("bottomRight.top", 0);
             //bottomRight_top = new ClVariable("bottomRight.top", 0);
-            var bottomRight_bottom = new ClVariable("bottomRight.bottom", 100);
+            var bottomRight_bottom = new Variable("bottomRight.bottom", 100);
             //bottomRight_bottom = new ClVariable("bottomRight.bottom", 100);
-            var bottomRight_left = new ClVariable("bottomRight.left", 0);
+            var bottomRight_left = new Variable("bottomRight.left", 0);
             //bottomRight_left = new ClVariable("bottomRight.left", 0);
-            var bottomRight_right = new ClVariable("bottomRight.right", 200);
+            var bottomRight_right = new Variable("bottomRight.right", 200);
             //bottomRight_right = new ClVariable("bottomRight.right", 200);
-            var bottomRight_height = new ClVariable("bottomRight.height", 100);
+            var bottomRight_height = new Variable("bottomRight.height", 100);
             //bottomRight_height = new ClVariable("bottomRight.height", 100);
-            var bottomRight_width = new ClVariable("bottomRight.width", 200);
+            var bottomRight_width = new Variable("bottomRight.width", 200);
             //bottomRight_width = new ClVariable("bottomRight.width", 200);
 
-            var right_top = new ClVariable("right.top", 0);
+            var right_top = new Variable("right.top", 0);
             //right_top = new ClVariable("right.top", 0);
-            var right_bottom = new ClVariable("right.bottom", 100);
+            var right_bottom = new Variable("right.bottom", 100);
             //right_bottom = new ClVariable("right.bottom", 100);
             //right_bottom = new ClVariable("right.bottom", 100);
-            var right_left = new ClVariable("right.left", 0);
+            var right_left = new Variable("right.left", 0);
             //right_left = new ClVariable("right.left", 0);
-            var right_right = new ClVariable("right.right", 200);
+            var right_right = new Variable("right.right", 200);
             //right_right = new ClVariable("right.right", 200);
-            var right_height = new ClVariable("right.height", 100);
+            var right_height = new Variable("right.height", 100);
             //right_height = new ClVariable("right.height", 100);
-            var right_width = new ClVariable("right.width", 200);
+            var right_width = new Variable("right.width", 200);
             //right_width = new ClVariable("right.width", 200);
             //right_width = new ClVariable("right.width", 200);
 
-            var left_top = new ClVariable("left.top", 0);
+            var left_top = new Variable("left.top", 0);
             //left_top = new ClVariable("left.top", 0);
-            var left_bottom = new ClVariable("left.bottom", 100);
+            var left_bottom = new Variable("left.bottom", 100);
             //left_bottom = new ClVariable("left.bottom", 100);
-            var left_left = new ClVariable("left.left", 0);
+            var left_left = new Variable("left.left", 0);
             //left_left = new ClVariable("left.left", 0);
-            var left_right = new ClVariable("left.right", 200);
+            var left_right = new Variable("left.right", 200);
             //left_right = new ClVariable("left.right", 200);
-            var left_height = new ClVariable("left.height", 100);
+            var left_height = new Variable("left.height", 100);
             //left_height = new ClVariable("left.height", 100);
-            var left_width = new ClVariable("left.width", 200);
+            var left_width = new Variable("left.width", 200);
             //left_width = new ClVariable("left.width", 200);
 
-            var fr_top = new ClVariable("fr.top", 0);
-            var fr_bottom = new ClVariable("fr.bottom", 100);
-            var fr_left = new ClVariable("fr.left", 0);
-            var fr_right = new ClVariable("fr.right", 200);
-            var fr_height = new ClVariable("fr.height", 100);
-            var fr_width = new ClVariable("fr.width", 200);
+            var fr_top = new Variable("fr.top", 0);
+            var fr_bottom = new Variable("fr.bottom", 100);
+            var fr_left = new Variable("fr.left", 0);
+            var fr_right = new Variable("fr.right", 200);
+            var fr_height = new Variable("fr.height", 100);
+            var fr_width = new Variable("fr.width", 200);
 
             #endregion
 
@@ -165,7 +165,7 @@ namespace CassowaryNET.Tests
             target.AddStay(blogentry_height);
             // let's keep blogentry.width in favor of other stay constraints!
             // remember we later specify title.width to be equal to blogentry.width
-            target.AddStay(blogentry_width, ClStrength.Strong);
+            target.AddStay(blogentry_width, Strength.Strong);
             target.AddStay(l_recent_height);
             target.AddStay(l_recent_width);
             target.AddStay(articles_height);
@@ -176,527 +176,527 @@ namespace CassowaryNET.Tests
             #region Required Constraints
 
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(bottomRight_height) + bottomRight_top,
-                    new ClLinearExpression(bottomRight_bottom),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(bottomRight_height) + bottomRight_top,
+                    new LinearExpression(bottomRight_bottom),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(bottomRight_width) + bottomRight_left,
-                    new ClLinearExpression(bottomRight_right),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(bottomRight_width) + bottomRight_left,
+                    new LinearExpression(bottomRight_right),
+                    Strength.Required));
             InequalityType geq = InequalityType.GreaterThanOrEqual;
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     bottomRight_top,
                     geq,
                     0,
-                    ClStrength.Required));
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     bottomRight_bottom,
                     geq,
                     0,
-                    ClStrength.Required));
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     bottomRight_left,
                     geq,
                     0,
-                    ClStrength.Required));
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     bottomRight_right,
                     geq,
                     0,
-                    ClStrength.Required));
+                    Strength.Required));
 
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(update_height) + update_top,
-                    new ClLinearExpression(update_bottom),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(update_height) + update_top,
+                    new LinearExpression(update_bottom),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(update_width) + update_left,
-                    new ClLinearExpression(update_right),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(update_width) + update_left,
+                    new LinearExpression(update_right),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(update_top, geq, 0, ClStrength.Required));
+                new LinearInequality(update_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(update_bottom, geq, 0, ClStrength.Required));
+                new LinearInequality(update_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(update_left, geq, 0, ClStrength.Required));
+                new LinearInequality(update_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(update_right, geq, 0, ClStrength.Required));
+                new LinearInequality(update_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(update_right, geq, 0, ClStrength.Required));
+                new LinearInequality(update_right, geq, 0, Strength.Required));
             InequalityType leq = InequalityType.LessThanOrEqual;
             target.AddConstraint(
-                new ClLinearInequality(update_bottom, leq, bottomRight_height));
+                new LinearInequality(update_bottom, leq, bottomRight_height));
             target.AddConstraint(
-                new ClLinearInequality(update_right, leq, bottomRight_width));
+                new LinearInequality(update_right, leq, bottomRight_width));
 
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(newpost_height) + newpost_top,
-                    new ClLinearExpression(newpost_bottom),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(newpost_height) + newpost_top,
+                    new LinearExpression(newpost_bottom),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(newpost_width) + newpost_left,
-                    new ClLinearExpression(newpost_right),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(newpost_width) + newpost_left,
+                    new LinearExpression(newpost_right),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(newpost_top, geq, 0, ClStrength.Required));
+                new LinearInequality(newpost_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(newpost_bottom, geq, 0, ClStrength.Required));
+                new LinearInequality(newpost_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(newpost_left, geq, 0, ClStrength.Required));
+                new LinearInequality(newpost_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(newpost_right, geq, 0, ClStrength.Required));
+                new LinearInequality(newpost_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(newpost_right, geq, 0, ClStrength.Required));
+                new LinearInequality(newpost_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(newpost_bottom, leq, bottomRight_height));
+                new LinearInequality(newpost_bottom, leq, bottomRight_height));
             target.AddConstraint(
-                new ClLinearInequality(newpost_right, leq, bottomRight_width));
+                new LinearInequality(newpost_right, leq, bottomRight_width));
 
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(quit_height) + quit_top,
-                    new ClLinearExpression(quit_bottom),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(quit_height) + quit_top,
+                    new LinearExpression(quit_bottom),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(quit_width) + quit_left,
-                    new ClLinearExpression(quit_right),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(quit_width) + quit_left,
+                    new LinearExpression(quit_right),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(quit_top, geq, 0, ClStrength.Required));
+                new LinearInequality(quit_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(quit_bottom, geq, 0, ClStrength.Required));
+                new LinearInequality(quit_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(quit_left, geq, 0, ClStrength.Required));
+                new LinearInequality(quit_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(quit_right, geq, 0, ClStrength.Required));
+                new LinearInequality(quit_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(quit_right, geq, 0, ClStrength.Required));
+                new LinearInequality(quit_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(quit_bottom, leq, bottomRight_height));
+                new LinearInequality(quit_bottom, leq, bottomRight_height));
             target.AddConstraint(
-                new ClLinearInequality(quit_right, leq, bottomRight_width));
+                new LinearInequality(quit_right, leq, bottomRight_width));
 
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(topRight_height) + topRight_top,
-                    new ClLinearExpression(topRight_bottom),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(topRight_height) + topRight_top,
+                    new LinearExpression(topRight_bottom),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(topRight_width) + topRight_left,
-                    new ClLinearExpression(topRight_right),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(topRight_width) + topRight_left,
+                    new LinearExpression(topRight_right),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(topRight_top, geq, 0, ClStrength.Required));
+                new LinearInequality(topRight_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     topRight_bottom,
                     geq,
                     0,
-                    ClStrength.Required));
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(topRight_left, geq, 0, ClStrength.Required));
+                new LinearInequality(topRight_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(topRight_right, geq, 0, ClStrength.Required));
+                new LinearInequality(topRight_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(topRight_right, geq, 0, ClStrength.Required));
+                new LinearInequality(topRight_right, geq, 0, Strength.Required));
 
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(l_title_height) + l_title_top,
-                    new ClLinearExpression(l_title_bottom),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(l_title_height) + l_title_top,
+                    new LinearExpression(l_title_bottom),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(l_title_width) + l_title_left,
-                    new ClLinearExpression(l_title_right),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(l_title_width) + l_title_left,
+                    new LinearExpression(l_title_right),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(l_title_top, geq, 0, ClStrength.Required));
+                new LinearInequality(l_title_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(l_title_bottom, geq, 0, ClStrength.Required));
+                new LinearInequality(l_title_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(l_title_left, geq, 0, ClStrength.Required));
+                new LinearInequality(l_title_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(l_title_right, geq, 0, ClStrength.Required));
+                new LinearInequality(l_title_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(l_title_right, geq, 0, ClStrength.Required));
+                new LinearInequality(l_title_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(l_title_bottom, leq, topRight_height));
+                new LinearInequality(l_title_bottom, leq, topRight_height));
             target.AddConstraint(
-                new ClLinearInequality(l_title_right, leq, topRight_width));
+                new LinearInequality(l_title_right, leq, topRight_width));
 
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(title_height) + title_top,
-                    new ClLinearExpression(title_bottom),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(title_height) + title_top,
+                    new LinearExpression(title_bottom),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(title_width) + title_left,
-                    new ClLinearExpression(title_right),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(title_width) + title_left,
+                    new LinearExpression(title_right),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(title_top, geq, 0, ClStrength.Required));
+                new LinearInequality(title_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(title_bottom, geq, 0, ClStrength.Required));
+                new LinearInequality(title_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(title_left, geq, 0, ClStrength.Required));
+                new LinearInequality(title_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(title_right, geq, 0, ClStrength.Required));
+                new LinearInequality(title_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(title_right, geq, 0, ClStrength.Required));
+                new LinearInequality(title_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(title_bottom, leq, topRight_height));
+                new LinearInequality(title_bottom, leq, topRight_height));
             target.AddConstraint(
-                new ClLinearInequality(title_right, leq, topRight_width));
+                new LinearInequality(title_right, leq, topRight_width));
 
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(l_body_height) + l_body_top,
-                    new ClLinearExpression(l_body_bottom),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(l_body_height) + l_body_top,
+                    new LinearExpression(l_body_bottom),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(l_body_width) + l_body_left,
-                    new ClLinearExpression(l_body_right),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(l_body_width) + l_body_left,
+                    new LinearExpression(l_body_right),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(l_body_top, geq, 0, ClStrength.Required));
+                new LinearInequality(l_body_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(l_body_bottom, geq, 0, ClStrength.Required));
+                new LinearInequality(l_body_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(l_body_left, geq, 0, ClStrength.Required));
+                new LinearInequality(l_body_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(l_body_right, geq, 0, ClStrength.Required));
+                new LinearInequality(l_body_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(l_body_right, geq, 0, ClStrength.Required));
+                new LinearInequality(l_body_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(l_body_bottom, leq, topRight_height));
+                new LinearInequality(l_body_bottom, leq, topRight_height));
             target.AddConstraint(
-                new ClLinearInequality(l_body_right, leq, topRight_width));
+                new LinearInequality(l_body_right, leq, topRight_width));
 
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(blogentry_height) + blogentry_top,
-                    new ClLinearExpression(blogentry_bottom),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(blogentry_height) + blogentry_top,
+                    new LinearExpression(blogentry_bottom),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(blogentry_width) + blogentry_left,
-                    new ClLinearExpression(blogentry_right),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(blogentry_width) + blogentry_left,
+                    new LinearExpression(blogentry_right),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(blogentry_top, geq, 0, ClStrength.Required));
+                new LinearInequality(blogentry_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     blogentry_bottom,
                     geq,
                     0,
-                    ClStrength.Required));
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(blogentry_left, geq, 0, ClStrength.Required));
+                new LinearInequality(blogentry_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     blogentry_right,
                     geq,
                     0,
-                    ClStrength.Required));
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     blogentry_right,
                     geq,
                     0,
-                    ClStrength.Required));
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(blogentry_bottom, leq, topRight_height));
+                new LinearInequality(blogentry_bottom, leq, topRight_height));
             target.AddConstraint(
-                new ClLinearInequality(blogentry_right, leq, topRight_width));
+                new LinearInequality(blogentry_right, leq, topRight_width));
 
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(left_height) + left_top,
-                    new ClLinearExpression(left_bottom),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(left_height) + left_top,
+                    new LinearExpression(left_bottom),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(left_width) + left_left,
-                    new ClLinearExpression(left_right),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(left_width) + left_left,
+                    new LinearExpression(left_right),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(left_top, geq, 0, ClStrength.Required));
+                new LinearInequality(left_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(left_bottom, geq, 0, ClStrength.Required));
+                new LinearInequality(left_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(left_left, geq, 0, ClStrength.Required));
+                new LinearInequality(left_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(left_right, geq, 0, ClStrength.Required));
+                new LinearInequality(left_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(left_right, geq, 0, ClStrength.Required));
+                new LinearInequality(left_right, geq, 0, Strength.Required));
 
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(l_recent_height) + l_recent_top,
-                    new ClLinearExpression(l_recent_bottom),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(l_recent_height) + l_recent_top,
+                    new LinearExpression(l_recent_bottom),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(l_recent_width) + l_recent_left,
-                    new ClLinearExpression(l_recent_right),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(l_recent_width) + l_recent_left,
+                    new LinearExpression(l_recent_right),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(l_recent_top, geq, 0, ClStrength.Required));
+                new LinearInequality(l_recent_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     l_recent_bottom,
                     geq,
                     0,
-                    ClStrength.Required));
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(l_recent_left, geq, 0, ClStrength.Required));
+                new LinearInequality(l_recent_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(l_recent_right, geq, 0, ClStrength.Required));
+                new LinearInequality(l_recent_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(l_recent_right, geq, 0, ClStrength.Required));
+                new LinearInequality(l_recent_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(l_recent_bottom, leq, left_height));
+                new LinearInequality(l_recent_bottom, leq, left_height));
             target.AddConstraint(
-                new ClLinearInequality(l_recent_right, leq, left_width));
+                new LinearInequality(l_recent_right, leq, left_width));
 
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(articles_height) + articles_top,
-                    new ClLinearExpression(articles_bottom),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(articles_height) + articles_top,
+                    new LinearExpression(articles_bottom),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(articles_width) + articles_left,
-                    new ClLinearExpression(articles_right),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(articles_width) + articles_left,
+                    new LinearExpression(articles_right),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(articles_top, geq, 0, ClStrength.Required));
+                new LinearInequality(articles_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     articles_bottom,
                     geq,
                     0,
-                    ClStrength.Required));
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(articles_left, geq, 0, ClStrength.Required));
+                new LinearInequality(articles_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(articles_right, geq, 0, ClStrength.Required));
+                new LinearInequality(articles_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(articles_right, geq, 0, ClStrength.Required));
+                new LinearInequality(articles_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(articles_bottom, leq, left_height));
+                new LinearInequality(articles_bottom, leq, left_height));
             target.AddConstraint(
-                new ClLinearInequality(articles_right, leq, left_width));
+                new LinearInequality(articles_right, leq, left_width));
 
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(left_height) + left_top,
-                    new ClLinearExpression(left_bottom),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(left_height) + left_top,
+                    new LinearExpression(left_bottom),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(left_width) + left_left,
-                    new ClLinearExpression(left_right),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(left_width) + left_left,
+                    new LinearExpression(left_right),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(left_top, geq, 0, ClStrength.Required));
+                new LinearInequality(left_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(left_bottom, geq, 0, ClStrength.Required));
+                new LinearInequality(left_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(left_left, geq, 0, ClStrength.Required));
+                new LinearInequality(left_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(left_right, geq, 0, ClStrength.Required));
+                new LinearInequality(left_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(left_right, geq, 0, ClStrength.Required));
+                new LinearInequality(left_right, geq, 0, Strength.Required));
 
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(right_height) + right_top,
-                    new ClLinearExpression(right_bottom),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(right_height) + right_top,
+                    new LinearExpression(right_bottom),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(right_width) + right_left,
-                    new ClLinearExpression(right_right),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(right_width) + right_left,
+                    new LinearExpression(right_right),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(right_top, geq, 0, ClStrength.Required));
+                new LinearInequality(right_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(right_bottom, geq, 0, ClStrength.Required));
+                new LinearInequality(right_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(right_left, geq, 0, ClStrength.Required));
+                new LinearInequality(right_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(right_right, geq, 0, ClStrength.Required));
+                new LinearInequality(right_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(right_right, geq, 0, ClStrength.Required));
+                new LinearInequality(right_right, geq, 0, Strength.Required));
 
             target.AddConstraint(
-                new ClLinearInequality(topRight_bottom, leq, right_height));
+                new LinearInequality(topRight_bottom, leq, right_height));
             target.AddConstraint(
-                new ClLinearInequality(topRight_right, leq, right_width));
+                new LinearInequality(topRight_right, leq, right_width));
 
             target.AddConstraint(
-                new ClLinearInequality(bottomRight_bottom, leq, right_height));
+                new LinearInequality(bottomRight_bottom, leq, right_height));
             target.AddConstraint(
-                new ClLinearInequality(bottomRight_right, leq, right_width));
+                new LinearInequality(bottomRight_right, leq, right_width));
 
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(fr_height) + fr_top,
-                    new ClLinearExpression(fr_bottom),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(fr_height) + fr_top,
+                    new LinearExpression(fr_bottom),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearEquation(
-                    new ClLinearExpression(fr_width) + fr_left,
-                    new ClLinearExpression(fr_right),
-                    ClStrength.Required));
+                new LinearEquality(
+                    new LinearExpression(fr_width) + fr_left,
+                    new LinearExpression(fr_right),
+                    Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(fr_top, geq, 0, ClStrength.Required));
+                new LinearInequality(fr_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(fr_bottom, geq, 0, ClStrength.Required));
+                new LinearInequality(fr_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(fr_left, geq, 0, ClStrength.Required));
+                new LinearInequality(fr_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(fr_right, geq, 0, ClStrength.Required));
+                new LinearInequality(fr_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new ClLinearInequality(fr_right, geq, 0, ClStrength.Required));
+                new LinearInequality(fr_right, geq, 0, Strength.Required));
 
             target.AddConstraint(
-                new ClLinearInequality(left_bottom, leq, fr_height));
+                new LinearInequality(left_bottom, leq, fr_height));
             target.AddConstraint(
-                new ClLinearInequality(left_right, leq, fr_width));
+                new LinearInequality(left_right, leq, fr_width));
             target.AddConstraint(
-                new ClLinearInequality(right_bottom, leq, fr_height));
+                new LinearInequality(right_bottom, leq, fr_height));
             target.AddConstraint(
-                new ClLinearInequality(right_right, leq, fr_width));
+                new LinearInequality(right_right, leq, fr_width));
 
             #endregion
 
             #region Strong Constraints
 
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     update_right,
                     leq,
                     newpost_left,
-                    ClStrength.Strong));
+                    Strength.Strong));
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     newpost_right,
                     leq,
                     quit_left,
-                    ClStrength.Strong));
+                    Strength.Strong));
             //_solver.AddConstraint(new ClLinearEquation(bottomRight_width, new ClLinearExpression(topRight_width), ClStrength.Strong));
             //_solver.AddConstraint(new ClLinearEquation(right_width, new ClLinearExpression(topRight_width), ClStrength.Strong));
             target.AddConstraint(
-                new ClLinearEquation(
+                new LinearEquality(
                     bottomRight_bottom,
-                    new ClLinearExpression(right_bottom),
-                    ClStrength.Strong));
+                    new LinearExpression(right_bottom),
+                    Strength.Strong));
             target.AddConstraint(
-                new ClLinearEquation(
+                new LinearEquality(
                     newpost_height,
-                    new ClLinearExpression(update_height),
-                    ClStrength.Strong));
+                    new LinearExpression(update_height),
+                    Strength.Strong));
             target.AddConstraint(
-                new ClLinearEquation(
+                new LinearEquality(
                     newpost_width,
-                    new ClLinearExpression(update_width),
-                    ClStrength.Strong));
+                    new LinearExpression(update_width),
+                    Strength.Strong));
             target.AddConstraint(
-                new ClLinearEquation(
+                new LinearEquality(
                     update_height,
-                    new ClLinearExpression(quit_height),
-                    ClStrength.Strong));
+                    new LinearExpression(quit_height),
+                    Strength.Strong));
             target.AddConstraint(
-                new ClLinearEquation(
+                new LinearEquality(
                     quit_width,
-                    new ClLinearExpression(update_width),
-                    ClStrength.Strong));
+                    new LinearExpression(update_width),
+                    Strength.Strong));
 
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     l_title_bottom,
                     leq,
                     title_top,
-                    ClStrength.Strong));
+                    Strength.Strong));
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     title_bottom,
                     leq,
                     l_body_top,
-                    ClStrength.Strong));
+                    Strength.Strong));
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     l_body_bottom,
                     leq,
                     blogentry_top,
-                    ClStrength.Strong));
+                    Strength.Strong));
 
             target.AddConstraint(
-                new ClLinearEquation(
+                new LinearEquality(
                     title_width,
-                    new ClLinearExpression(blogentry_width),
-                    ClStrength.Strong));
+                    new LinearExpression(blogentry_width),
+                    Strength.Strong));
 
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     l_recent_bottom,
                     leq,
                     articles_top,
-                    ClStrength.Strong));
+                    Strength.Strong));
 
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     topRight_bottom,
                     leq,
                     bottomRight_top,
-                    ClStrength.Strong));
+                    Strength.Strong));
             target.AddConstraint(
-                new ClLinearInequality(
+                new LinearInequality(
                     left_right,
                     leq,
                     right_left,
-                    ClStrength.Strong));
+                    Strength.Strong));
             //_solver.AddConstraint(new ClLinearEquation(left_height, new ClLinearExpression(right_height), ClStrength.Strong));
             //_solver.AddConstraint(new ClLinearEquation(fr_height, new ClLinearExpression(right_height), ClStrength.Strong));
 
             // alignment
             target.AddConstraint(
-                new ClLinearEquation(
+                new LinearEquality(
                     l_title_left,
-                    new ClLinearExpression(title_left),
-                    ClStrength.Strong));
+                    new LinearExpression(title_left),
+                    Strength.Strong));
             target.AddConstraint(
-                new ClLinearEquation(
+                new LinearEquality(
                     title_left,
-                    new ClLinearExpression(blogentry_left),
-                    ClStrength.Strong));
+                    new LinearExpression(blogentry_left),
+                    Strength.Strong));
             target.AddConstraint(
-                new ClLinearEquation(
+                new LinearEquality(
                     l_body_left,
-                    new ClLinearExpression(blogentry_left),
-                    ClStrength.Strong));
+                    new LinearExpression(blogentry_left),
+                    Strength.Strong));
             target.AddConstraint(
-                new ClLinearEquation(
+                new LinearEquality(
                     l_recent_left,
-                    new ClLinearExpression(articles_left),
-                    ClStrength.Strong));
+                    new LinearExpression(articles_left),
+                    Strength.Strong));
 
             #endregion
 

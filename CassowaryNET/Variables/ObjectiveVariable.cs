@@ -20,35 +20,19 @@
 */
 
 using System;
-using CassowaryNET.Variables;
 
-namespace CassowaryNET.Constraints
+namespace CassowaryNET.Variables
 {
-    public sealed class ClEditConstraint : ClEditOrStayConstraint
+    internal sealed class ObjectiveVariable : AbstractVariable
     {
         #region Fields
-        
+
         #endregion
 
         #region Constructors
 
-        public ClEditConstraint(ClVariable variable)
-            : this(variable, ClStrength.Required)
-        {
-        }
-
-        public ClEditConstraint(
-            ClVariable variable,
-            ClStrength strength)
-            : this(variable, strength, 1d)
-        {
-        }
-
-        public ClEditConstraint(
-            ClVariable variable,
-            ClStrength strength,
-            double weight)
-            : base(variable, strength, weight)
+        public ObjectiveVariable(string name)
+            : base(name)
         {
         }
 
@@ -56,9 +40,19 @@ namespace CassowaryNET.Constraints
 
         #region Properties
 
-        public override bool IsEditConstraint
+        public override bool IsExternal
         {
-            get { return true; }
+            get { return false; }
+        }
+
+        public override bool IsPivotable
+        {
+            get { return false; }
+        }
+
+        public override bool IsRestricted
+        {
+            get { return false; }
         }
 
         #endregion
@@ -67,7 +61,7 @@ namespace CassowaryNET.Constraints
 
         public override string ToString()
         {
-            return "edit" + base.ToString();
+            return string.Format("[{0}:obj]", Name);
         }
 
         #endregion

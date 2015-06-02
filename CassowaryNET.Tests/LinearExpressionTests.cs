@@ -10,7 +10,7 @@ using NUnit.Framework;
 namespace CassowaryNET.Tests
 {
     [TestFixture]
-    public class ClLinearExpressionTests
+    public class LinearExpressionTests
     {
         #region Helpers
 
@@ -35,7 +35,7 @@ namespace CassowaryNET.Tests
             [Test]
             public void can_be_created()
             {
-                var target = new ClLinearExpression(42.3d);
+                var target = new LinearExpression(42.3d);
                 Assert.Pass();
             }
         }
@@ -46,7 +46,7 @@ namespace CassowaryNET.Tests
             [Test]
             public void can_be_created()
             {
-                var target = new ClLinearExpression(new ClVariable(), 3d, 5d);
+                var target = new LinearExpression(new Variable(), 3d, 5d);
                 Assert.Pass();
             }
         }
@@ -57,34 +57,34 @@ namespace CassowaryNET.Tests
             [Test]
             public void regression()
             {
-                var a = new ClVariable("a");
-                var b_ToSub = new ClVariable("b");
-                var c = new ClVariable("c");
+                var a = new Variable("a");
+                var b_ToSub = new Variable("b");
+                var c = new Variable("c");
 
-                var x = new ClVariable("x");
-                var y = new ClVariable("y");
+                var x = new Variable("x");
+                var y = new Variable("y");
 
                 var mockNoteVariableChangesOld = new Mock<INoteVariableChanges>(
                     MockBehavior.Strict);
                 var mockNoteVariableChangesNew = new Mock<INoteVariableChanges>(
                     MockBehavior.Strict);
                 
-                var subject = new ClVariable("subject");
+                var subject = new Variable("subject");
 
-                var additionsOld = new List<ClAbstractVariable>();
-                var removalsOld = new List<ClAbstractVariable>();
-                var additionsNew = new List<ClAbstractVariable>();
-                var removalsNew = new List<ClAbstractVariable>();
+                var additionsOld = new List<AbstractVariable>();
+                var removalsOld = new List<AbstractVariable>();
+                var additionsNew = new List<AbstractVariable>();
+                var removalsNew = new List<AbstractVariable>();
 
                 Func
-                    <List<ClAbstractVariable>,
-                        Action<ClAbstractVariable, ClAbstractVariable>>
+                    <List<AbstractVariable>,
+                        Action<AbstractVariable, AbstractVariable>>
                     getAddToList = list => (v, subj) => list.Add(v);
 
                 Expression<Action<INoteVariableChanges>> noteAdded =
-                    o => o.NoteAddedVariable(It.IsAny<ClAbstractVariable>(), subject);
+                    o => o.NoteAddedVariable(It.IsAny<AbstractVariable>(), subject);
                 Expression<Action<INoteVariableChanges>> noteRemoved =
-                    o => o.NoteRemovedVariable(It.IsAny<ClAbstractVariable>(), subject);
+                    o => o.NoteRemovedVariable(It.IsAny<AbstractVariable>(), subject);
 
                 mockNoteVariableChangesOld
                     .Setup(noteAdded)

@@ -1,9 +1,9 @@
 /*
   Cassowary.net: an incremental constraint solver for .NET
   (http://lumumba.uhasselt.be/jo/projects/cassowary.net/)
-  
+    
   Copyright (C) 2005-2006  Jo Vermeulen (jo.vermeulen@uhasselt.be)
-  
+    
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public License
   as published by the Free Software Foundation; either version 2.1
@@ -20,50 +20,40 @@
 */
 
 using System;
-using CassowaryNET.Variables;
 
 namespace CassowaryNET.Constraints
 {
-    public sealed class ClStayConstraint : ClEditOrStayConstraint
+    public abstract class LinearConstraint : Constraint
     {
         #region Fields
+
+        private readonly LinearExpression expression;
 
         #endregion
 
         #region Constructors
 
-        public ClStayConstraint(ClVariable variable)
-            : this(variable, ClStrength.Weak)
+        protected LinearConstraint(
+            LinearExpression expression,
+            Strength strength,
+            double weight)
+            : base(strength, weight)
         {
-        }
-
-        public ClStayConstraint(ClVariable variable, ClStrength strength)
-            : this(variable, strength, 1d)
-        {
-        }
-
-        public ClStayConstraint(ClVariable variable, ClStrength strength, double weight)
-            : base(variable, strength, weight)
-        {
+            this.expression = expression;
         }
 
         #endregion
 
         #region Properties
 
-        public override bool IsStayConstraint
+        public override sealed LinearExpression Expression
         {
-            get { return true; }
+            get { return expression; }
         }
 
         #endregion
 
         #region Methods
-
-        public override string ToString()
-        {
-            return "stay" + base.ToString();
-        }
 
         #endregion
     }

@@ -32,26 +32,26 @@ namespace CassowaryNET
 {
 #pragma warning disable 660,661
     // We are heavily using operator overloading here
-    public class ClLinearExpression : ICloneable
+    public class LinearExpression : ICloneable
 #pragma warning restore 660,661
     {
         #region Fields
 
         private ClDouble constant;
-        private readonly Dictionary<ClAbstractVariable, ClDouble> terms;
+        private readonly Dictionary<AbstractVariable, ClDouble> terms;
 
         #endregion
 
         #region Constructors
 
-        public ClLinearExpression(double constant)
+        public LinearExpression(double constant)
         {
             this.constant = new ClDouble(constant);
-            this.terms = new Dictionary<ClAbstractVariable, ClDouble>();
+            this.terms = new Dictionary<AbstractVariable, ClDouble>();
         }
 
-        public ClLinearExpression(
-            ClAbstractVariable variable,
+        internal LinearExpression(
+            AbstractVariable variable,
             double multiplier = 1d,
             double constant = 0d)
         {
@@ -59,7 +59,7 @@ namespace CassowaryNET
                 throw new ArgumentNullException();
 
             this.constant = new ClDouble(constant);
-            this.terms = new Dictionary<ClAbstractVariable, ClDouble>
+            this.terms = new Dictionary<AbstractVariable, ClDouble>
             {
                 {variable, new ClDouble(multiplier)},
             };
@@ -68,12 +68,12 @@ namespace CassowaryNET
         /// <summary>
         /// For use by the clone method.
         /// </summary>
-        private ClLinearExpression(
+        private LinearExpression(
             ClDouble constant,
-            IDictionary<ClAbstractVariable, ClDouble> terms)
+            IDictionary<AbstractVariable, ClDouble> terms)
         {
             this.constant = constant;
-            this.terms = new Dictionary<ClAbstractVariable, ClDouble>(
+            this.terms = new Dictionary<AbstractVariable, ClDouble>(
                 terms);
         }
 
@@ -86,7 +86,7 @@ namespace CassowaryNET
             get { return constant.Value; }
         }
 
-        public Dictionary<ClAbstractVariable, ClDouble> Terms
+        internal Dictionary<AbstractVariable, ClDouble> Terms
         {
             get { return terms; }
         }
@@ -102,42 +102,42 @@ namespace CassowaryNET
 
         object ICloneable.Clone()
         {
-            return new ClLinearExpression(constant, terms);
+            return new LinearExpression(constant, terms);
         }
 
-        public ClLinearExpression WithVariableSetTo(
-            ClAbstractVariable variable,
+        internal LinearExpression WithVariableSetTo(
+            AbstractVariable variable,
             double newCoefficient)
         {
             var coefficient = new ClDouble(newCoefficient);
 
             var newConstant = constant;
-            var newTerms = new Dictionary<ClAbstractVariable, ClDouble>(terms);
+            var newTerms = new Dictionary<AbstractVariable, ClDouble>(terms);
 
             //if (!coefficient.IsApproxZero)
                 newTerms[variable] = coefficient;
 
-            return new ClLinearExpression(newConstant, newTerms);
+            return new LinearExpression(newConstant, newTerms);
         }
 
-        public ClLinearExpression WithConstantIncrementedBy(
+        internal LinearExpression WithConstantIncrementedBy(
             double increment)
         {
             return WithConstantSetTo(constant + increment);
         }
 
-        public ClLinearExpression WithConstantSetTo(
+        internal LinearExpression WithConstantSetTo(
             double newConstant)
         {
             return WithConstantSetTo(new ClDouble(newConstant));
         }
 
-        public ClLinearExpression WithConstantSetTo(
+        internal LinearExpression WithConstantSetTo(
             ClDouble newConstant)
         {
-            var newTerms = new Dictionary<ClAbstractVariable, ClDouble>(terms);
+            var newTerms = new Dictionary<AbstractVariable, ClDouble>(terms);
 
-            return new ClLinearExpression(newConstant, newTerms);
+            return new LinearExpression(newConstant, newTerms);
         }
         
         /// <summary>
@@ -145,7 +145,7 @@ namespace CassowaryNET
         /// if this expression is constant -- signal ExCLInternalError in
         /// that case).  Return null if no pivotable variables
         /// </summary>
-        public ClAbstractVariable GetAnyPivotableVariable()
+        internal AbstractVariable GetAnyPivotableVariable()
             /*throws ExCLInternalError*/
         {
             if (IsConstant)
@@ -162,9 +162,9 @@ namespace CassowaryNET
         /// by the given expression (which should be because the expression and
         /// variable are equal to each other).
         /// </summary>
-        public ClLinearExpression WithVariableSubstitutedBy(
-            ClAbstractVariable variable,
-            ClLinearExpression expression)
+        internal LinearExpression WithVariableSubstitutedBy(
+            AbstractVariable variable,
+            LinearExpression expression)
         {
             // need variable to occur with a non-zero coefficient in this expression
             var coefficient = terms[variable];
@@ -172,11 +172,11 @@ namespace CassowaryNET
                 throw new CassowaryInternalException("Coefficient was zero");
 
             var newConstant = constant;
-            var newTerms = new Dictionary<ClAbstractVariable, ClDouble>(terms);
+            var newTerms = new Dictionary<AbstractVariable, ClDouble>(terms);
 
             newTerms.Remove(variable);
             
-            var expressionWithoutVariable = new ClLinearExpression(newConstant, newTerms);
+            var expressionWithoutVariable = new LinearExpression(newConstant, newTerms);
             return expressionWithoutVariable + coefficient.Value*expression;
         }
 
@@ -188,10 +188,10 @@ namespace CassowaryNET
         /// PRECONDITIONS:
         ///   var occurs with a non-zero coefficient in this expression.
         /// </summary>
-        public void SubstituteOut(
-            ClAbstractVariable variable,
-            ClLinearExpression expression,
-            ClAbstractVariable subject,
+        internal void SubstituteOut(
+            AbstractVariable variable,
+            LinearExpression expression,
+            AbstractVariable subject,
             INoteVariableChanges solver)
         {
             // NOTE: doesn't inform of removal of the substituted variable...
@@ -209,7 +209,7 @@ namespace CassowaryNET
                 {
                     var newCoefficient = oldCoefficient + multiplier * coeff;
 
-                    if (CMath.Approx(newCoefficient.Value, 0.0))
+                    if (MathHelper.Approx(newCoefficient.Value, 0.0))
                     {
                         solver.NoteRemovedVariable(clv, subject);
                         terms.Remove(clv);
@@ -245,9 +245,9 @@ namespace CassowaryNET
         ///        newSubject = -c/a + oldSubject/a - (a1/a)*v1 - ... - (an/a)*vn.
         ///   Note that the term involving newSubject has been dropped.
         /// </summary>
-        public ClLinearExpression WithSubjectChangedTo(
-            ClAbstractVariable oldSubject,
-            ClAbstractVariable newSubject)
+        internal LinearExpression WithSubjectChangedTo(
+            AbstractVariable oldSubject,
+            AbstractVariable newSubject)
         {
             double reciprocal;
             var expression = this.WithSubject(newSubject, out reciprocal);
@@ -275,24 +275,24 @@ namespace CassowaryNET
         /// Note that the term involving subject has been dropped.
         /// Returns the reciprocal, so changeSubject can use it, too
         /// </summary>
-        public ClLinearExpression WithSubject(ClAbstractVariable subject)
+        internal LinearExpression WithSubject(AbstractVariable subject)
         {
             double reciprocal;
             return WithSubject(subject, out reciprocal);
         }
-        public ClLinearExpression WithSubject(
-            ClAbstractVariable subject,
+        internal LinearExpression WithSubject(
+            AbstractVariable subject,
             out double reciprocal)
         {
             var newConstant = constant;
-            var newTerms = new Dictionary<ClAbstractVariable, ClDouble>(terms);
+            var newTerms = new Dictionary<AbstractVariable, ClDouble>(terms);
 
             newTerms.Remove(subject);
 
             var coefficient = terms[subject];
             reciprocal = 1d / coefficient.Value;
 
-            var expressionWithoutSubject = new ClLinearExpression(
+            var expressionWithoutSubject = new LinearExpression(
                 newConstant,
                 newTerms);
             return expressionWithoutSubject*-reciprocal;
@@ -303,7 +303,7 @@ namespace CassowaryNET
         /// the 'ci' corresponding to the 'vi' that var is:
         ///      v1*c1 + v2*c2 + .. + vn*cn + c
         /// </summary>
-        public double CoefficientFor(ClAbstractVariable variable)
+        internal double CoefficientFor(AbstractVariable variable)
         {
             var coeff = terms.GetOrDefault(variable);
 
@@ -317,7 +317,7 @@ namespace CassowaryNET
         {
             var builder = new StringBuilder();
 
-            if (!CMath.Approx(constant.Value, 0d))
+            if (!MathHelper.Approx(constant.Value, 0d))
             {
                 builder.Append(constant);
                 builder.Append(" + ");
@@ -335,15 +335,15 @@ namespace CassowaryNET
 
         #region Operators
 
-        private static ClLinearExpression Add(
-            ClLinearExpression a,
-            ClLinearExpression b,
+        private static LinearExpression Add(
+            LinearExpression a,
+            LinearExpression b,
             double aMultiplier,
             double bMultiplier)
         {
             var constant = aMultiplier*a.constant + bMultiplier*b.constant;
 
-            var terms = new Dictionary<ClAbstractVariable, ClDouble>();
+            var terms = new Dictionary<AbstractVariable, ClDouble>();
 
             var variables = a.Terms.Keys.Union(b.Terms.Keys);
             foreach (var variable in variables)
@@ -358,19 +358,19 @@ namespace CassowaryNET
                 }
             }
 
-            return new ClLinearExpression(constant, terms);
+            return new LinearExpression(constant, terms);
         }
 
         #region Unary
 
-        public static ClLinearExpression operator -(
-            ClLinearExpression a)
+        public static LinearExpression operator -(
+            LinearExpression a)
         {
             return 0d - a;
         }
 
-        public static ClLinearExpression operator +(
-            ClLinearExpression a)
+        public static LinearExpression operator +(
+            LinearExpression a)
         {
             return 0d + a;
         }
@@ -379,39 +379,39 @@ namespace CassowaryNET
 
         #region +
 
-        public static ClLinearExpression operator +(
-            ClLinearExpression a,
-            ClLinearExpression b)
+        public static LinearExpression operator +(
+            LinearExpression a,
+            LinearExpression b)
         {
             return Add(a, b, 1d, 1d);
         }
 
-        public static ClLinearExpression operator +(
-            ClLinearExpression a,
-            ClAbstractVariable b)
+        public static LinearExpression operator +(
+            LinearExpression a,
+            AbstractVariable b)
         {
-            return a + new ClLinearExpression(b);
+            return a + new LinearExpression(b);
         }
 
-        public static ClLinearExpression operator +(
-            ClAbstractVariable a,
-            ClLinearExpression b)
+        public static LinearExpression operator +(
+            AbstractVariable a,
+            LinearExpression b)
         {
-            return new ClLinearExpression(a) + b;
+            return new LinearExpression(a) + b;
         }
 
-        public static ClLinearExpression operator +(
-            ClLinearExpression a,
+        public static LinearExpression operator +(
+            LinearExpression a,
             double b)
         {
-            return a + new ClLinearExpression(b);
+            return a + new LinearExpression(b);
         }
 
-        public static ClLinearExpression operator +(
+        public static LinearExpression operator +(
             double a,
-            ClLinearExpression b)
+            LinearExpression b)
         {
-            return new ClLinearExpression(a) + b;
+            return new LinearExpression(a) + b;
         }
 
         #endregion
@@ -419,45 +419,45 @@ namespace CassowaryNET
         #region -
 
 
-        public static ClLinearExpression operator -(
-            ClLinearExpression a,
-            ClLinearExpression b)
+        public static LinearExpression operator -(
+            LinearExpression a,
+            LinearExpression b)
         {
             return Add(a, b, 1d, -1d);
         }
 
-        public static ClLinearExpression operator -(
-            ClLinearExpression a,
-            ClAbstractVariable b)
+        public static LinearExpression operator -(
+            LinearExpression a,
+            AbstractVariable b)
         {
-            return a - new ClLinearExpression(b);
+            return a - new LinearExpression(b);
         }
 
-        public static ClLinearExpression operator -(
-            ClAbstractVariable a,
-            ClLinearExpression b)
+        public static LinearExpression operator -(
+            AbstractVariable a,
+            LinearExpression b)
         {
-            return new ClLinearExpression(a) - b;
+            return new LinearExpression(a) - b;
         }
 
-        public static ClLinearExpression operator -(
-            ClLinearExpression a,
+        public static LinearExpression operator -(
+            LinearExpression a,
             double b)
         {
-            return a - new ClLinearExpression(b);
+            return a - new LinearExpression(b);
         }
 
-        public static ClLinearExpression operator -(
+        public static LinearExpression operator -(
             double a,
-            ClLinearExpression b)
+            LinearExpression b)
         {
-            return new ClLinearExpression(a) - b;
+            return new LinearExpression(a) - b;
         }
 
         #endregion
 
 
-        private static ClLinearExpression Multiply(ClLinearExpression a, double b)
+        private static LinearExpression Multiply(LinearExpression a, double b)
         {
             var newConstant = a.constant*b;
             var newTerms = a.terms.Select(
@@ -469,16 +469,16 @@ namespace CassowaryNET
                 .Where(o => !o.Value.IsApproxZero)
                 .ToDictionary(o => o.Key, o => o.Value);
 
-            return new ClLinearExpression(
+            return new LinearExpression(
                 newConstant,
                 newTerms);
         }
 
         #region *
 
-        public static ClLinearExpression operator *(
-            ClLinearExpression a,
-            ClLinearExpression b)
+        public static LinearExpression operator *(
+            LinearExpression a,
+            LinearExpression b)
         {
             if (a.IsConstant)
                 return a.constant.Value*b;
@@ -489,30 +489,30 @@ namespace CassowaryNET
             throw new CassowaryNonLinearExpressionException();
         }
 
-        public static ClLinearExpression operator *(
-            ClLinearExpression a,
-            ClAbstractVariable b)
+        public static LinearExpression operator *(
+            LinearExpression a,
+            AbstractVariable b)
         {
-            return a * new ClLinearExpression(b);
+            return a * new LinearExpression(b);
         }
 
-        public static ClLinearExpression operator *(
-            ClAbstractVariable a,
-            ClLinearExpression b)
+        public static LinearExpression operator *(
+            AbstractVariable a,
+            LinearExpression b)
         {
-            return new ClLinearExpression(a) * b;
+            return new LinearExpression(a) * b;
         }
 
-        public static ClLinearExpression operator *(
-            ClLinearExpression a,
+        public static LinearExpression operator *(
+            LinearExpression a,
             double b)
         {
             return Multiply(a, b);
         }
 
-        public static ClLinearExpression operator *(
+        public static LinearExpression operator *(
             double a,
-            ClLinearExpression b)
+            LinearExpression b)
         {
             return Multiply(b, a);
         }
@@ -521,9 +521,9 @@ namespace CassowaryNET
 
         #region /
 
-        public static ClLinearExpression operator /(
-            ClLinearExpression a,
-            ClLinearExpression b)
+        public static LinearExpression operator /(
+            LinearExpression a,
+            LinearExpression b)
         {
             if (!b.IsConstant) 
                 throw new CassowaryNonLinearExpressionException();
@@ -531,103 +531,103 @@ namespace CassowaryNET
             return a/b.constant.Value;
         }
 
-        public static ClLinearExpression operator /(
-            ClAbstractVariable a,
-            ClLinearExpression b)
+        public static LinearExpression operator /(
+            AbstractVariable a,
+            LinearExpression b)
         {
-            return new ClLinearExpression(a) / b;
+            return new LinearExpression(a) / b;
         }
 
-        public static ClLinearExpression operator /(
-            ClLinearExpression a,
+        public static LinearExpression operator /(
+            LinearExpression a,
             double b)
         {
             // cannot divide by zero
-            if (CMath.Approx(b, 0d))
+            if (MathHelper.Approx(b, 0d))
                 throw new CassowaryNonLinearExpressionException();
 
             return a*(1d/b);
         }
 
-        public static ClLinearExpression operator /(
+        public static LinearExpression operator /(
             double a,
-            ClLinearExpression b)
+            LinearExpression b)
         {
-            return new ClLinearExpression(a)/b;
+            return new LinearExpression(a)/b;
         }
 
         #endregion
 
         #region ==
 
-        public static ClLinearEquation operator ==(
-            ClLinearExpression a,
-            ClLinearExpression b)
+        public static LinearEquality operator ==(
+            LinearExpression a,
+            LinearExpression b)
         {
-            return new ClLinearEquation(a, b);
+            return new LinearEquality(a, b);
         }
 
-        public static ClLinearEquation operator !=(
-            ClLinearExpression a,
-            ClLinearExpression b)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static ClLinearEquation operator ==(
-            ClLinearExpression a,
-            ClAbstractVariable b)
-        {
-            return new ClLinearEquation(a, b);
-        }
-
-        public static ClLinearEquation operator !=(
-            ClLinearExpression a,
-            ClAbstractVariable b)
+        public static LinearEquality operator !=(
+            LinearExpression a,
+            LinearExpression b)
         {
             throw new NotImplementedException();
         }
 
-        public static ClLinearEquation operator ==(
-            ClAbstractVariable a,
-            ClLinearExpression b)
+        public static LinearEquality operator ==(
+            LinearExpression a,
+            AbstractVariable b)
         {
-            return new ClLinearEquation(a, b);
+            return new LinearEquality(a, b);
         }
 
-        public static ClLinearEquation operator !=(
-            ClAbstractVariable a,
-            ClLinearExpression b)
+        public static LinearEquality operator !=(
+            LinearExpression a,
+            AbstractVariable b)
         {
             throw new NotImplementedException();
         }
 
-        public static ClLinearEquation operator ==(
-            ClLinearExpression a,
+        public static LinearEquality operator ==(
+            AbstractVariable a,
+            LinearExpression b)
+        {
+            return new LinearEquality(a, b);
+        }
+
+        public static LinearEquality operator !=(
+            AbstractVariable a,
+            LinearExpression b)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static LinearEquality operator ==(
+            LinearExpression a,
             double b)
         {
-            var bExpression = new ClLinearExpression(b);
-            return new ClLinearEquation(a, bExpression);
+            var bExpression = new LinearExpression(b);
+            return new LinearEquality(a, bExpression);
         }
 
-        public static ClLinearEquation operator !=(
-            ClLinearExpression a,
+        public static LinearEquality operator !=(
+            LinearExpression a,
             double b)
         {
             throw new NotImplementedException();
         }
 
-        public static ClLinearEquation operator ==(
+        public static LinearEquality operator ==(
             double a,
-            ClLinearExpression b)
+            LinearExpression b)
         {
-            var aExpression = new ClLinearExpression(a);
-            return new ClLinearEquation(aExpression, b);
+            var aExpression = new LinearExpression(a);
+            return new LinearEquality(aExpression, b);
         }
 
-        public static ClLinearEquation operator !=(
+        public static LinearEquality operator !=(
             double a,
-            ClLinearExpression b)
+            LinearExpression b)
         {
             throw new NotImplementedException();
         }
@@ -636,78 +636,78 @@ namespace CassowaryNET
 
         #region <= and >=
 
-        public static ClLinearInequality operator <=(
-            ClLinearExpression a,
-            ClLinearExpression b)
+        public static LinearInequality operator <=(
+            LinearExpression a,
+            LinearExpression b)
         {
-            return new ClLinearInequality(a, InequalityType.LessThanOrEqual, b);
+            return new LinearInequality(a, InequalityType.LessThanOrEqual, b);
         }
 
-        public static ClLinearInequality operator >=(
-            ClLinearExpression a,
-            ClLinearExpression b)
+        public static LinearInequality operator >=(
+            LinearExpression a,
+            LinearExpression b)
         {
-            return new ClLinearInequality(a, InequalityType.GreaterThanOrEqual, b);
+            return new LinearInequality(a, InequalityType.GreaterThanOrEqual, b);
         }
 
-        public static ClLinearInequality operator <=(
-            ClLinearExpression a,
-            ClAbstractVariable b)
+        public static LinearInequality operator <=(
+            LinearExpression a,
+            AbstractVariable b)
         {
-            return new ClLinearInequality(a, InequalityType.LessThanOrEqual, b);
+            return new LinearInequality(a, InequalityType.LessThanOrEqual, b);
         }
 
-        public static ClLinearInequality operator >=(
-            ClLinearExpression a,
-            ClAbstractVariable b)
+        public static LinearInequality operator >=(
+            LinearExpression a,
+            AbstractVariable b)
         {
-            return new ClLinearInequality(a, InequalityType.GreaterThanOrEqual, b);
+            return new LinearInequality(a, InequalityType.GreaterThanOrEqual, b);
         }
 
-        public static ClLinearInequality operator <=(
-            ClAbstractVariable a,
-            ClLinearExpression b)
+        public static LinearInequality operator <=(
+            AbstractVariable a,
+            LinearExpression b)
         {
-            return new ClLinearInequality(a, InequalityType.LessThanOrEqual, b);
+            return new LinearInequality(a, InequalityType.LessThanOrEqual, b);
         }
 
-        public static ClLinearInequality operator >=(
-            ClAbstractVariable a,
-            ClLinearExpression b)
+        public static LinearInequality operator >=(
+            AbstractVariable a,
+            LinearExpression b)
         {
-            return new ClLinearInequality(a, InequalityType.GreaterThanOrEqual, b);
+            return new LinearInequality(a, InequalityType.GreaterThanOrEqual, b);
         }
 
-        public static ClLinearInequality operator <=(
-            ClLinearExpression a,
+        public static LinearInequality operator <=(
+            LinearExpression a,
             double b)
         {
-            var bExpression = new ClLinearExpression(b);
-            return new ClLinearInequality(a, InequalityType.LessThanOrEqual, bExpression);
+            var bExpression = new LinearExpression(b);
+            return new LinearInequality(a, InequalityType.LessThanOrEqual, bExpression);
         }
 
-        public static ClLinearInequality operator >=(
-            ClLinearExpression a,
+        public static LinearInequality operator >=(
+            LinearExpression a,
             double b)
         {
-            var bExpression = new ClLinearExpression(b);
-            return new ClLinearInequality(a, InequalityType.GreaterThanOrEqual, bExpression);
+            var bExpression = new LinearExpression(b);
+            return new LinearInequality(a, InequalityType.GreaterThanOrEqual, bExpression);
         }
 
-        public static ClLinearInequality operator <=(
+        public static LinearInequality operator <=(
             double a,
-            ClLinearExpression b)
+            LinearExpression b)
         {
-            var aExpression = new ClLinearExpression(a);
-            return new ClLinearInequality(aExpression, InequalityType.LessThanOrEqual, b);
+            var aExpression = new LinearExpression(a);
+            return new LinearInequality(aExpression, InequalityType.LessThanOrEqual, b);
         }
 
-        public static ClLinearInequality operator >=(
+        public static LinearInequality operator >=(
             double a,
-            ClLinearExpression b)
+            LinearExpression b)
         {
-            var aExpression = new ClLinearExpression(a);
-            return new ClLinearInequality(aExpression, InequalityType.GreaterThanOrEqual, b);
+            var aExpression = new LinearExpression(a);
+            return new LinearInequality(aExpression, InequalityType.GreaterThanOrEqual, b);
         }
 
         #endregion

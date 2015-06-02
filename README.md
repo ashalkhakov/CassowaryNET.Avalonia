@@ -14,8 +14,8 @@ of complex constraints.
 ## Example
 
 ```csharp
-var x = new ClVariable(20d);
-var y = new ClVariable(10d);
+var x = new Variable(20d);
+var y = new Variable(10d);
 
 var solver = new CassowarySolver();
     

@@ -24,7 +24,7 @@ using CassowaryNET.Variables;
 
 namespace CassowaryNET.Constraints
 {
-    public sealed class ClLinearEquation : ClLinearConstraint
+    public sealed class LinearEquality : LinearConstraint
     {
         #region Fields
 
@@ -34,23 +34,23 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Expression)
 
-        public ClLinearEquation(
-            ClLinearExpression expression,
-            ClStrength strength,
+        public LinearEquality(
+            LinearExpression expression,
+            Strength strength,
             double weight)
             : base(expression, strength, weight)
         {
         }
 
-        public ClLinearEquation(
-            ClLinearExpression expression,
-            ClStrength strength)
+        public LinearEquality(
+            LinearExpression expression,
+            Strength strength)
             : this(expression, strength, 1d)
         {
         }
 
-        public ClLinearEquation(ClLinearExpression expression)
-            : this(expression, ClStrength.Required)
+        public LinearEquality(LinearExpression expression)
+            : this(expression, Strength.Required)
         {
         }
 
@@ -58,27 +58,27 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Variable,Expression)
 
-        public ClLinearEquation(
-            ClAbstractVariable variable,
-            ClLinearExpression expression,
-            ClStrength strength,
+        public LinearEquality(
+            AbstractVariable variable,
+            LinearExpression expression,
+            Strength strength,
             double weight)
             : base(expression - variable, strength, weight)
         {
         }
 
-        public ClLinearEquation(
-            ClAbstractVariable variable,
-            ClLinearExpression expression,
-            ClStrength strength)
+        public LinearEquality(
+            AbstractVariable variable,
+            LinearExpression expression,
+            Strength strength)
             : this(variable, expression, strength, 1d)
         {
         }
 
-        public ClLinearEquation(
-            ClAbstractVariable variable,
-            ClLinearExpression expression)
-            : this(variable, expression, ClStrength.Required, 1d)
+        public LinearEquality(
+            AbstractVariable variable,
+            LinearExpression expression)
+            : this(variable, expression, Strength.Required, 1d)
         {
         }
 
@@ -86,25 +86,25 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Variable,double)
 
-        public ClLinearEquation(
-            ClAbstractVariable variable,
+        public LinearEquality(
+            AbstractVariable variable,
             double value)
-            : this(variable, value, ClStrength.Required, 1d)
+            : this(variable, value, Strength.Required, 1d)
         {
         }
 
-        public ClLinearEquation(
-            ClAbstractVariable variable,
+        public LinearEquality(
+            AbstractVariable variable,
             double value,
-            ClStrength strength)
+            Strength strength)
             : this(variable, value, strength, 1d)
         {
         }
 
-        public ClLinearEquation(
-            ClAbstractVariable variable,
+        public LinearEquality(
+            AbstractVariable variable,
             double value,
-            ClStrength strength,
+            Strength strength,
             double weight)
             : this(
                 value - variable,
@@ -117,10 +117,10 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Expression,Variable)
 
-        public ClLinearEquation(
-            ClLinearExpression expression,
-            ClAbstractVariable variable,
-            ClStrength strength,
+        public LinearEquality(
+            LinearExpression expression,
+            AbstractVariable variable,
+            Strength strength,
             double weight)
             : this(
                 expression- variable,
@@ -129,18 +129,18 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public ClLinearEquation(
-            ClLinearExpression expression,
-            ClAbstractVariable variable,
-            ClStrength strength)
+        public LinearEquality(
+            LinearExpression expression,
+            AbstractVariable variable,
+            Strength strength)
             : this(expression, variable, strength, 1d)
         {
         }
 
-        public ClLinearEquation(
-            ClLinearExpression expression,
-            ClAbstractVariable variable)
-            : this(expression, variable, ClStrength.Required, 1d)
+        public LinearEquality(
+            LinearExpression expression,
+            AbstractVariable variable)
+            : this(expression, variable, Strength.Required, 1d)
         {
         }
 
@@ -148,25 +148,25 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Expression,Expression)
 
-        public ClLinearEquation(
-            ClLinearExpression expression1,
-            ClLinearExpression expression2)
-            : this(expression1, expression2, ClStrength.Required, 1d)
+        public LinearEquality(
+            LinearExpression expression1,
+            LinearExpression expression2)
+            : this(expression1, expression2, Strength.Required, 1d)
         {
         }
 
-        public ClLinearEquation(
-            ClLinearExpression expression1,
-            ClLinearExpression expression2,
-            ClStrength strength)
+        public LinearEquality(
+            LinearExpression expression1,
+            LinearExpression expression2,
+            Strength strength)
             : this(expression1, expression2, strength, 1d)
         {
         }
 
-        public ClLinearEquation(
-            ClLinearExpression expression1,
-            ClLinearExpression expression2,
-            ClStrength strength,
+        public LinearEquality(
+            LinearExpression expression1,
+            LinearExpression expression2,
+            Strength strength,
             double weight)
             : this(expression1 - expression2, strength, weight)
         {
@@ -183,14 +183,14 @@ namespace CassowaryNET.Constraints
         
         #region Methods
 
-        public ClLinearEquation WithStrength(ClStrength strength)
+        public LinearEquality WithStrength(Strength strength)
         {
-            return new ClLinearEquation(Expression, strength, Weight);
+            return new LinearEquality(Expression, strength, Weight);
         }
 
-        public ClLinearEquation WithWeight(double weight)
+        public LinearEquality WithWeight(double weight)
         {
-            return new ClLinearEquation(Expression, Strength, weight);
+            return new LinearEquality(Expression, Strength, weight);
         }
 
         public override string ToString()

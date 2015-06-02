@@ -1,9 +1,9 @@
 /*
   Cassowary.net: an incremental constraint solver for .NET
   (http://lumumba.uhasselt.be/jo/projects/cassowary.net/)
-    
+  
   Copyright (C) 2005-2006  Jo Vermeulen (jo.vermeulen@uhasselt.be)
-    
+  
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public License
   as published by the Free Software Foundation; either version 2.1
@@ -20,25 +20,30 @@
 */
 
 using System;
+using CassowaryNET.Variables;
 
-namespace CassowaryNET.Variables
+namespace CassowaryNET.Constraints
 {
-    internal sealed class ClDummyVariable : ClAbstractVariable
+    public sealed class StayConstraint : EditOrStayConstraint
     {
         #region Fields
-
-        private static long dummyCounter = 0;
 
         #endregion
 
         #region Constructors
 
-        public ClDummyVariable(string name)
-            : base(name + (++dummyCounter))
+        public StayConstraint(Variable variable)
+            : this(variable, Strength.Weak)
         {
         }
 
-        public ClDummyVariable()
+        public StayConstraint(Variable variable, Strength strength)
+            : this(variable, strength, 1d)
+        {
+        }
+
+        public StayConstraint(Variable variable, Strength strength, double weight)
+            : base(variable, strength, weight)
         {
         }
 
@@ -46,22 +51,7 @@ namespace CassowaryNET.Variables
 
         #region Properties
 
-        public override bool IsDummy
-        {
-            get { return true; }
-        }
-
-        public override bool IsExternal
-        {
-            get { return false; }
-        }
-
-        public override bool IsPivotable
-        {
-            get { return false; }
-        }
-
-        public override bool IsRestricted
+        public override bool IsStayConstraint
         {
             get { return true; }
         }
@@ -72,7 +62,7 @@ namespace CassowaryNET.Variables
 
         public override string ToString()
         {
-            return "[" + Name + ":dummy]";
+            return "stay" + base.ToString();
         }
 
         #endregion

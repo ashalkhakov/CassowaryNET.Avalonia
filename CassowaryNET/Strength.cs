@@ -23,50 +23,50 @@ using System;
 
 namespace CassowaryNET
 {
-    public class ClStrength
+    public class Strength
     {
         #region Static
 
-        private static readonly ClStrength required = new ClStrength(
+        private static readonly Strength required = new Strength(
             "<Required>",
             1000,
             1000,
             1000);
 
-        private static readonly ClStrength strong = new ClStrength(
+        private static readonly Strength strong = new Strength(
             "strong",
             1.0,
             0.0,
             0.0);
 
-        private static readonly ClStrength medium = new ClStrength(
+        private static readonly Strength medium = new Strength(
             "medium",
             0.0,
             1.0,
             0.0);
 
-        private static readonly ClStrength weak = new ClStrength(
+        private static readonly Strength weak = new Strength(
             "weak",
             0.0,
             0.0,
             1.0);
 
-        public static ClStrength Required
+        public static Strength Required
         {
             get { return required; }
         }
 
-        public static ClStrength Strong
+        public static Strength Strong
         {
             get { return strong; }
         }
 
-        public static ClStrength Medium
+        public static Strength Medium
         {
             get { return medium; }
         }
 
-        public static ClStrength Weak
+        public static Strength Weak
         {
             get { return weak; }
         }
@@ -76,22 +76,22 @@ namespace CassowaryNET
         #region Fields
 
         private readonly string name;
-        private readonly ClSymbolicWeight symbolicWeight;
+        private readonly SymbolicWeight symbolicWeight;
 
         #endregion
 
         #region Constructors
 
-        private ClStrength(string name, ClSymbolicWeight symbolicWeight)
+        private Strength(string name, SymbolicWeight symbolicWeight)
         {
             this.name = name;
             this.symbolicWeight = symbolicWeight;
         }
 
-        private ClStrength(string name, double w1, double w2, double w3)
+        private Strength(string name, double w1, double w2, double w3)
         {
             this.name = name;
-            symbolicWeight = new ClSymbolicWeight(w1, w2, w3);
+            symbolicWeight = new SymbolicWeight(w1, w2, w3);
         }
 
         #endregion
@@ -108,7 +108,7 @@ namespace CassowaryNET
             get { return (this == Required); }
         }
 
-        public ClSymbolicWeight SymbolicWeight
+        internal SymbolicWeight SymbolicWeight
         {
             get { return symbolicWeight; }
         }

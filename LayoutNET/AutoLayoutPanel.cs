@@ -50,7 +50,7 @@ namespace LayoutNET
         #region Fields
 
         private readonly CassowarySolver solver;
-        private readonly Dictionary<ClVariable, ClLinearEquation> variableConstraints;
+        private readonly Dictionary<Variable, LinearEquality> variableConstraints;
         private readonly Dictionary<UIElement, LayoutVariableSet> elementVariables;
         private readonly List<UIElement> processedChildren;
 
@@ -62,7 +62,7 @@ namespace LayoutNET
         {
             solver = new CassowarySolver();
             solver.AutoSolve = false;
-            variableConstraints = new Dictionary<ClVariable, ClLinearEquation>();
+            variableConstraints = new Dictionary<Variable, LinearEquality>();
 
             elementVariables = new Dictionary<UIElement, LayoutVariableSet>();
             processedChildren = new List<UIElement>();
@@ -91,10 +91,10 @@ namespace LayoutNET
             var thisVariables = elementVariables[this];
             solver.AddConstraint(
                 (thisVariables.Left == 0d)
-                    .WithStrength(ClStrength.Required));
+                    .WithStrength(Strength.Required));
             solver.AddConstraint(
                 (thisVariables.Top == 0d)
-                    .WithStrength(ClStrength.Required));
+                    .WithStrength(Strength.Required));
 
             HandleChangedChildren();
         }
@@ -107,35 +107,35 @@ namespace LayoutNET
 
             solver.AddConstraint(
                 (variables.Width >= 0d)
-                    .WithStrength(ClStrength.Required));
+                    .WithStrength(Strength.Required));
             solver.AddConstraint(
                 (variables.Height >= 0d)
-                    .WithStrength(ClStrength.Required));
+                    .WithStrength(Strength.Required));
 
             solver.AddConstraint(
                 (variables.Top >= 0d)
-                    .WithStrength(ClStrength.Required));
+                    .WithStrength(Strength.Required));
             solver.AddConstraint(
                 (variables.Left >= 0d)
-                    .WithStrength(ClStrength.Required));
+                    .WithStrength(Strength.Required));
 
             // HCenter == Left + 0.5*Width
             // Right == Left + Width
             solver.AddConstraint(
                 (variables.HCenter == variables.Left + 0.5d * variables.Width)
-                    .WithStrength(ClStrength.Required));
+                    .WithStrength(Strength.Required));
             solver.AddConstraint(
                 (variables.Right == variables.Left + variables.Width)
-                    .WithStrength(ClStrength.Required));
+                    .WithStrength(Strength.Required));
 
             // VCenter == Top + 0.5*Height
             // Bottom = Top + Height
             solver.AddConstraint(
                 (variables.VCenter == variables.Top + 0.5d * variables.Height)
-                    .WithStrength(ClStrength.Required));
+                    .WithStrength(Strength.Required));
             solver.AddConstraint(
                 (variables.Bottom == variables.Top + variables.Height)
-                    .WithStrength(ClStrength.Required));
+                    .WithStrength(Strength.Required));
         }
 
         private void InitialiseElementConstraints(UIElement uiElement)
@@ -167,7 +167,7 @@ namespace LayoutNET
                             Multiplier = lle.Multiplier,
                         })
                     .Aggregate(
-                        new ClLinearExpression(layoutConstraint.Constant),
+                        new LinearExpression(layoutConstraint.Constant),
                         (agg, o) => agg + o.Variable*o.Multiplier
                     );
 
@@ -186,10 +186,10 @@ namespace LayoutNET
             }
         }
 
-        private static ClLinearConstraint GetClLinearEquation(
-            ClVariable variable,
-            ClLinearExpression expression,
-            ClStrength strength,
+        private static LinearConstraint GetClLinearEquation(
+            Variable variable,
+            LinearExpression expression,
+            Strength strength,
             double weight,
             LayoutRelationship relationship)
         {
@@ -206,19 +206,19 @@ namespace LayoutNET
             }
         }
 
-        private ClStrength GetStrength(
+        private Strength GetStrength(
             LayoutConstraintStrength layoutConstraintStrength)
         {
             switch (layoutConstraintStrength)
             {
                 case LayoutConstraintStrength.Weak:
-                    return ClStrength.Weak;
+                    return Strength.Weak;
                 case LayoutConstraintStrength.Medium:
-                    return ClStrength.Medium;
+                    return Strength.Medium;
                 case LayoutConstraintStrength.Strong:
-                    return ClStrength.Strong;
+                    return Strength.Strong;
                 case LayoutConstraintStrength.Required:
-                    return ClStrength.Required;
+                    return Strength.Required;
                 default:
                     throw new ArgumentOutOfRangeException("layoutConstraintStrength");
             }
@@ -232,7 +232,7 @@ namespace LayoutNET
             return elementVariables[uiElement];
         }
 
-        private ClVariable FindClVariable(
+        private Variable FindClVariable(
             UIElement uiElement,
             LayoutProperty property)
         {
@@ -240,14 +240,14 @@ namespace LayoutNET
         }
         
         private void SetValue(
-            ClVariable variable,
+            Variable variable,
             double value,
-            ClStrength strength)
+            Strength strength)
         {
             // TODO: Find a better way then manually adding/removing constriants.
 
             // if it is already there, remove from the solver...
-            ClLinearEquation constraint;
+            LinearEquality constraint;
             if (variableConstraints.TryGetValue(variable, out constraint))
             {
                 if (constraint != null)
@@ -305,11 +305,11 @@ namespace LayoutNET
             SetValue(
                 thisVariables.Width,
                 finalSize.Width,
-                ClStrength.Required);
+                Strength.Required);
             SetValue(
                 thisVariables.Height,
                 finalSize.Height,
-                ClStrength.Required);
+                Strength.Required);
         }
 
         private void SetChildValues()
@@ -321,11 +321,11 @@ namespace LayoutNET
                 SetValue(
                     variables.Width,
                     child.DesiredSize.Width,
-                    ClStrength.Strong);
+                    Strength.Strong);
                 SetValue(
                     variables.Height,
                     child.DesiredSize.Height,
-                    ClStrength.Strong);
+                    Strength.Strong);
             }
         }
 

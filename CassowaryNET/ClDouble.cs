@@ -26,7 +26,7 @@ namespace CassowaryNET
 {
     // TODO: inline this class to System.Double?
 
-    public class ClDouble
+    internal class ClDouble
     {
         #region Fields
 
@@ -52,7 +52,7 @@ namespace CassowaryNET
 
         public bool IsApproxZero
         {
-            get { return CMath.Approx(value, 0d); }
+            get { return MathHelper.Approx(value, 0d); }
         }
 
         #endregion

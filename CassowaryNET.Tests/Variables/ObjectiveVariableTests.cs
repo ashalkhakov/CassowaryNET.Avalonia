@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace CassowaryNET.Tests.Variables
 {
     [TestFixture]
-    public class ClObjectiveVariableTests
+    public class ObjectiveVariableTests
     {
         #region Helpers
 
@@ -23,9 +23,9 @@ namespace CassowaryNET.Tests.Variables
             {
             }
 
-            internal ClObjectiveVariable GetTarget()
+            internal ObjectiveVariable GetTarget()
             {
-                var target = new ClObjectiveVariable("foo");
+                var target = new ObjectiveVariable("foo");
                 return target;
             }
         }
@@ -38,7 +38,7 @@ namespace CassowaryNET.Tests.Variables
             [Test]
             public void can_be_created()
             {
-                var target = new ClObjectiveVariable("foo");
+                var target = new ObjectiveVariable("foo");
 
                 Assert.That(target.Name, Is.EqualTo("foo"));
 

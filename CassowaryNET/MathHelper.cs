@@ -23,7 +23,7 @@ using System;
 
 namespace CassowaryNET
 {
-    public static class CMath
+    internal static class MathHelper
     {
         #region Fields
 
@@ -45,14 +45,14 @@ namespace CassowaryNET
 
             if (a == 0d)
             {
-                return (Math.Abs(b) < epsilon);
+                return Math.Abs(b) < epsilon;
             }
             if (b == 0d)
             {
-                return (Math.Abs(a) < epsilon);
+                return Math.Abs(a) < epsilon;
             }
             
-            return (Math.Abs(a - b) < Math.Abs(a)*epsilon);
+            return Math.Abs(a - b) < Math.Abs(a)*epsilon;
         }
 
         #endregion

@@ -32,15 +32,15 @@ namespace CassowaryNET
     public interface INoteVariableChanges
     {
         void NoteRemovedVariable(
-            ClAbstractVariable v,
-            ClAbstractVariable subject);
+            AbstractVariable v,
+            AbstractVariable subject);
 
         void NoteAddedVariable(
-            ClAbstractVariable v,
-            ClAbstractVariable subject);
+            AbstractVariable v,
+            AbstractVariable subject);
     }
 
-    internal class ClTableau : INoteVariableChanges
+    internal class Tableau : INoteVariableChanges
     {
         #region Fields
 
@@ -50,30 +50,30 @@ namespace CassowaryNET
         /// i.e., it's a mapping from variables in expressions (a column) to the 
         /// set of rows that contain them.
         /// </summary>
-        private readonly Dictionary<ClAbstractVariable, HashSet<ClAbstractVariable>> columns; 
+        private readonly Dictionary<AbstractVariable, HashSet<AbstractVariable>> columns; 
 
         /// <summary>
         /// _rows maps basic variables to the expressions for that row in the tableau.
         /// </summary>
-        private readonly Dictionary<ClAbstractVariable, ClLinearExpression> rows;
+        private readonly Dictionary<AbstractVariable, LinearExpression> rows;
 
         /// <summary>
         /// Collection of basic variables that have infeasible rows
         /// (used when reoptimizing).
         /// </summary>
-        private readonly HashSet<ClAbstractVariable> infeasibleRows;
+        private readonly HashSet<AbstractVariable> infeasibleRows;
 
         /// <summary>
         /// Set of rows where the basic variable is external
         /// this was added to the Java/C++/C# versions to reduce time in SetExternalVariables().
         /// </summary>
-        private readonly HashSet<ClVariable> externalRows;
+        private readonly HashSet<Variable> externalRows;
 
         /// <summary>
         /// Set of external variables which are parametric
         /// this was added to the Java/C++/C# versions to reduce time in SetExternalVariables().
         /// </summary>
-        private readonly HashSet<ClVariable> externalParametricVars;
+        private readonly HashSet<Variable> externalParametricVars;
         
         #endregion
 
@@ -83,40 +83,40 @@ namespace CassowaryNET
         /// Constructor is protected, since this only supports an ADT for
         /// the ClSimplexSolver class.
         /// </summary>
-        public ClTableau()
+        public Tableau()
         {
-            columns = new Dictionary<ClAbstractVariable, HashSet<ClAbstractVariable>>();
-            rows = new Dictionary<ClAbstractVariable, ClLinearExpression>();
-            infeasibleRows = new HashSet<ClAbstractVariable>();
-            externalRows = new HashSet<ClVariable>();
-            externalParametricVars = new HashSet<ClVariable>();
+            columns = new Dictionary<AbstractVariable, HashSet<AbstractVariable>>();
+            rows = new Dictionary<AbstractVariable, LinearExpression>();
+            infeasibleRows = new HashSet<AbstractVariable>();
+            externalRows = new HashSet<Variable>();
+            externalParametricVars = new HashSet<Variable>();
         }
 
         #endregion
 
         #region Properties
 
-        public Dictionary<ClAbstractVariable, HashSet<ClAbstractVariable>> Columns
+        public Dictionary<AbstractVariable, HashSet<AbstractVariable>> Columns
         {
             get { return columns; }
         }
 
-        public Dictionary<ClAbstractVariable, ClLinearExpression> Rows
+        public Dictionary<AbstractVariable, LinearExpression> Rows
         {
             get { return rows; }
         }
 
-        public HashSet<ClAbstractVariable> InfeasibleRows
+        public HashSet<AbstractVariable> InfeasibleRows
         {
             get { return infeasibleRows; }
         }
 
-        public IEnumerable<ClVariable> ExternalRows
+        public IEnumerable<Variable> ExternalRows
         {
             get { return externalRows; }
         }
 
-        public IEnumerable<ClVariable> ExternalParametricVars
+        public IEnumerable<Variable> ExternalParametricVars
         {
             get { return externalParametricVars; }
         }
@@ -132,8 +132,8 @@ namespace CassowaryNET
         /// Update the column cross-indices.
         /// </summary>
         public void NoteRemovedVariable(
-            ClAbstractVariable v,
-            ClAbstractVariable subject)
+            AbstractVariable v,
+            AbstractVariable subject)
         {
             if (!Equals(subject, null))
             {
@@ -146,8 +146,8 @@ namespace CassowaryNET
         /// update column cross indices.
         /// </summary>
         public void NoteAddedVariable(
-            ClAbstractVariable v,
-            ClAbstractVariable subject)
+            AbstractVariable v,
+            AbstractVariable subject)
         {
             if (!Equals(subject, null))
             {
@@ -161,14 +161,14 @@ namespace CassowaryNET
         /// creating a new set if needed. 
         /// </summary>
         private void InsertColVar(
-            ClAbstractVariable param_var,
-            ClAbstractVariable rowvar)
+            AbstractVariable param_var,
+            AbstractVariable rowvar)
         {
             var rowset = columns.GetOrDefault(param_var);
 
             if (rowset == null)
             {
-                rowset = new HashSet<ClAbstractVariable>();
+                rowset = new HashSet<AbstractVariable>();
                 columns.Add(param_var, rowset);
             }
 
@@ -180,7 +180,7 @@ namespace CassowaryNET
         // expr is now owned by ClTableau class, 
         // and ClTableau is responsible for deleting it
         // (also, expr better be allocated on the heap!).
-        public void AddRow(ClAbstractVariable variable, ClLinearExpression expression)
+        public void AddRow(AbstractVariable variable, LinearExpression expression)
         {
             // for each variable in expr, add var to the set of rows which
             // have that variable in their expression
@@ -193,14 +193,14 @@ namespace CassowaryNET
 
                 if (expressionVariable.IsExternal)
                 {
-                    var clVariable = (ClVariable) expressionVariable;
+                    var clVariable = (Variable) expressionVariable;
                     externalParametricVars.Add(clVariable);
                 }
             }
 
             if (variable.IsExternal)
             {
-                var clVariable = (ClVariable)variable;
+                var clVariable = (Variable)variable;
                 externalRows.Add(clVariable);
             }
         }
@@ -209,7 +209,7 @@ namespace CassowaryNET
         /// Remove v from the tableau -- remove the column cross indices for v
         /// and remove v from every expression in rows in which v occurs
         /// </summary>
-        public void RemoveColumn(ClAbstractVariable variable)
+        public void RemoveColumn(AbstractVariable variable)
         {
             // remove the rows with the variables in varset
 
@@ -231,7 +231,7 @@ namespace CassowaryNET
 
             if (variable.IsExternal)
             {
-                var clVariable = (ClVariable)variable;
+                var clVariable = (Variable)variable;
                 externalRows.Remove(clVariable);
                 externalParametricVars.Remove(clVariable);
             }
@@ -241,7 +241,7 @@ namespace CassowaryNET
         /// Remove the basic variable v from the tableau row v=expr
         /// Then update column cross indices.
         /// </summary>
-        public ClLinearExpression RemoveRow(ClAbstractVariable variable)
+        public LinearExpression RemoveRow(AbstractVariable variable)
             /*throws ExCLInternalError*/
         {
             var expression = rows[variable];
@@ -264,7 +264,7 @@ namespace CassowaryNET
 
             if (variable.IsExternal)
             {
-                var clVariable = (ClVariable) variable;
+                var clVariable = (Variable) variable;
                 externalRows.Remove(clVariable);
             }
 
@@ -278,8 +278,8 @@ namespace CassowaryNET
         /// oldVar should now be a basic variable.
         /// </summary> 
         public void SubstituteOut(
-            ClAbstractVariable oldVariable,
-            ClLinearExpression expression)
+            AbstractVariable oldVariable,
+            LinearExpression expression)
         {
             var oldVariableColumn = columns[oldVariable];
 
@@ -322,7 +322,7 @@ namespace CassowaryNET
 
             if (oldVariable.IsExternal)
             {
-                var oldClVariable = (ClVariable)oldVariable;
+                var oldClVariable = (Variable)oldVariable;
                 externalRows.Add(oldClVariable);
                 externalParametricVars.Remove(oldClVariable);
             }
@@ -334,13 +334,13 @@ namespace CassowaryNET
         /// Return true if and only if the variable subject is in the columns keys 
         /// </summary>
         [Pure]
-        public bool ColumnsHasKey(ClAbstractVariable subject)
+        public bool ColumnsHasKey(AbstractVariable subject)
         {
             return columns.ContainsKey(subject);
         }
 
         [Pure]
-        public ClLinearExpression RowExpression(ClAbstractVariable v)
+        public LinearExpression RowExpression(AbstractVariable v)
         {
             return Rows.GetOrDefault(v);
         }

@@ -26,30 +26,29 @@ using System.Linq;
 
 namespace CassowaryNET
 {
-    public class ClSymbolicWeight : ICloneable
+    internal class SymbolicWeight
     {
         #region Fields
 
-        private readonly double[] weights;
+        private readonly IReadOnlyList<double> weights;
 
         #endregion
 
         #region Constructors
 
-        public ClSymbolicWeight(double w1, double w2, double w3)
+        public SymbolicWeight(double w1, double w2, double w3)
             : this(new[] {w1, w2, w3,})
         {
         }
 
-        private ClSymbolicWeight(double[] weights)
+        private SymbolicWeight(ICollection<double> weights)
         {
-            Debug.Assert(weights.Length == 3);
+            Debug.Assert(weights.Count == 3);
 
-            this.weights = new double[weights.Length];
-            Array.Copy(weights, this.weights, weights.Length);
+            this.weights = weights.ToList().AsReadOnly();
         }
 
-        private ClSymbolicWeight(IEnumerable<double> weights)
+        private SymbolicWeight(IEnumerable<double> weights)
             : this(weights.ToArray())
         {
         }
@@ -68,7 +67,7 @@ namespace CassowaryNET
             double sum = 0;
             double factor = 1;
 
-            for (int i = weights.Length - 1; i >= 0; i--)
+            for (int i = weights.Count - 1; i >= 0; i--)
             {
                 sum += weights[i]*factor;
                 factor *= multiplier;
@@ -77,19 +76,14 @@ namespace CassowaryNET
             return sum;
         }
 
-        object ICloneable.Clone()
-        {
-            return new ClSymbolicWeight(weights);
-        }
-
         public override string ToString()
         {
             return string.Format("[{0}]", string.Join(",", weights));
         }
         
-        public static ClSymbolicWeight operator +(
-            ClSymbolicWeight symbolicWeightA,
-            ClSymbolicWeight symbolicWeightB)
+        public static SymbolicWeight operator +(
+            SymbolicWeight symbolicWeightA,
+            SymbolicWeight symbolicWeightB)
         {
             var weightsA = symbolicWeightA.weights;
             var weightsB = symbolicWeightB.weights;
@@ -98,12 +92,12 @@ namespace CassowaryNET
                 weightsB,
                 (wA, wB) => wA + wB);
 
-            return new ClSymbolicWeight(weights);
+            return new SymbolicWeight(weights);
         }
 
-        public static ClSymbolicWeight operator -(
-            ClSymbolicWeight symbolicWeightA,
-            ClSymbolicWeight symbolicWeightB)
+        public static SymbolicWeight operator -(
+            SymbolicWeight symbolicWeightA,
+            SymbolicWeight symbolicWeightB)
         {
             var weightsA = symbolicWeightA.weights;
             var weightsB = symbolicWeightB.weights;
@@ -112,30 +106,30 @@ namespace CassowaryNET
                 weightsB,
                 (wA, wB) => wA - wB);
 
-            return new ClSymbolicWeight(weights);
+            return new SymbolicWeight(weights);
         }
 
-        public static ClSymbolicWeight operator *(
+        public static SymbolicWeight operator *(
             double value,
-            ClSymbolicWeight symbolicWeight)
+            SymbolicWeight symbolicWeight)
         {
             var weights = symbolicWeight.weights.Select(w => w * value);
-            return new ClSymbolicWeight(weights);
+            return new SymbolicWeight(weights);
         }
 
-        public static ClSymbolicWeight operator *(
-            ClSymbolicWeight symbolicWeight,
+        public static SymbolicWeight operator *(
+            SymbolicWeight symbolicWeight,
             double value)
         {
             return value*symbolicWeight;
         }
 
-        public static ClSymbolicWeight operator /(
-            ClSymbolicWeight symbolicWeight,
+        public static SymbolicWeight operator /(
+            SymbolicWeight symbolicWeight,
             double value)
         {
             var weights = symbolicWeight.weights.Select(w => w / value);
-            return new ClSymbolicWeight(weights);
+            return new SymbolicWeight(weights);
         }
 
         #endregion

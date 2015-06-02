@@ -1,9 +1,9 @@
 /*
   Cassowary.net: an incremental constraint solver for .NET
   (http://lumumba.uhasselt.be/jo/projects/cassowary.net/)
-    
+  
   Copyright (C) 2005-2006  Jo Vermeulen (jo.vermeulen@uhasselt.be)
-    
+  
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public License
   as published by the Free Software Foundation; either version 2.1
@@ -21,59 +21,70 @@
 
 using System;
 
-namespace CassowaryNET.Constraints
+namespace CassowaryNET.Variables
 {
-    // Type         => Edit  | Stay  | Equality | Inequality
-    // IsEdit       => true  | false | false    | false
-    // IsStay       => false | true  | false    | false
-    // IsInequality => false | false | false    | true 
-
-    // TODO: the subtyping / casting here is attrocious. Clean up needed.
-
-    public abstract class ClConstraint
+    public sealed class Variable : AbstractVariable
     {
         #region Fields
 
-        private readonly ClStrength strength;
-        private readonly double weight;
+        private double value;
 
         #endregion
 
         #region Constructors
-        
-        protected ClConstraint(ClStrength strength, double weight)
+
+        public Variable()
+            : this(0d)
         {
-            this.strength = strength;
-            this.weight = weight;
+        }
+
+        public Variable(double value)
+            : base()
+        {
+            this.value = value;
+        }
+
+        public Variable(string name)
+            : this(name, 0d)
+        {
+        }
+
+        public Variable(string name, double value)
+            : base(name)
+        {
+            this.value = value;
         }
 
         #endregion
 
         #region Properties
 
-        public abstract ClLinearExpression Expression { get; }
-
-        public ClStrength Strength
+        /// <remarks>
+        /// Change the value held -- should *not* use this if the variable is 
+        /// in a solver -- instead use AddEditVar() and SuggestValue() interface
+        /// </remarks>
+        public double Value
         {
-            get { return strength; }
+            get { return value; }
+            internal set { this.value = value; }
         }
 
-        public double Weight
-        {
-            get { return weight; }
-        }
-
-        public virtual bool IsEditConstraint
+        public override bool IsDummy
         {
             get { return false; }
         }
 
-        public virtual bool IsStayConstraint
+        public override bool IsExternal
+        {
+            get { return true; }
+        }
+
+        public override bool IsPivotable
         {
             get { return false; }
         }
 
-        public virtual bool IsInequality
+        public override bool IsRestricted
         {
             get { return false; }
         }
@@ -84,13 +95,7 @@ namespace CassowaryNET.Constraints
 
         public override string ToString()
         {
-            // example output:
-            // weak:[0,0,1] {1} (23 + -1*[update.height:23]
-            return string.Format(
-                "{0} {{{1}}} ({2}",
-                Strength,
-                Weight,
-                Expression);
+            return string.Format("[{0}:{1}]", Name, value);
         }
 
         #endregion

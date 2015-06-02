@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace CassowaryNET.Tests.Variables
 {
     [TestFixture]
-    public class ClDummyVariableTests
+    public class DummyVariableTests
     {
         #region Helpers
 
@@ -23,9 +23,9 @@ namespace CassowaryNET.Tests.Variables
             {
             }
 
-            internal ClDummyVariable GetTarget()
+            internal DummyVariable GetTarget()
             {
-                var target = new ClDummyVariable();
+                var target = new DummyVariable();
                 return target;
             }
         }
@@ -38,7 +38,7 @@ namespace CassowaryNET.Tests.Variables
             [Test]
             public void can_be_created()
             {
-                var target = new ClDummyVariable();
+                var target = new DummyVariable();
 
                 Assert.That(target.Name, Is.Not.Null);
 
@@ -55,7 +55,7 @@ namespace CassowaryNET.Tests.Variables
             [Test]
             public void can_be_created()
             {
-                var target = new ClDummyVariable("foo");
+                var target = new DummyVariable("foo");
 
                 Assert.That(target.Name, Is.StringStarting("foo"));
 

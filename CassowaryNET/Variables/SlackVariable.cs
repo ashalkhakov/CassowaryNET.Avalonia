@@ -19,28 +19,57 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-using CassowaryNET.Exceptions;
+using System;
 
-namespace CassowaryNET.Parsing
+namespace CassowaryNET.Variables
 {
-    public class ExClParseError : CassowaryException
+    internal sealed class SlackVariable : AbstractVariable
     {
-        private string _rule;
+        #region Fields
 
-        public ExClParseError(string rule)
+        private static long slackCounter = 0;
+
+        #endregion
+
+        #region Constructors
+
+        public SlackVariable(string name)
+            : base(name + (++slackCounter))
         {
-            Rule = rule;
         }
 
-        public override string Description
+        public SlackVariable()
         {
-            get { return string.Format("[ExClParseError] Parse error in \"{0}\"", Rule); }
         }
 
-        public string Rule
+        #endregion
+
+        #region Properties
+
+        public override bool IsExternal
         {
-            get { return _rule; }
-            set { _rule = value; }
+            get { return false; }
         }
+
+        public override bool IsPivotable
+        {
+            get { return true; }
+        }
+
+        public override bool IsRestricted
+        {
+            get { return true; }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public override string ToString()
+        {
+            return string.Format("[{0}:slack]", Name);
+        }
+
+        #endregion
     }
 }

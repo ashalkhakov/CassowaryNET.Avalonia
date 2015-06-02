@@ -21,39 +21,59 @@
 
 using System;
 
-namespace CassowaryNET.Constraints
+namespace CassowaryNET.Variables
 {
-    public abstract class ClLinearConstraint : ClConstraint
+    internal sealed class DummyVariable : AbstractVariable
     {
         #region Fields
 
-        private readonly ClLinearExpression expression;
+        private static long dummyCounter = 0;
 
         #endregion
 
         #region Constructors
 
-        protected ClLinearConstraint(
-            ClLinearExpression expression,
-            ClStrength strength,
-            double weight)
-            : base(strength, weight)
+        public DummyVariable(string name)
+            : base(name + (++dummyCounter))
         {
-            this.expression = expression;
+        }
+
+        public DummyVariable()
+        {
         }
 
         #endregion
 
         #region Properties
 
-        public override sealed ClLinearExpression Expression
+        public override bool IsDummy
         {
-            get { return expression; }
+            get { return true; }
+        }
+
+        public override bool IsExternal
+        {
+            get { return false; }
+        }
+
+        public override bool IsPivotable
+        {
+            get { return false; }
+        }
+
+        public override bool IsRestricted
+        {
+            get { return true; }
         }
 
         #endregion
 
         #region Methods
+
+        public override string ToString()
+        {
+            return "[" + Name + ":dummy]";
+        }
 
         #endregion
     }

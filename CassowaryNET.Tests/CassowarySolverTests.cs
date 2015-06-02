@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace CassowaryNET.Tests
 {
     [TestFixture]
-    public class ClSimplexSolverTests
+    public class CassowarySolverTests
     {
         #region Helpers
 

@@ -33,13 +33,13 @@ namespace CassowaryNET
     /// the parallel vectors of error variables and previous edit
     /// constants from the Smalltalk version of the code.
     /// </summary>
-    internal class ClEditInfo
+    internal class EditInfo
     {
         #region Fields
 
-        private readonly ClConstraint constraint;
-        private readonly ClSlackVariable clvEditPlus;
-        private readonly ClSlackVariable clvEditMinus;
+        private readonly EditConstraint constraint;
+        private readonly SlackVariable clvEditPlus;
+        private readonly SlackVariable clvEditMinus;
         private double prevEditConstant;
         private readonly int index;
 
@@ -47,10 +47,10 @@ namespace CassowaryNET
 
         #region Constructors
 
-        public ClEditInfo(
-            ClConstraint constraint,
-            ClSlackVariable eplus,
-            ClSlackVariable eminus,
+        public EditInfo(
+            EditConstraint constraint,
+            SlackVariable eplus,
+            SlackVariable eminus,
             double prevEditConstant,
             int index)
         {
@@ -70,17 +70,17 @@ namespace CassowaryNET
             get { return index; }
         }
 
-        public ClConstraint Constraint
+        public EditConstraint Constraint
         {
             get { return constraint; }
         }
 
-        public ClSlackVariable ClvEditPlus
+        public SlackVariable ClvEditPlus
         {
             get { return clvEditPlus; }
         }
 
-        public ClSlackVariable ClvEditMinus
+        public SlackVariable ClvEditMinus
         {
             get { return clvEditMinus; }
         }

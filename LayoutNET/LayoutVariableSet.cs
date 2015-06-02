@@ -38,47 +38,47 @@ namespace LayoutNET
             get { return uiElement; }
         }
 
-        public IEnumerable<ClVariable> AllVariables
+        public IEnumerable<Variable> AllVariables
         {
             get { return variables.Values.Select(o => o.Variable); }
         }
 
-        public ClVariable Left
+        public Variable Left
         {
             get { return variables[LayoutProperty.Left].Variable; }
         }
 
-        public ClVariable HCenter
+        public Variable HCenter
         {
             get { return variables[LayoutProperty.HCenter].Variable; }
         }
 
-        public ClVariable Right
+        public Variable Right
         {
             get { return variables[LayoutProperty.Right].Variable; }
         }
 
-        public ClVariable Width
+        public Variable Width
         {
             get { return variables[LayoutProperty.Width].Variable; }
         }
 
-        public ClVariable Top
+        public Variable Top
         {
             get { return variables[LayoutProperty.Top].Variable; }
         }
 
-        public ClVariable VCenter
+        public Variable VCenter
         {
             get { return variables[LayoutProperty.VCenter].Variable; }
         }
 
-        public ClVariable Bottom
+        public Variable Bottom
         {
             get { return variables[LayoutProperty.Bottom].Variable; }
         }
 
-        public ClVariable Height
+        public Variable Height
         {
             get { return variables[LayoutProperty.Height].Variable; }
         }
@@ -87,7 +87,7 @@ namespace LayoutNET
 
         #region Methods
 
-        public ClVariable GetVariable(LayoutProperty property)
+        public Variable GetVariable(LayoutProperty property)
         {
             return variables[property].Variable;
         }

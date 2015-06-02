@@ -1,9 +1,9 @@
 /*
   Cassowary.net: an incremental constraint solver for .NET
   (http://lumumba.uhasselt.be/jo/projects/cassowary.net/)
-    
-  Copyright (C) 2005  Jo Vermeulen (jo.vermeulen@uhasselt.be)
-    
+  
+  Copyright (C) 2005-2006  Jo Vermeulen (jo.vermeulen@uhasselt.be)
+  
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public License
   as published by the Free Software Foundation; either version 2.1
@@ -24,40 +24,41 @@ using CassowaryNET.Variables;
 
 namespace CassowaryNET.Constraints
 {
-    public abstract class ClEditOrStayConstraint : ClConstraint
+    public sealed class EditConstraint : EditOrStayConstraint
     {
         #region Fields
-
-        private readonly ClVariable variable;
-        // cache the expression
-        private readonly ClLinearExpression expression;
-
+        
         #endregion
 
         #region Constructors
 
-        protected ClEditOrStayConstraint(
-            ClVariable variable,
-            ClStrength strength,
-            double weight)
-            : base(strength, weight)
+        public EditConstraint(Variable variable)
+            : this(variable, Strength.Required)
         {
-            this.variable = variable;
-            expression = new ClLinearExpression(this.variable, -1d, this.variable.Value);
+        }
+
+        public EditConstraint(
+            Variable variable,
+            Strength strength)
+            : this(variable, strength, 1d)
+        {
+        }
+
+        public EditConstraint(
+            Variable variable,
+            Strength strength,
+            double weight)
+            : base(variable, strength, weight)
+        {
         }
 
         #endregion
 
         #region Properties
 
-        public ClVariable Variable
+        public override bool IsEditConstraint
         {
-            get { return variable; }
-        }
-
-        public override sealed ClLinearExpression Expression
-        {
-            get { return expression; }
+            get { return true; }
         }
 
         #endregion
@@ -66,8 +67,7 @@ namespace CassowaryNET.Constraints
 
         public override string ToString()
         {
-            // add missing bracket -> see ClConstraint#ToString(...)
-            return base.ToString() + ")";
+            return "edit" + base.ToString();
         }
 
         #endregion

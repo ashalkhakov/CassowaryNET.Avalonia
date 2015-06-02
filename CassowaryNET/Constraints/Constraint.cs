@@ -1,9 +1,9 @@
 /*
   Cassowary.net: an incremental constraint solver for .NET
   (http://lumumba.uhasselt.be/jo/projects/cassowary.net/)
-  
+    
   Copyright (C) 2005-2006  Jo Vermeulen (jo.vermeulen@uhasselt.be)
-  
+    
   This program is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public License
   as published by the Free Software Foundation; either version 2.1
@@ -21,36 +21,59 @@
 
 using System;
 
-namespace CassowaryNET.Variables
+namespace CassowaryNET.Constraints
 {
-    public sealed class ClObjectiveVariable : ClAbstractVariable
+    // Type         => Edit  | Stay  | Equality | Inequality
+    // IsEdit       => true  | false | false    | false
+    // IsStay       => false | true  | false    | false
+    // IsInequality => false | false | false    | true 
+
+    // TODO: the subtyping / casting here is attrocious. Clean up needed.
+
+    public abstract class Constraint
     {
         #region Fields
+
+        private readonly Strength strength;
+        private readonly double weight;
 
         #endregion
 
         #region Constructors
-
-        public ClObjectiveVariable(string name)
-            : base(name)
+        
+        protected Constraint(Strength strength, double weight)
         {
+            this.strength = strength;
+            this.weight = weight;
         }
 
         #endregion
 
         #region Properties
 
-        public override bool IsExternal
+        public abstract LinearExpression Expression { get; }
+
+        public Strength Strength
+        {
+            get { return strength; }
+        }
+
+        public double Weight
+        {
+            get { return weight; }
+        }
+
+        public virtual bool IsEditConstraint
         {
             get { return false; }
         }
 
-        public override bool IsPivotable
+        public virtual bool IsStayConstraint
         {
             get { return false; }
         }
 
-        public override bool IsRestricted
+        public virtual bool IsInequality
         {
             get { return false; }
         }
@@ -61,7 +84,13 @@ namespace CassowaryNET.Variables
 
         public override string ToString()
         {
-            return string.Format("[{0}:obj]", Name);
+            // example output:
+            // weak:[0,0,1] {1} (23 + -1*[update.height:23]
+            return string.Format(
+                "{0} {{{1}}} ({2}",
+                Strength,
+                Weight,
+                Expression);
         }
 
         #endregion

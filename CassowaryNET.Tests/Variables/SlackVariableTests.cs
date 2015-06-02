@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace CassowaryNET.Tests.Variables
 {
     [TestFixture]
-    public class ClSlackVariableTests
+    public class SlackVariableTests
     {
         #region Helpers
 
@@ -23,9 +23,9 @@ namespace CassowaryNET.Tests.Variables
             {
             }
 
-            internal ClSlackVariable GetTarget()
+            internal SlackVariable GetTarget()
             {
-                var target = new ClSlackVariable();
+                var target = new SlackVariable();
                 return target;
             }
         }
@@ -38,7 +38,7 @@ namespace CassowaryNET.Tests.Variables
             [Test]
             public void can_be_created()
             {
-                var target = new ClSlackVariable();
+                var target = new SlackVariable();
 
                 Assert.That(target.Name, Is.Not.Null);
 
@@ -55,7 +55,7 @@ namespace CassowaryNET.Tests.Variables
             [Test]
             public void can_be_created()
             {
-                var target = new ClSlackVariable("foo");
+                var target = new SlackVariable("foo");
 
                 Assert.That(target.Name, Is.StringStarting("foo"));
 

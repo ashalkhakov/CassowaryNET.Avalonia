@@ -9,7 +9,7 @@ namespace LayoutNET
 
         private readonly UIElement uiElement;
         private readonly LayoutProperty property;
-        private readonly ClVariable variable;
+        private readonly Variable variable;
 
         #endregion
 
@@ -21,7 +21,7 @@ namespace LayoutNET
             this.property = property;
 
             var elementName = ((FrameworkElement) uiElement).Name ?? "???";
-            variable = new ClVariable(elementName + property);
+            variable = new Variable(elementName + property);
         }
 
         #endregion
@@ -38,7 +38,7 @@ namespace LayoutNET
             get { return property; }
         }
 
-        public ClVariable Variable
+        public Variable Variable
         {
             get { return variable; }
         }
