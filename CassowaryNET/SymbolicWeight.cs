@@ -31,7 +31,8 @@ namespace CassowaryNET
         #region Fields
 
         private readonly IReadOnlyList<double> weights;
-
+        private readonly double value;
+        
         #endregion
 
         #region Constructors
@@ -41,16 +42,17 @@ namespace CassowaryNET
         {
         }
 
+        private SymbolicWeight(IEnumerable<double> weights)
+            : this(weights.ToArray())
+        {
+        }
+
         private SymbolicWeight(ICollection<double> weights)
         {
             Debug.Assert(weights.Count == 3);
 
             this.weights = weights.ToList().AsReadOnly();
-        }
-
-        private SymbolicWeight(IEnumerable<double> weights)
-            : this(weights.ToArray())
-        {
+            this.value = GetValue(this.weights);
         }
 
         #endregion
@@ -61,75 +63,36 @@ namespace CassowaryNET
 
         #region Methods
 
-        public double AsDouble()
+        public double Value
         {
-            const double multiplier = 1000;
-            double sum = 0;
-            double factor = 1;
+            get { return value; }
+        }
 
-            for (int i = weights.Count - 1; i >= 0; i--)
-            {
-                sum += weights[i]*factor;
-                factor *= multiplier;
-            }
+        private static double GetValue(IEnumerable<double> weights)
+        {
+            // e.g result = 100*weights[0] + 10*weights[1] + weights[2];
 
-            return sum;
+            return weights
+                .Reverse()
+                .Aggregate(
+                    new
+                    {
+                        Sum = 0d,
+                        Factor = 1d,
+                    },
+                    (acc, w) =>
+                        new
+                        {
+                            Sum = acc.Sum + w * acc.Factor,
+                            Factor = acc.Factor * 1000d,
+                        },
+                    acc => acc.Sum);
         }
 
         public override string ToString()
         {
-            return string.Format("[{0}]", string.Join(",", weights));
-        }
-        
-        public static SymbolicWeight operator +(
-            SymbolicWeight symbolicWeightA,
-            SymbolicWeight symbolicWeightB)
-        {
-            var weightsA = symbolicWeightA.weights;
-            var weightsB = symbolicWeightB.weights;
-
-            var weights = weightsA.Zip(
-                weightsB,
-                (wA, wB) => wA + wB);
-
-            return new SymbolicWeight(weights);
-        }
-
-        public static SymbolicWeight operator -(
-            SymbolicWeight symbolicWeightA,
-            SymbolicWeight symbolicWeightB)
-        {
-            var weightsA = symbolicWeightA.weights;
-            var weightsB = symbolicWeightB.weights;
-
-            var weights = weightsA.Zip(
-                weightsB,
-                (wA, wB) => wA - wB);
-
-            return new SymbolicWeight(weights);
-        }
-
-        public static SymbolicWeight operator *(
-            double value,
-            SymbolicWeight symbolicWeight)
-        {
-            var weights = symbolicWeight.weights.Select(w => w * value);
-            return new SymbolicWeight(weights);
-        }
-
-        public static SymbolicWeight operator *(
-            SymbolicWeight symbolicWeight,
-            double value)
-        {
-            return value*symbolicWeight;
-        }
-
-        public static SymbolicWeight operator /(
-            SymbolicWeight symbolicWeight,
-            double value)
-        {
-            var weights = symbolicWeight.weights.Select(w => w / value);
-            return new SymbolicWeight(weights);
+            var weightsString = string.Join(",", weights);
+            return string.Format("[{0}]", weightsString);
         }
 
         #endregion

@@ -419,7 +419,7 @@ namespace CassowaryNET
                 foreach (var variable in slackVariables)
                 {
                     var coeff = -constraint.Weight*
-                                constraint.Strength.SymbolicWeight.AsDouble();
+                                constraint.Strength.Weight.Value;
 
                     var variableRow = tableau.Rows.GetOrDefault(variable);
 
@@ -946,14 +946,14 @@ namespace CassowaryNET
                 expr = expr.WithVariableSetTo(slackVar, -1);
                 markerVariables.Add(cn, slackVar);
 
-                if (!cn.Strength.IsRequired)
+                if (cn.Strength != Strength.Required)
                 {
                     var eminus = new SlackVariable("em");
                     expr = expr.WithVariableSetTo(eminus, 1.0);
-                    var sw = cn.Strength.SymbolicWeight * cn.Weight;
+                    var sw = cn.Strength.Weight.Value * cn.Weight;
 
                     var zRow = tableau.Rows[objective];
-                    zRow = zRow.WithVariableSetTo(eminus, sw.AsDouble());
+                    zRow = zRow.WithVariableSetTo(eminus, sw);
                     tableau.Rows[objective] = zRow;
 
                     InsertErrorVar(cn, eminus);
@@ -963,7 +963,7 @@ namespace CassowaryNET
             else
             {
                 // cn is an equality
-                if (cn.Strength.IsRequired)
+                if (cn.Strength == Strength.Required)
                 {
                     var dummyVar = new DummyVariable("d");
                     expr = expr.WithVariableSetTo(dummyVar, 1.0);
@@ -977,8 +977,7 @@ namespace CassowaryNET
                     expr = expr.WithVariableSetTo(eplus, -1.0);
                     expr = expr.WithVariableSetTo(eminus, 1.0);
                     markerVariables.Add(cn, eplus);
-                    SymbolicWeight sw = cn.Strength.SymbolicWeight*cn.Weight;
-                    double swCoeff = sw.AsDouble();
+                    double swCoeff = cn.Strength.Weight.Value * cn.Weight;
 
                     var zRow = tableau.Rows[objective];
                     zRow = zRow.WithVariableSetTo(eplus, swCoeff);

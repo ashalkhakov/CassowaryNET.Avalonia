@@ -27,29 +27,14 @@ namespace CassowaryNET
     {
         #region Static
 
-        private static readonly Strength required = new Strength(
-            "<Required>",
-            1000,
-            1000,
-            1000);
-
-        private static readonly Strength strong = new Strength(
-            "strong",
-            1.0,
-            0.0,
-            0.0);
-
-        private static readonly Strength medium = new Strength(
-            "medium",
-            0.0,
-            1.0,
-            0.0);
-
-        private static readonly Strength weak = new Strength(
-            "weak",
-            0.0,
-            0.0,
-            1.0);
+        private static readonly Strength required =
+            new Strength("required", new SymbolicWeight(double.PositiveInfinity, 0d, 0d));
+        private static readonly Strength strong =
+            new Strength("strong", new SymbolicWeight(1d, 0d, 0d));
+        private static readonly Strength medium =
+            new Strength("medium", new SymbolicWeight(0d, 1d, 0d));
+        private static readonly Strength weak =
+            new Strength("weak", new SymbolicWeight(0d, 0d, 1d));
 
         public static Strength Required
         {
@@ -76,22 +61,16 @@ namespace CassowaryNET
         #region Fields
 
         private readonly string name;
-        private readonly SymbolicWeight symbolicWeight;
+        private readonly SymbolicWeight weight;
 
         #endregion
 
         #region Constructors
 
-        private Strength(string name, SymbolicWeight symbolicWeight)
+        private Strength(string name, SymbolicWeight weight)
         {
             this.name = name;
-            this.symbolicWeight = symbolicWeight;
-        }
-
-        private Strength(string name, double w1, double w2, double w3)
-        {
-            this.name = name;
-            symbolicWeight = new SymbolicWeight(w1, w2, w3);
+            this.weight = weight;
         }
 
         #endregion
@@ -102,15 +81,10 @@ namespace CassowaryNET
         {
             get { return name; }
         }
-
-        public bool IsRequired
+        
+        internal SymbolicWeight Weight
         {
-            get { return (this == Required); }
-        }
-
-        internal SymbolicWeight SymbolicWeight
-        {
-            get { return symbolicWeight; }
+            get { return weight; }
         }
 
         #endregion
@@ -119,9 +93,10 @@ namespace CassowaryNET
 
         public override string ToString()
         {
-            if (IsRequired)
-                return Name;
-            return string.Format("{0}:{1}", Name, SymbolicWeight);
+            if (this == Required)
+                return string.Format("({0})", name);
+
+            return string.Format("({0}:{1})", name, weight);
         }
 
         #endregion
