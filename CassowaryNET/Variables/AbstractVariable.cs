@@ -69,16 +69,16 @@ namespace CassowaryNET.Variables
             get { return name; }
         }
 
-        public virtual bool IsDummy
+        internal virtual bool IsDummy
         {
             get { return false; }
         }
 
-        public abstract bool IsExternal { get; }
+        internal abstract bool IsExternal { get; }
 
-        public abstract bool IsPivotable { get; }
+        internal abstract bool IsPivotable { get; }
 
-        public abstract bool IsRestricted { get; }
+        internal abstract bool IsRestricted { get; }
         
         #endregion
 

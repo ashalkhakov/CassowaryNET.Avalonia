@@ -7,9 +7,24 @@ namespace CassowaryNET.Utils
 {
     internal static class DictionaryEx
     {
+        //[Pure]
+        //internal static TValue GetOrDefault<TKey, TValue>(
+        //    this IDictionary<TKey, TValue> dictionary,
+        //    TKey key,
+        //    TValue defaultValue = default(TValue))
+        //{
+        //    TValue value;
+        //    if (dictionary.TryGetValue(key, out value))
+        //    {
+        //        return value;
+        //    }
+
+        //    return defaultValue;
+        //}
+
         [Pure]
         internal static TValue GetOrDefault<TKey, TValue>(
-            this IDictionary<TKey, TValue> dictionary,
+            this IReadOnlyDictionary<TKey, TValue> dictionary,
             TKey key,
             TValue defaultValue = default(TValue))
         {
@@ -26,7 +41,6 @@ namespace CassowaryNET.Utils
             this IDictionary<TKey, TValue> dictionary,
             TKey key,
             Func<TKey, TValue> valueFactory)
-            where TValue : class
         {
             TValue value;
 

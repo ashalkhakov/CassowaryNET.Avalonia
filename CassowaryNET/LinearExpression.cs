@@ -81,14 +81,19 @@ namespace CassowaryNET
 
         #region Properties
 
+        internal Dictionary<AbstractVariable, double> Terms
+        {
+            get { return terms; }
+        }
+
         public double Constant
         {
             get { return constant; }
         }
 
-        internal Dictionary<AbstractVariable, double> Terms
+        internal IReadOnlyCollection<AbstractVariable> Variables
         {
-            get { return terms; }
+            get { return terms.Keys.ToList().AsReadOnly(); }
         }
 
         public bool IsConstant
@@ -275,6 +280,7 @@ namespace CassowaryNET
             double reciprocal;
             return WithSubject(subject, out reciprocal);
         }
+
         internal LinearExpression WithSubject(
             AbstractVariable subject,
             out double reciprocal)
@@ -285,7 +291,7 @@ namespace CassowaryNET
             newTerms.Remove(subject);
 
             var coefficient = terms[subject];
-            reciprocal = 1d / (double) coefficient;
+            reciprocal = 1d/coefficient;
 
             var expressionWithoutSubject = new LinearExpression(
                 newConstant,

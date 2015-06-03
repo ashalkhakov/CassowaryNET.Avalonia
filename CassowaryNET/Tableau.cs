@@ -29,15 +29,15 @@ using JetBrains.Annotations;
 
 namespace CassowaryNET
 {
-    public interface INoteVariableChanges
+    internal interface INoteVariableChanges
     {
         void NoteRemovedVariable(
-            AbstractVariable v,
-            AbstractVariable subject);
+            [NotNull] AbstractVariable variable,
+            [NotNull] AbstractVariable subject);
 
         void NoteAddedVariable(
-            AbstractVariable v,
-            AbstractVariable subject);
+            [NotNull] AbstractVariable variable,
+            [NotNull] AbstractVariable subject);
     }
 
     internal class Tableau : INoteVariableChanges
@@ -96,7 +96,7 @@ namespace CassowaryNET
 
         #region Properties
 
-        public Dictionary<AbstractVariable, HashSet<AbstractVariable>> Columns
+        public IReadOnlyDictionary<AbstractVariable, HashSet<AbstractVariable>> Columns
         {
             get { return columns; }
         }
@@ -132,13 +132,10 @@ namespace CassowaryNET
         /// Update the column cross-indices.
         /// </summary>
         public void NoteRemovedVariable(
-            AbstractVariable v,
+            AbstractVariable variable,
             AbstractVariable subject)
         {
-            if (!Equals(subject, null))
-            {
-                columns[v].Remove(subject);
-            }
+            columns[variable].Remove(subject);
         }
 
         /// <summary>
@@ -146,33 +143,26 @@ namespace CassowaryNET
         /// update column cross indices.
         /// </summary>
         public void NoteAddedVariable(
-            AbstractVariable v,
+            AbstractVariable variable,
             AbstractVariable subject)
         {
-            if (!Equals(subject, null))
-            {
-                InsertColVar(v, subject);
-            }
+            AddColumnVariable(variable, subject);
         }
 
         /// <summary>
         /// Convenience function to insert a variable into
-        /// the set of rows stored at _columns[param_var],
+        /// the set of rows stored at _columns[variable],
         /// creating a new set if needed. 
         /// </summary>
-        private void InsertColVar(
-            AbstractVariable param_var,
-            AbstractVariable rowvar)
+        private void AddColumnVariable(
+            AbstractVariable variable,
+            AbstractVariable subject)
         {
-            var rowset = columns.GetOrDefault(param_var);
+            var rowset = columns.GetOrAdd(
+                variable,
+                _ => new HashSet<AbstractVariable>());
 
-            if (rowset == null)
-            {
-                rowset = new HashSet<AbstractVariable>();
-                columns.Add(param_var, rowset);
-            }
-
-            rowset.Add(rowvar);
+            rowset.Add(subject);
         }
 
         // Add v=expr to the tableau, update column cross indices
@@ -187,9 +177,9 @@ namespace CassowaryNET
             rows.Add(variable, expression);
 
             // FIXME: check correctness!
-            foreach (var expressionVariable in expression.Terms.Keys)
+            foreach (var expressionVariable in expression.Variables)
             {
-                InsertColVar(expressionVariable, variable);
+                AddColumnVariable(expressionVariable, variable);
 
                 if (expressionVariable.IsExternal)
                 {
@@ -200,8 +190,8 @@ namespace CassowaryNET
 
             if (variable.IsExternal)
             {
-                var clVariable = (Variable)variable;
-                externalRows.Add(clVariable);
+                var externalVariable = (Variable)variable;
+                externalRows.Add(externalVariable);
             }
         }
 
@@ -226,7 +216,7 @@ namespace CassowaryNET
             }
             else
             {
-                // Could not find var {0} in _columns
+                // Could not find variable {0} in _columns
             }
 
             if (variable.IsExternal)
@@ -244,35 +234,31 @@ namespace CassowaryNET
         public LinearExpression RemoveRow(AbstractVariable variable)
             /*throws ExCLInternalError*/
         {
-            var expression = rows[variable];
-            Debug.Assert(!Equals(expression, null));
+            var rowExpression = rows[variable];
+            Debug.Assert(!Equals(rowExpression, null));
 
             // For each variable in this expression, update
             // the column mapping and remove the variable from the list
             // of rows it is known to be in.
-            foreach (var clv in expression.Terms.Keys)
+            foreach (var rowVariable in rowExpression.Variables)
             {
-                var varset = columns[clv];
-
-                if (varset != null)
-                {
-                    varset.Remove(variable);
-                }
+                var column = columns[rowVariable];
+                column.Remove(variable);
             }
 
             infeasibleRows.Remove(variable);
 
             if (variable.IsExternal)
             {
-                var clVariable = (Variable) variable;
-                externalRows.Remove(clVariable);
+                var externalVariable = (Variable) variable;
+                externalRows.Remove(externalVariable);
             }
 
             rows.Remove(variable);
 
-            return expression;
+            return rowExpression;
         }
-
+        
         /// <summary> 
         /// Replace all occurrences of oldVar with expr, and update column cross indices
         /// oldVar should now be a basic variable.
@@ -282,6 +268,9 @@ namespace CassowaryNET
             LinearExpression expression)
         {
             var oldVariableColumn = columns[oldVariable];
+
+            // oldVariableColumn is all of the basic variables whose expression
+            // contains oldVariable
 
             foreach (var variable in oldVariableColumn)
             {
@@ -295,12 +284,13 @@ namespace CassowaryNET
                 // "casso1" is a good, simple test that shows this behaviour
 
                 //var newRow = row.WithVariableSubstitutedBy(oldVariable, expression);
+
                 //// don't include the substituted variable in the removals here
-                //var addedVariables = newRow.Terms.Keys
-                //    .Except(row.Terms.Keys)
+                //var addedVariables = newRow.Variables
+                //    .Except(row.Variables)
                 //    .ToList();
-                //var removedVariables = row.Terms.Keys
-                //    .Except(newRow.Terms.Keys)
+                //var removedVariables = row.Variables
+                //    .Except(newRow.Variables)
                 //    .Where(v => !Equals(v, oldVariable))
                 //    .ToList();
                 //foreach (var addedVariable in addedVariables)
@@ -311,6 +301,7 @@ namespace CassowaryNET
                 //{
                 //    NoteRemovedVariable(removedVariable, variable);
                 //}
+
                 //rows[variable] = newRow;
 
 
@@ -334,7 +325,7 @@ namespace CassowaryNET
         /// Return true if and only if the variable subject is in the columns keys 
         /// </summary>
         [Pure]
-        public bool ColumnsHasKey(AbstractVariable subject)
+        public bool HasColumnKey(AbstractVariable subject)
         {
             return columns.ContainsKey(subject);
         }

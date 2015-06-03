@@ -69,22 +69,22 @@ namespace CassowaryNET.Variables
             internal set { this.value = value; }
         }
 
-        public override bool IsDummy
+        internal override bool IsDummy
         {
             get { return false; }
         }
 
-        public override bool IsExternal
+        internal override bool IsExternal
         {
             get { return true; }
         }
 
-        public override bool IsPivotable
+        internal override bool IsPivotable
         {
             get { return false; }
         }
 
-        public override bool IsRestricted
+        internal override bool IsRestricted
         {
             get { return false; }
         }

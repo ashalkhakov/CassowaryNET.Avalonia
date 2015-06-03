@@ -46,22 +46,22 @@ namespace CassowaryNET.Variables
 
         #region Properties
 
-        public override bool IsDummy
+        internal override bool IsDummy
         {
             get { return true; }
         }
 
-        public override bool IsExternal
+        internal override bool IsExternal
         {
             get { return false; }
         }
 
-        public override bool IsPivotable
+        internal override bool IsPivotable
         {
             get { return false; }
         }
 
-        public override bool IsRestricted
+        internal override bool IsRestricted
         {
             get { return true; }
         }

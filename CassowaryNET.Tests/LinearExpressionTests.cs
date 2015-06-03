@@ -115,11 +115,11 @@ namespace CassowaryNET.Tests
                 // NEW WAY
                 var substitutedNew = Cloneable.Clone(target)
                     .WithVariableSubstitutedBy(b_ToSub, subtituteForB);
-                var addedVariables = substitutedNew.Terms.Keys
-                    .Except(target.Terms.Keys)
+                var addedVariables = substitutedNew.Variables
+                    .Except(target.Variables)
                     .ToList();
-                var removedVariables = target.Terms.Keys
-                    .Except(substitutedNew.Terms.Keys)
+                var removedVariables = target.Variables
+                    .Except(substitutedNew.Variables)
                     .Where(v => !Equals(v, b_ToSub))
                     .ToList();
                 foreach (var addedVariable in addedVariables)
@@ -138,9 +138,9 @@ namespace CassowaryNET.Tests
                 Assert.That(additionsNew, Is.EqualTo(additionsOld));
                 Assert.That(removalsNew, Is.EqualTo(removalsOld));
 
-                Assert.That(substitutedNew.Terms.Keys, Is.EqualTo(substitutedOld.Terms.Keys));
+                Assert.That(substitutedNew.Variables, Is.EqualTo(substitutedOld.Variables));
 
-                foreach (var term in substitutedOld.Terms.Keys)
+                foreach (var term in substitutedOld.Variables)
                 {
                     var termCoefficientOld = substitutedOld.Terms[term];
                     var termCoefficientNew = substitutedNew.Terms[term];

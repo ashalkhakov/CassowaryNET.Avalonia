@@ -437,10 +437,10 @@ namespace CassowaryNET
                     // overwrite the objective row
                     tableau.Rows[objective] = newObjectiveRow;
 
-                    var addedVariables = newObjectiveRow.Terms.Keys
-                        .Except(objectiveRow.Terms.Keys);
-                    var removedVariables = objectiveRow.Terms.Keys
-                        .Except(newObjectiveRow.Terms.Keys);
+                    var addedVariables = newObjectiveRow.Variables
+                        .Except(objectiveRow.Variables);
+                    var removedVariables = objectiveRow.Variables
+                        .Except(newObjectiveRow.Variables);
 
                     foreach (var addedVariable in addedVariables)
                     {
@@ -672,7 +672,7 @@ namespace CassowaryNET
         public bool ContainsVariable(Variable v)
             /* throws ExClInternalError */
         {
-            return tableau.ColumnsHasKey(v) || !Equals(tableau.RowExpression(v), null);
+            return tableau.HasColumnKey(v) || !Equals(tableau.RowExpression(v), null);
         }
 
         public void AddVar(Variable v)
@@ -802,21 +802,19 @@ namespace CassowaryNET
         private bool TryAddingDirectly(LinearExpression expression)
             /* throws ExClRequiredFailure */
         {
-            LinearExpression modifiedExpression;
-
-            var subject = ChooseSubject(expression, out modifiedExpression);
+            var subject = ChooseSubject(expression);
             if (Equals(subject, null))
             {
                 return false;
             }
 
-            modifiedExpression = modifiedExpression.WithSubject(subject);
-            if (tableau.ColumnsHasKey(subject))
+            expression = expression.WithSubject(subject);
+            if (tableau.HasColumnKey(subject))
             {
-                tableau.SubstituteOut(subject, modifiedExpression);
+                tableau.SubstituteOut(subject, expression);
             }
 
-            tableau.AddRow(subject, modifiedExpression);
+            tableau.AddRow(subject, expression);
 
             return true; // succesfully added directly
         }
@@ -837,9 +835,7 @@ namespace CassowaryNET
         /// (In this last case we have to add an artificial variable and use that
         /// variable as the subject -- this is done outside this method though.)
         /// </remarks>
-        private AbstractVariable ChooseSubject(
-            LinearExpression expression,
-            out LinearExpression modifiedExpression)
+        private AbstractVariable ChooseSubject(LinearExpression expression)
             /* ExClRequiredFailure */
         {
             AbstractVariable subject = null; // the current best subject, if any
@@ -847,19 +843,16 @@ namespace CassowaryNET
             bool foundUnrestricted = false;
             bool foundNewRestricted = false;
 
-            var terms = expression.Terms;
-
-            foreach (var v in terms.Keys)
+            foreach (var v in expression.Terms.Keys)
             {
-                double c = terms[v];
+                double c = expression.Terms[v];
 
                 if (foundUnrestricted)
                 {
                     if (!v.IsRestricted)
                     {
-                        if (!tableau.ColumnsHasKey(v))
+                        if (!tableau.HasColumnKey(v))
                         {
-                            modifiedExpression = expression;
                             return v;
                         }
                     }
@@ -874,7 +867,7 @@ namespace CassowaryNET
                             var col = tableau.Columns.GetOrDefault(v);
 
                             if (col == null ||
-                                (col.Count == 1 && tableau.ColumnsHasKey(objective)))
+                                (col.Count == 1 && tableau.HasColumnKey(objective)))
                             {
                                 subject = v;
                                 foundNewRestricted = true;
@@ -891,23 +884,21 @@ namespace CassowaryNET
 
             if (!Equals(subject, null))
             {
-                modifiedExpression = expression;
                 return subject;
             }
 
             double coeff = 0.0;
 
-            foreach (var v in terms.Keys)
+            foreach (var v in expression.Terms.Keys)
             {
-                double c = terms[v];
+                double c = expression.Terms[v];
 
                 if (!v.IsDummy)
                 {
-                    modifiedExpression = expression;
                     return null; // nope, no luck
                 }
 
-                if (!tableau.ColumnsHasKey(v))
+                if (!tableau.HasColumnKey(v))
                 {
                     subject = v;
                     coeff = c;
@@ -918,17 +909,7 @@ namespace CassowaryNET
             {
                 throw new CassowaryRequiredConstraintFailureException();
             }
-
-            if (coeff > 0.0)
-            {
-                modifiedExpression = -expression;
-                //expression.MultiplyMe(-1);
-            }
-            else
-            {
-                modifiedExpression = expression;
-            }
-
+            
             return subject;
         }
 
@@ -944,11 +925,10 @@ namespace CassowaryNET
 
             var cnExpr = cn.Expression;
             var expr = new LinearExpression(cnExpr.Constant);
-            var cnTerms = cnExpr.Terms;
 
-            foreach (AbstractVariable v in cnTerms.Keys)
+            foreach (AbstractVariable v in cnExpr.Terms.Keys)
             {
-                double c = cnTerms[v];
+                double c = cnExpr.Terms[v];
                 LinearExpression e = tableau.RowExpression(v);
                 if (Equals(e, null))
                 {
@@ -1052,10 +1032,9 @@ namespace CassowaryNET
             while (true)
             {
                 var objectiveCoeff = 0d;
-                var terms = zRow.Terms;
-                foreach (var v in terms.Keys)
+                foreach (var v in zRow.Terms.Keys)
                 {
-                    double c = terms[v];
+                    double c = zRow.Terms[v];
                     if (v.IsPivotable && c < objectiveCoeff)
                     {
                         objectiveCoeff = c;
@@ -1207,11 +1186,10 @@ namespace CassowaryNET
 
                 double ratio = Double.MaxValue;
                 double r;
-                var terms = expr.Terms;
 
-                foreach (AbstractVariable v in terms.Keys)
+                foreach (AbstractVariable v in expr.Terms.Keys)
                 {
-                    double c = terms[v];
+                    double c = expr.Terms[v];
                     if (c > 0.0 && v.IsPivotable)
                     {
                         double zc = zRow.CoefficientFor(v);
