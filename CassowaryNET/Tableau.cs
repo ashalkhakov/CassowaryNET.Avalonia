@@ -235,7 +235,6 @@ namespace CassowaryNET
             /*throws ExCLInternalError*/
         {
             var rowExpression = rows[variable];
-            Debug.Assert(!Equals(rowExpression, null));
 
             // For each variable in this expression, update
             // the column mapping and remove the variable from the list

@@ -40,21 +40,6 @@ namespace CassowaryNET.Variables
 
         #region Properties
 
-        internal override bool IsExternal
-        {
-            get { return false; }
-        }
-
-        internal override bool IsPivotable
-        {
-            get { return false; }
-        }
-
-        internal override bool IsRestricted
-        {
-            get { return false; }
-        }
-
         #endregion
 
         #region Methods

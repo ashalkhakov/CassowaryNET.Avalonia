@@ -316,7 +316,7 @@ namespace CassowaryNET
         {
             var marker = markerVariables.GetOrDefault(constraint);
             if (Equals(marker, null))
-                throw new ConstraintNotFoundException();
+                throw new ConstraintNotFoundException(constraint);
             markerVariables.Remove(constraint);
 
             needsSolving = true;
@@ -463,7 +463,7 @@ namespace CassowaryNET
             }
             else if (constraint.IsEditConstraint)
             {
-                Debug.Assert(slackVariables != null, "eVars != null");
+                Debug.Assert(slackVariables != null);
                 var editConstraint = (EditConstraint) constraint;
                 var variable = editConstraint.Variable;
                 var editInfo = editVariableInfo[variable];
@@ -637,7 +637,7 @@ namespace CassowaryNET
                 Pivot(entryVar, av);
             }
 
-            Debug.Assert(Equals(Tableau.RowExpression(av), null), "tableau.RowExpression(av) == null)");
+            Debug.Assert(!Tableau.Rows.ContainsKey(av));
 
             Tableau.RemoveColumn(av);
             Tableau.RemoveRow(az);
@@ -854,8 +854,7 @@ namespace CassowaryNET
         private void Optimize(ObjectiveVariable zVariable)
             /* throws ExClInternalError */
         {
-            var zRow = Tableau.RowExpression(zVariable);
-            Debug.Assert(!Equals(zRow, null), "zRow != null");
+            var zRow = Tableau.Rows[zVariable];
 
             // NOTE: should this be inside the loop?
             AbstractVariable entryVariable = null;
@@ -877,8 +876,6 @@ namespace CassowaryNET
                     return;
 
                 var exitVariable = GetExitVariable(entryVariable);
-
-                Debug.Assert(!Equals(exitVariable, null));
 
                 Pivot(entryVariable, exitVariable);
             }
@@ -943,41 +940,20 @@ namespace CassowaryNET
         /// </remarks>
         internal void DeltaEditConstant(
             double delta,
-            AbstractVariable plusErrorVariable,
-            AbstractVariable minusErrorVariable)
+            AbstractVariable plusError,
+            AbstractVariable minusError)
         {
-            var plusErrorRow = Tableau.Rows.GetOrDefault(plusErrorVariable);
-            if (!Equals(plusErrorRow, null))
-            {
-                plusErrorRow = plusErrorRow.WithConstantIncrementedBy(delta);
-                Tableau.Rows[plusErrorVariable] = plusErrorRow;
-
-                if (plusErrorRow.Constant < 0d)
-                {
-                    Tableau.InfeasibleRows.Add(plusErrorVariable);
-                }
+            if (TryDeltaEdit(plusError, delta)) 
                 return;
-            }
 
-            var minusErrorRow = Tableau.Rows.GetOrDefault(minusErrorVariable);
-            if (!Equals(minusErrorRow, null))
-            {
-                minusErrorRow = minusErrorRow.WithConstantIncrementedBy(-delta);
-                Tableau.Rows[minusErrorVariable] = minusErrorRow;
-
-                if (minusErrorRow.Constant < 0d)
-                {
-                    Tableau.InfeasibleRows.Add(minusErrorVariable);
-                }
+            if (TryDeltaEdit(minusError, -delta))
                 return;
-            }
-
-            var minusErrorColumn = Tableau.Columns[minusErrorVariable];
+            
+            var minusErrorColumn = Tableau.Columns[minusError];
             foreach (var variable in minusErrorColumn)
             {
                 var variableRow = Tableau.Rows[variable];
-
-                var coefficient = variableRow.CoefficientFor(minusErrorVariable);
+                var coefficient = variableRow.CoefficientFor(minusError);
                 variableRow = variableRow.WithConstantIncrementedBy(coefficient*delta);
                 Tableau.Rows[variable] = variableRow;
 
@@ -986,6 +962,23 @@ namespace CassowaryNET
                     Tableau.InfeasibleRows.Add(variable);
                 }
             }
+        }
+
+        private bool TryDeltaEdit(AbstractVariable errorVariable, double delta)
+        {
+            var errorRow = Tableau.Rows.GetOrDefault(errorVariable);
+            if (!Equals(errorRow, null))
+            {
+                errorRow = errorRow.WithConstantIncrementedBy(delta);
+                Tableau.Rows[errorVariable] = errorRow;
+
+                if (errorRow.Constant < 0d)
+                {
+                    Tableau.InfeasibleRows.Add(errorVariable);
+                }
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -1133,9 +1126,7 @@ namespace CassowaryNET
 
                 if (!Equals(rowExpression, null))
                 {
-                    Debug.WriteLine(
-                        "Error: variable {0}in _externalParametricVars is basic",
-                        variable);
+                    // variable {0}in _externalParametricVars is basic"
                     continue;
                 }
 

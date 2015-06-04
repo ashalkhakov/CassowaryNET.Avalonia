@@ -25,16 +25,9 @@ namespace CassowaryNET.Exceptions
 {
     public class CassowaryInternalException : CassowaryException
     {
-        public CassowaryInternalException(string s)
+        public CassowaryInternalException(string message)
+            : base(message)
         {
-            description_ = s;
         }
-
-        public override string Description
-        {
-            get { return string.Format("(ExClInternalError) ", description_); }
-        }
-
-        private String description_;
     }
 }

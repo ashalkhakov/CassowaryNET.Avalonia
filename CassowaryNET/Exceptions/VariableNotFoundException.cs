@@ -20,41 +20,42 @@
 */
 
 using System;
+using Variable = CassowaryNET.Variables.Variable;
 
-namespace CassowaryNET.Variables
+namespace CassowaryNET.Exceptions
 {
-    internal sealed class SlackVariable : AbstractVariable
+    public class VariableNotFoundException : CassowaryException
     {
-        #region Fields
+        private readonly Variable variable;
 
-        private static long slackCounter = 0;
-
-        #endregion
-
-        #region Constructors
-
-        public SlackVariable(string name)
-            : base(name + (++slackCounter))
+        public VariableNotFoundException(Variable variable)
+            : base(GetMessage(variable, ""))
         {
+            this.variable = variable;
         }
 
-        public SlackVariable()
+        public VariableNotFoundException(string message, Variable variable)
+            : base(GetMessage(variable, message))
         {
+            this.variable = variable;
         }
 
-        #endregion
-
-        #region Properties
-        
-        #endregion
-
-        #region Methods
-
-        public override string ToString()
+        public Variable Variable
         {
-            return string.Format("[{0}:slack]", Name);
+            get { return variable; }
         }
 
-        #endregion
+        private static string GetMessage(Variable variable, string message)
+        {
+            return GetMessage(variable) + Environment.NewLine + message;
+        }
+
+        private static string GetMessage(Variable variable)
+        {
+            if (Equals(variable, null))
+                return "The variable could not be found.";
+
+            return string.Format("The variable ({0}) could not be found.", variable);
+        }
     }
 }

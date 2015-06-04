@@ -305,13 +305,7 @@ namespace CassowaryNET
         /// </summary>
         internal double CoefficientFor(AbstractVariable variable)
         {
-            double coeff;
-            var coeffFound = terms.TryGetValue(variable, out coeff);
-
-            if (coeffFound)
-                return coeff;
-            else
-                return 0.0;
+            return terms.GetOption(variable).ValueOr(0d);
         }
 
         public override string ToString()
@@ -496,7 +490,12 @@ namespace CassowaryNET
             if (b.IsConstant)
                 return a*b.constant;
 
-            throw new NonLinearExpressionException();
+            var message =
+                string.Format(
+                    "The resulting expression of ({0}) * ({1}) would be non-linear.",
+                    a,
+                    b);
+            throw new NonLinearExpressionException(message);
         }
 
         public static LinearExpression operator *(
@@ -535,10 +534,15 @@ namespace CassowaryNET
             LinearExpression a,
             LinearExpression b)
         {
-            if (!b.IsConstant) 
-                throw new NonLinearExpressionException();
+            if (b.IsConstant) 
+                return a/b.constant;
 
-            return a/b.constant;
+            var message =
+                string.Format(
+                    "The resulting expression of ({0}) / ({1}) would be non-linear.",
+                    a,
+                    b);
+            throw new NonLinearExpressionException(message);
         }
 
         public static LinearExpression operator /(
@@ -553,10 +557,16 @@ namespace CassowaryNET
             double b)
         {
             // cannot divide by zero
-            if (MathHelper.Approx(b, 0d))
-                throw new NonLinearExpressionException();
+            if (!MathHelper.Approx(b, 0d)) 
+                return a*(1d/b);
 
-            return a*(1d/b);
+            var message =
+                string.Format(
+                    "The resulting expression of ({0}) / {1} would be non-linear " +
+                    "as the denominator is approximately zero.",
+                    a,
+                    b);
+            throw new NonLinearExpressionException(message);
         }
 
         public static LinearExpression operator /(

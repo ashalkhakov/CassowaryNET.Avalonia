@@ -49,8 +49,6 @@ namespace CassowaryNET
 
         private SymbolicWeight(ICollection<double> weights)
         {
-            Debug.Assert(weights.Count == 3);
-
             this.weights = weights.ToList().AsReadOnly();
             this.value = GetValue(this.weights);
         }

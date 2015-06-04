@@ -25,14 +25,14 @@ namespace CassowaryNET.Exceptions
 {
     public class CassowaryException : Exception
     {
-        public virtual string Description
+        public CassowaryException(string message)
+            : base(message)
         {
-            get { return "(ExClError) An error has occured in CL"; }
         }
 
-        public override string ToString()
+        public CassowaryException(string message, Exception innerException)
+            : base(message, innerException)
         {
-            return Description;
         }
     }
 }

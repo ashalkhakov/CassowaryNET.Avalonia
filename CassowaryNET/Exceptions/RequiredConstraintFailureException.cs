@@ -25,9 +25,9 @@ namespace CassowaryNET.Exceptions
 {
     public class RequiredConstraintFailureException : CassowaryException
     {
-        public override string Description
+        public RequiredConstraintFailureException()
+            : base("A required constraint cannot be satisfied.")
         {
-            get { return "(ExCLRequiredFailure) A required constraint cannot be satisfied"; }
         }
     }
 }

@@ -67,16 +67,13 @@ namespace CassowaryNET
         }
 
         public void SuggestValue(Variable variable, double value)
-        /* throws ExClError */
         {
             var editInfo = editVariableInfo[variable];
             if (editInfo == null)
             {
-                Console.Error.WriteLine(
-                    "SuggestValue for variable {0}, but var is not an edit variable\n",
+                throw new VariableNotFoundException(
+                    "The variable has not been added to the edit section.",
                     variable);
-
-                throw new CassowaryException();
             }
 
             var plusError = editInfo.PlusError;

@@ -69,26 +69,6 @@ namespace CassowaryNET.Variables
             internal set { this.value = value; }
         }
 
-        internal override bool IsDummy
-        {
-            get { return false; }
-        }
-
-        internal override bool IsExternal
-        {
-            get { return true; }
-        }
-
-        internal override bool IsPivotable
-        {
-            get { return false; }
-        }
-
-        internal override bool IsRestricted
-        {
-            get { return false; }
-        }
-
         #endregion
 
         #region Methods

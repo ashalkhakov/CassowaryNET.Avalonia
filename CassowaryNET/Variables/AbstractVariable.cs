@@ -69,16 +69,25 @@ namespace CassowaryNET.Variables
             get { return name; }
         }
 
-        internal virtual bool IsDummy
+        internal bool IsDummy
         {
-            get { return false; }
+            get { return this is DummyVariable; }
         }
 
-        internal abstract bool IsExternal { get; }
+        internal bool IsExternal
+        {
+            get { return this is Variable; }
+        }
 
-        internal abstract bool IsPivotable { get; }
+        internal bool IsPivotable
+        {
+            get { return this is SlackVariable; }
+        }
 
-        internal abstract bool IsRestricted { get; }
+        internal bool IsRestricted
+        {
+            get { return this is SlackVariable || this is DummyVariable; }
+        }
         
         #endregion
 

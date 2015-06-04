@@ -25,12 +25,9 @@ namespace CassowaryNET.Exceptions
 {
     public class NonLinearExpressionException : CassowaryException
     {
-        public override string Description
+        public NonLinearExpressionException(string message)
+            : base(message)
         {
-            get
-            {
-                return "(ExClNonlinearExpression) The resulting expression would be nonlinear";
-            }
         }
     }
 }

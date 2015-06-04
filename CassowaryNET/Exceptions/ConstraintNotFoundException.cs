@@ -20,18 +20,31 @@
 */
 
 using System;
+using Constraint = CassowaryNET.Constraints.Constraint;
 
 namespace CassowaryNET.Exceptions
 {
     public class ConstraintNotFoundException : CassowaryException
     {
-        public override string Description
+        private readonly Constraint constraint;
+
+        public ConstraintNotFoundException(Constraint constraint)
+            : base(GetMessage(constraint))
         {
-            get
-            {
-                return
-                    "(ExCLConstraintNotFound) Tried to remove a constraint never added to the tableau";
-            }
+            this.constraint = constraint;
+        }
+
+        public Constraint Constraint
+        {
+            get { return constraint; }
+        }
+
+        private static string GetMessage(Constraint constraint)
+        {
+            if (Equals(constraint, null))
+                return "The constraint could not be found.";
+
+            return string.Format("The constraint ({0}) could not be found.", constraint);
         }
     }
 }
