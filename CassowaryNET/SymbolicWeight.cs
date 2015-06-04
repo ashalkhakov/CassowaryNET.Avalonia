@@ -41,13 +41,8 @@ namespace CassowaryNET
             : this(new[] {w1, w2, w3,})
         {
         }
-
+        
         private SymbolicWeight(IEnumerable<double> weights)
-            : this(weights.ToArray())
-        {
-        }
-
-        private SymbolicWeight(ICollection<double> weights)
         {
             this.weights = weights.ToList().AsReadOnly();
             this.value = GetValue(this.weights);
