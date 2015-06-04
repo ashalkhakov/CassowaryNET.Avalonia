@@ -34,24 +34,43 @@ namespace CassowaryNET
     {
         #region Fields
 
+        private class ErrorVariablePair
+        {
+            private readonly SlackVariable plus;
+            private readonly SlackVariable minus;
+
+            public ErrorVariablePair(SlackVariable plus, SlackVariable minus)
+            {
+                this.plus = plus;
+                this.minus = minus;
+            }
+
+            public SlackVariable Plus
+            {
+                get { return plus; }
+            }
+
+            public SlackVariable Minus
+            {
+                get { return minus; }
+            }
+        }
+
+        #endregion
+
+        #region Fields
+
         private const double Epsilon = 1e-8;
 
         private readonly Tableau tableau;
         private readonly ObjectiveVariable objective;
 
         /// <summary>
-        /// The array of negative error vars for the stay constraints
+        /// The array of error vars for the stay constraints
         /// (need both positive and negative since they have only non-negative
         /// values).
         /// </summary>
-        private readonly List<SlackVariable> stayMinusErrorVariables;
-
-        /// <summary>
-        /// The array of positive error vars for the stay constraints
-        /// (need both positive and negative since they have only non-negative
-        /// values).
-        /// </summary>
-        private readonly List<SlackVariable> stayPlusErrorVariables;
+        private readonly List<ErrorVariablePair> stayErrorVariables;
 
         /// <summary>
         /// Give error variables for a non-required constraints,
@@ -82,8 +101,6 @@ namespace CassowaryNET
         /// </remarks>
         private readonly Dictionary<Variable, EditInfo> editVariableInfo;
 
-        private readonly Stack<int> editVariablesCountStack;
-
         private bool needsSolving = false;
 
         #endregion
@@ -98,18 +115,14 @@ namespace CassowaryNET
             tableau = new Tableau();
 
             objective = new ObjectiveVariable("Z");
-            tableau.Rows.Add(objective, new LinearExpression(0d));
+            Tableau.Rows.Add(objective, new LinearExpression(0d));
 
-            stayMinusErrorVariables = new List<SlackVariable>();
-            stayPlusErrorVariables = new List<SlackVariable>();
+            stayErrorVariables = new List<ErrorVariablePair>();
             errorVariables = new Dictionary<Constraint, HashSet<SlackVariable>>();
             markerVariables = new Dictionary<Constraint, AbstractVariable>();
             editVariableInfo = new Dictionary<Variable, EditInfo>();
 
             AutoSolve = true;
-
-            editVariablesCountStack = new Stack<int>();
-            editVariablesCountStack.Push(0);
         }
 
         #endregion
@@ -131,51 +144,91 @@ namespace CassowaryNET
         /// </remarks>
         public bool AutoSolve { get; set; }
 
+        internal Tableau Tableau
+        {
+            get { return tableau; }
+        }
+
+        /// <summary>
+        /// Map edit variables to ClEditInfo-s.
+        /// </summary>
+        /// <remarks>
+        /// ClEditInfo instances contain all the information for an
+        /// edit constraints (the edit plus/minus vars, the index [for old-style
+        /// resolve(ArrayList...)] interface), and the previous value.
+        /// (ClEditInfo replaces the parallel vectors from the Smalltalk impl.)
+        /// </remarks>
+        internal Dictionary<Variable, EditInfo> EditVariableInfo
+        {
+            get { return editVariableInfo; }
+        }
+
         #endregion
 
         #region Methods
 
-        internal void AddConstraint(EditConstraint constraint)
-        {
-            AddConstraintCore(constraint);
-        }
-
-        internal void AddConstraint(StayConstraint constraint)
-        {
-            AddConstraintCore(constraint);
-        }
-
         public void AddConstraint(EqualityConstraint constraint)
         {
             AddConstraintCore(constraint);
+            MaybeAutoSolve();
         }
 
         public void AddConstraint(InequalityConstraint constraint)
         {
             AddConstraintCore(constraint);
+            MaybeAutoSolve();
         }
 
-        public void AddConstraint(Constraint constraint)
+        public void AddConstraint(LinearConstraint constraint)
         /* throws ExClRequiredFailure, ExClInternalError */
         {
-            // NOTE: really not sure whether I like this...
-
-            if (constraint is EditConstraint)
-                AddConstraint((EditConstraint)constraint);
-            else if (constraint is StayConstraint)
-                AddConstraint((StayConstraint)constraint);
-            else if (constraint is EqualityConstraint)
+            if (constraint is EqualityConstraint)
                 AddConstraint((EqualityConstraint)constraint);
             else if (constraint is InequalityConstraint)
                 AddConstraint((InequalityConstraint)constraint);
             else
-                throw new ArgumentException();
+            {
+                throw new ArgumentException(
+                    "Uknown constraint type. " +
+                    "Expected type of EqualityConstraint or InequalityConstraint");
+            }
         }
 
-        private void AddConstraintCore(Constraint constraint)
+        internal EditInfo AddConstraint(EditConstraint constraint)
         {
             SlackVariable plusError;
             SlackVariable minusError;
+            AddConstraintCore(constraint, out plusError, out minusError);
+
+            MaybeAutoSolve();
+
+            var editInfo = new EditInfo(
+                constraint,
+                plusError,
+                minusError,
+                constraint.Expression.Constant);
+            return editInfo;
+        }
+
+        internal void AddConstraint(StayConstraint constraint)
+        {
+            AddConstraintCore(constraint);
+            MaybeAutoSolve();
+        }
+
+        private void AddConstraintCore(
+            Constraint constraint)
+        {
+            SlackVariable plusError;
+            SlackVariable minusError;
+            AddConstraintCore(constraint, out plusError, out minusError);
+        }
+
+        private void AddConstraintCore(
+            Constraint constraint,
+            out SlackVariable plusError,
+            out SlackVariable minusError)
+        {
             var expression = GetExpressionForConstraint(
                 constraint,
                 out plusError,
@@ -188,145 +241,11 @@ namespace CassowaryNET
             }
 
             needsSolving = true;
-
-            if (constraint is EditConstraint)
-            {
-                var editConstraint = (EditConstraint) constraint;
-
-                var index = editVariableInfo.Count;
-                var editInfo = new EditInfo(
-                    editConstraint,
-                    plusError,
-                    minusError,
-                    constraint.Expression.Constant,
-                    index);
-
-                editVariableInfo.Add(editConstraint.Variable, editInfo);
-            }
-
-            MaybeAutoSolve();
         }
 
-        /// <summary>
-        /// Add an edit constraint for a variable with a given strength.
-        /// <param name="variable">Variable to add an edit constraint to.</param>
-        /// <param name="strength">Strength of the edit constraint.</param>
-        /// </summary>
-        public void AddEditVariable(Variable variable, Strength strength)
-            /* throws ExClInternalError */
+        public EditSection CreateEditSection()
         {
-            // we get problems here is strength == Required
-            if (strength == Strength.Required)
-                throw new ArgumentException("Strength cannot be Strength.Required");
-
-            try
-            {
-                var editConstraint = new EditConstraint(variable, strength);
-                AddConstraint(editConstraint);
-            }
-            catch (CassowaryRequiredConstraintFailureException)
-            {
-                // should not get this
-                throw new CassowaryInternalException(
-                    "Required failure when adding an edit variable");
-            }
-        }
-
-        /// <remarks>
-        /// Add an edit constraint with strength ClStrength#Strong.
-        /// </remarks>
-        public void AddEditVariable(Variable variable)
-        {
-            /* throws ExClInternalError */
-            AddEditVariable(variable, Strength.Strong);
-        }
-
-        /// <summary>
-        /// Marks the start of an edit session.
-        /// </summary>
-        /// <remarks>
-        /// BeginEdit should be called before sending Resolve()
-        /// messages, after adding the appropriate edit variables.
-        /// </remarks>
-        public void BeginEdit()
-            /* throws ExClInternalError */
-        {
-            // TODO: Make this return some form of IDisposable
-
-            Debug.Assert(editVariableInfo.Count > 0, "_editVarMap.Count > 0");
-            // may later want to do more in here
-            tableau.InfeasibleRows.Clear();
-            ResetStayConstants();
-            editVariablesCountStack.Push(editVariableInfo.Count);
-        }
-
-        /// <summary>
-        /// Marks the end of an edit session.
-        /// </summary>
-        /// <remarks>
-        /// EndEdit should be called after editing has finished for now, it
-        /// just removes all edit variables.
-        /// </remarks>
-        public void EndEdit()
-            /* throws ExClInternalError */
-        {
-            Debug.Assert(editVariableInfo.Count > 0, "_editVarMap.Count > 0");
-            Resolve();
-
-            editVariablesCountStack.Pop();
-            var n = editVariablesCountStack.Peek();
-
-            RemoveEditVarsTo(n);
-            // may later want to do more in hore
-        }
-
-        /// <summary>
-        /// Remove the last added edit vars to leave only
-        /// a specific number left.
-        /// <param name="n">
-        /// Number of edit variables to keep.
-        /// </param>
-        /// </summary>
-        private void RemoveEditVarsTo(int n)
-            /* throws ExClInternalError */
-        {
-            var toRemove = new List<Variable>();
-            try
-            {
-                foreach (var v in editVariableInfo.Keys)
-                {
-                    var cei = editVariableInfo[v];
-                    if (cei.Index >= n)
-                    {
-                        toRemove.Add(v);
-                    }
-                }
-
-                foreach (var v in toRemove)
-                {
-                    RemoveEditVar(v);
-                }
-
-                Debug.Assert(editVariableInfo.Count == n, "_editVarMap.Count == n");
-            }
-            catch (CassowaryConstraintNotFoundException)
-            {
-                // should not get this
-                throw new CassowaryInternalException(
-                    "Constraint not found in RemoveEditVarsTo");
-            }
-        }
-
-        /// <summary>
-        /// Remove the edit constraint previously added.
-        /// <param name="v">Variable to which the edit constraint was added before.</param>
-        /// </summary>
-        private void RemoveEditVar(Variable v)
-            /* throws ExClInternalError, ExClConstraintNotFound */
-        {
-            var editInfo = editVariableInfo[v];
-            var constraint = editInfo.Constraint;
-            RemoveConstraint(constraint);
+            return new EditSection(this);
         }
         
         /// <summary>
@@ -369,6 +288,11 @@ namespace CassowaryNET
         public void RemoveConstraint(Constraint constraint)
             /* throws ExClRequiredFailure, ExClInternalError */
         {
+            var marker = markerVariables.GetOrDefault(constraint);
+            if (Equals(marker, null))
+                throw new CassowaryConstraintNotFoundException();
+            markerVariables.Remove(constraint);
+
             needsSolving = true;
 
             ResetStayConstants();
@@ -378,14 +302,14 @@ namespace CassowaryNET
             {
                 errorVariables.Remove(constraint);
 
-                var objectiveRow = tableau.Rows[objective];
+                var objectiveRow = Tableau.Rows[objective];
 
                 foreach (var variable in slackVariables)
                 {
                     var coeff = -constraint.Weight*
                                 constraint.Strength.Weight.Value;
 
-                    var variableRow = tableau.Rows.GetOrDefault(variable);
+                    var variableRow = Tableau.Rows.GetOrDefault(variable);
 
                     LinearExpression newObjectiveRow;
                     if (Equals(variableRow, null))
@@ -399,7 +323,7 @@ namespace CassowaryNET
                     }
 
                     // overwrite the objective row
-                    tableau.Rows[objective] = newObjectiveRow;
+                    Tableau.Rows[objective] = newObjectiveRow;
 
                     var addedVariables = newObjectiveRow.Variables
                         .Except(objectiveRow.Variables);
@@ -408,25 +332,19 @@ namespace CassowaryNET
 
                     foreach (var addedVariable in addedVariables)
                     {
-                        tableau.NoteAddedVariable(addedVariable, objective);
+                        Tableau.NoteAddedVariable(addedVariable, objective);
                     }
                     foreach (var removedVariable in removedVariables)
                     {
-                        tableau.NoteRemovedVariable(removedVariable, objective);
+                        Tableau.NoteRemovedVariable(removedVariable, objective);
                     }
                 }
             }
 
-            var marker = markerVariables.GetOrDefault(constraint);
-            if (Equals(marker, null))
-                throw new CassowaryConstraintNotFoundException();
-
-            markerVariables.Remove(constraint);
-
-            if (Equals(tableau.RowExpression(marker), null))
+            if (!Tableau.Rows.ContainsKey(marker))
             {
                 // not in the basis, so need to do some more work
-                var markerColumn = tableau.Columns[marker];
+                var markerColumn = Tableau.Columns[marker];
 
                 // must pivot...
                 AbstractVariable exitVar = null;
@@ -436,7 +354,7 @@ namespace CassowaryNET
                 {
                     if (variable.IsRestricted)
                     {
-                        var rowExpression = tableau.RowExpression(variable);
+                        var rowExpression = Tableau.RowExpression(variable);
                         var coefficient = rowExpression.CoefficientFor(marker);
 
                         if (coefficient >= 0d)
@@ -460,7 +378,7 @@ namespace CassowaryNET
                         if (!variable.IsRestricted)
                             continue;
 
-                        var rowExpression = tableau.RowExpression(variable);
+                        var rowExpression = Tableau.RowExpression(variable);
                         var coefficient = rowExpression.CoefficientFor(marker);
 
                         var ratio = rowExpression.Constant/coefficient;
@@ -476,7 +394,7 @@ namespace CassowaryNET
                 {
                     if (markerColumn.Count == 0)
                     {
-                        tableau.RemoveColumn(marker);
+                        Tableau.RemoveColumn(marker);
                     }
                     else
                     {
@@ -490,9 +408,9 @@ namespace CassowaryNET
                 }
             }
 
-            if (!Equals(tableau.RowExpression(marker), null))
+            if (!Equals(Tableau.RowExpression(marker), null))
             {
-                tableau.RemoveRow(marker);
+                Tableau.RemoveRow(marker);
             }
 
             if (slackVariables != null)
@@ -501,7 +419,7 @@ namespace CassowaryNET
                 {
                     if (!Equals(slackVariable, marker))
                     {
-                        tableau.RemoveColumn(slackVariable);
+                        Tableau.RemoveColumn(slackVariable);
                     }
                 }
             }
@@ -510,10 +428,10 @@ namespace CassowaryNET
             {
                 if (slackVariables != null)
                 {
-                    for (int i = 0; i < stayPlusErrorVariables.Count; i++)
+                    foreach (var pair in stayErrorVariables)
                     {
-                        slackVariables.Remove(stayPlusErrorVariables[i]);
-                        slackVariables.Remove(stayMinusErrorVariables[i]);
+                        slackVariables.Remove(pair.Plus);
+                        slackVariables.Remove(pair.Minus);
                     }
                 }
             }
@@ -524,7 +442,7 @@ namespace CassowaryNET
                 var variable = editConstraint.Variable;
                 var editInfo = editVariableInfo[variable];
                 var clvEditMinus = editInfo.MinusError;
-                tableau.RemoveColumn(clvEditMinus);
+                Tableau.RemoveColumn(clvEditMinus);
                 editVariableInfo.Remove(variable);
             }
 
@@ -563,37 +481,8 @@ namespace CassowaryNET
         {
             DualOptimize();
             SetExternalVariables();
-            tableau.InfeasibleRows.Clear();
+            Tableau.InfeasibleRows.Clear();
             ResetStayConstants();
-        }
-
-        /// <summary>
-        /// Suggest a new value for an edit variable. 
-        /// </summary>
-        /// <remarks>
-        /// The variable needs to be added as an edit variable and 
-        /// BeginEdit() needs to be called before this is called.
-        /// The tableau will not be solved completely until after Resolve()
-        /// has been called.
-        /// </remarks>
-        public void SuggestValue(Variable variable, double value)
-            /* throws ExClError */
-        {
-            var editInfo = editVariableInfo[variable];
-            if (editInfo == null)
-            {
-                Console.Error.WriteLine(
-                    "SuggestValue for variable {0}, but var is not an edit variable\n",
-                    variable);
-
-                throw new CassowaryException();
-            }
-
-            var plusError = editInfo.PlusError;
-            var minusError = editInfo.MinusError;
-            var delta = value - editInfo.ConstraintExpressionConstant;
-            editInfo.ConstraintExpressionConstant = value;
-            DeltaEditConstant(delta, plusError, minusError);
         }
 
         public void Solve()
@@ -619,24 +508,17 @@ namespace CassowaryNET
             if (MathHelper.Approx(value, variable.Value))
                 return;
 
-            AddEditVariable(variable);
-            BeginEdit();
-            try
+            using (var editSection = this.CreateEditSection())
             {
-                SuggestValue(variable, value);
+                editSection.Add(variable);
+                editSection.SuggestValue(variable, value);
             }
-            catch (CassowaryException)
-            {
-                // just added it above, so we shouldn't get an error
-                throw new CassowaryInternalException("Error in SetEditedValue");
-            }
-            EndEdit();
         }
 
         public bool ContainsVariable(Variable v)
             /* throws ExClInternalError */
         {
-            return tableau.HasColumnKey(v) || !Equals(tableau.RowExpression(v), null);
+            return Tableau.HasColumnKey(v) || !Equals(Tableau.RowExpression(v), null);
         }
 
         public void AddVar(Variable v)
@@ -668,13 +550,11 @@ namespace CassowaryNET
         /// </returns>
         public string GetInternalInfo()
         {
-            string result = tableau.GetInternalInfo();
+            string result = Tableau.GetInternalInfo();
 
             result += "\nSolver info:\n";
             result += "Stay Error Variables: ";
-            result += stayPlusErrorVariables.Count + stayMinusErrorVariables.Count;
-            result += " (" + stayPlusErrorVariables.Count + " +, ";
-            result += stayMinusErrorVariables.Count + " -)\n";
+            result += stayErrorVariables.Count*2;
             result += "Edit Variables: " + editVariableInfo.Count;
             result += "\n";
 
@@ -683,12 +563,10 @@ namespace CassowaryNET
 
         public override string ToString()
         {
-            string result = tableau.ToString();
+            string result = Tableau.ToString();
 
-            result += "\n_stayPlusErrorVars: ";
-            result += stayPlusErrorVariables;
-            result += "\n_stayMinusErrorVars: ";
-            result += stayMinusErrorVariables;
+            result += "\n_stayErrorVars: ";
+            result += stayErrorVariables;
             result += "\n";
 
             return result;
@@ -711,22 +589,22 @@ namespace CassowaryNET
 
             var expressionClone = Cloneable.Clone(expression);
 
-            tableau.AddRow(az, expressionClone);
-            tableau.AddRow(av, expression);
+            Tableau.AddRow(az, expressionClone);
+            Tableau.AddRow(av, expression);
 
             Optimize(az);
 
-            var azRowExpression = tableau.RowExpression(az);
+            var azRowExpression = Tableau.RowExpression(az);
 
             if (!MathHelper.Approx(azRowExpression.Constant, 0.0))
             {
-                tableau.RemoveRow(az);
-                tableau.RemoveColumn(av);
+                Tableau.RemoveRow(az);
+                Tableau.RemoveColumn(av);
                 throw new CassowaryRequiredConstraintFailureException();
             }
 
             // see if av is a basic variable
-            var avRowExpression = tableau.RowExpression(av);
+            var avRowExpression = Tableau.RowExpression(av);
 
             if (!Equals(avRowExpression, null))
             {
@@ -737,8 +615,8 @@ namespace CassowaryNET
                     // if there isn't another variable in the row
                     // then the tableau contains the equation av=0 --
                     // just delete av's row
-                    tableau.RemoveRow(av);
-                    tableau.RemoveRow(az);
+                    Tableau.RemoveRow(av);
+                    Tableau.RemoveRow(az);
                     return;
                 }
 
@@ -746,10 +624,10 @@ namespace CassowaryNET
                 Pivot(entryVar, av);
             }
 
-            Debug.Assert(Equals(tableau.RowExpression(av), null), "tableau.RowExpression(av) == null)");
+            Debug.Assert(Equals(Tableau.RowExpression(av), null), "tableau.RowExpression(av) == null)");
 
-            tableau.RemoveColumn(av);
-            tableau.RemoveRow(az);
+            Tableau.RemoveColumn(av);
+            Tableau.RemoveRow(az);
         }
 
         /// <summary>
@@ -773,12 +651,12 @@ namespace CassowaryNET
             }
 
             expression = expression.WithSubject(subject);
-            if (tableau.HasColumnKey(subject))
+            if (Tableau.HasColumnKey(subject))
             {
-                tableau.SubstituteOut(subject, expression);
+                Tableau.SubstituteOut(subject, expression);
             }
 
-            tableau.AddRow(subject, expression);
+            Tableau.AddRow(subject, expression);
 
             return true; // succesfully added directly
         }
@@ -815,7 +693,7 @@ namespace CassowaryNET
                 {
                     if (!v.IsRestricted)
                     {
-                        if (!tableau.HasColumnKey(v))
+                        if (!Tableau.HasColumnKey(v))
                         {
                             return v;
                         }
@@ -828,10 +706,10 @@ namespace CassowaryNET
                     {
                         if (!foundNewRestricted && !v.IsDummy && c < 0.0)
                         {
-                            var col = tableau.Columns.GetOrDefault(v);
+                            var col = Tableau.Columns.GetOrDefault(v);
 
                             if (col == null ||
-                                (col.Count == 1 && tableau.HasColumnKey(objective)))
+                                (col.Count == 1 && Tableau.HasColumnKey(objective)))
                             {
                                 subject = v;
                                 foundNewRestricted = true;
@@ -862,7 +740,7 @@ namespace CassowaryNET
                     return null; // nope, no luck
                 }
 
-                if (!tableau.HasColumnKey(v))
+                if (!Tableau.HasColumnKey(v))
                 {
                     subject = v;
                     coeff = c;
@@ -890,7 +768,7 @@ namespace CassowaryNET
             foreach (var variable in constraint.Expression.Variables)
             {
                 var coefficient = constraint.Expression.Terms[variable];
-                var addition = tableau.Rows.GetOption(variable).ValueOr(variable);
+                var addition = Tableau.Rows.GetOption(variable).ValueOr(variable);
                 expression += coefficient*addition;
             }
 
@@ -907,9 +785,9 @@ namespace CassowaryNET
 
                     var weightCoefficient = constraint.Strength.Weight.Value*
                                             constraint.Weight;
-                    tableau.Rows[objective] += weightCoefficient*minusError;
+                    Tableau.Rows[objective] += weightCoefficient*minusError;
 
-                    tableau.NoteAddedVariable(minusError, objective);
+                    Tableau.NoteAddedVariable(minusError, objective);
                     InsertErrorVariable(constraint, minusError);
                 }
             }
@@ -932,19 +810,19 @@ namespace CassowaryNET
 
                     var weightCoefficient = constraint.Strength.Weight.Value*
                                             constraint.Weight;
-                    tableau.Rows[objective] += weightCoefficient*(plusError + minusError);
+                    Tableau.Rows[objective] += weightCoefficient*(plusError + minusError);
 
                     // minus error must be handled first (for some reason)
-                    tableau.NoteAddedVariable(minusError, objective);
+                    Tableau.NoteAddedVariable(minusError, objective);
                     InsertErrorVariable(constraint, minusError);
 
-                    tableau.NoteAddedVariable(plusError, objective);
+                    Tableau.NoteAddedVariable(plusError, objective);
                     InsertErrorVariable(constraint, plusError);
 
                     if (constraint.IsStayConstraint)
                     {
-                        stayPlusErrorVariables.Add(plusError);
-                        stayMinusErrorVariables.Add(minusError);
+                        var pair = new ErrorVariablePair(plusError, minusError);
+                        stayErrorVariables.Add(pair);
                     }
                 }
             }
@@ -963,7 +841,7 @@ namespace CassowaryNET
         private void Optimize(ObjectiveVariable zVariable)
             /* throws ExClInternalError */
         {
-            var zRow = tableau.RowExpression(zVariable);
+            var zRow = Tableau.RowExpression(zVariable);
             Debug.Assert(!Equals(zRow, null), "zRow != null");
 
             // NOTE: should this be inside the loop?
@@ -999,13 +877,13 @@ namespace CassowaryNET
             var minRatio = double.MaxValue;
             var minFound = false;
 
-            var columnVariables = tableau.Columns[entryVariable];
+            var columnVariables = Tableau.Columns[entryVariable];
             foreach (var variable in columnVariables)
             {
                 if (!variable.IsPivotable)
                     continue;
 
-                var rowExpression = tableau.RowExpression(variable);
+                var rowExpression = Tableau.RowExpression(variable);
                 var coefficient = rowExpression.CoefficientFor(entryVariable);
 
                 if (coefficient >= 0d)
@@ -1050,49 +928,49 @@ namespace CassowaryNET
         /// gone since it was part of the screwey vector-based interface
         /// to resolveing. --02/16/99 gjb)
         /// </remarks>
-        private void DeltaEditConstant(
+        internal void DeltaEditConstant(
             double delta,
             AbstractVariable plusErrorVariable,
             AbstractVariable minusErrorVariable)
         {
-            var plusErrorRow = tableau.Rows.GetOrDefault(plusErrorVariable);
+            var plusErrorRow = Tableau.Rows.GetOrDefault(plusErrorVariable);
             if (!Equals(plusErrorRow, null))
             {
                 plusErrorRow = plusErrorRow.WithConstantIncrementedBy(delta);
-                tableau.Rows[plusErrorVariable] = plusErrorRow;
+                Tableau.Rows[plusErrorVariable] = plusErrorRow;
 
                 if (plusErrorRow.Constant < 0d)
                 {
-                    tableau.InfeasibleRows.Add(plusErrorVariable);
+                    Tableau.InfeasibleRows.Add(plusErrorVariable);
                 }
                 return;
             }
 
-            var minusErrorRow = tableau.Rows.GetOrDefault(minusErrorVariable);
+            var minusErrorRow = Tableau.Rows.GetOrDefault(minusErrorVariable);
             if (!Equals(minusErrorRow, null))
             {
                 minusErrorRow = minusErrorRow.WithConstantIncrementedBy(-delta);
-                tableau.Rows[minusErrorVariable] = minusErrorRow;
+                Tableau.Rows[minusErrorVariable] = minusErrorRow;
 
                 if (minusErrorRow.Constant < 0d)
                 {
-                    tableau.InfeasibleRows.Add(minusErrorVariable);
+                    Tableau.InfeasibleRows.Add(minusErrorVariable);
                 }
                 return;
             }
 
-            var minusErrorColumn = tableau.Columns[minusErrorVariable];
+            var minusErrorColumn = Tableau.Columns[minusErrorVariable];
             foreach (var variable in minusErrorColumn)
             {
-                var variableRow = tableau.Rows[variable];
+                var variableRow = Tableau.Rows[variable];
 
                 var coefficient = variableRow.CoefficientFor(minusErrorVariable);
                 variableRow = variableRow.WithConstantIncrementedBy(coefficient*delta);
-                tableau.Rows[variable] = variableRow;
+                Tableau.Rows[variable] = variableRow;
 
                 if (variable.IsRestricted && variableRow.Constant < 0d)
                 {
-                    tableau.InfeasibleRows.Add(variable);
+                    Tableau.InfeasibleRows.Add(variable);
                 }
             }
         }
@@ -1106,17 +984,17 @@ namespace CassowaryNET
         private void DualOptimize()
             /* throws ExClInternalError */
         {
-            LinearExpression zRow = tableau.RowExpression(objective);
+            LinearExpression zRow = Tableau.RowExpression(objective);
 
-            while (tableau.InfeasibleRows.Count != 0)
+            while (Tableau.InfeasibleRows.Count != 0)
             {
-                var enumIfRows = tableau.InfeasibleRows.GetEnumerator();
+                var enumIfRows = Tableau.InfeasibleRows.GetEnumerator();
                 enumIfRows.MoveNext();
                 var exitVar = enumIfRows.Current;
 
-                tableau.InfeasibleRows.Remove(exitVar);
+                Tableau.InfeasibleRows.Remove(exitVar);
                 AbstractVariable entryVar = null;
-                LinearExpression expr = tableau.RowExpression(exitVar);
+                LinearExpression expr = Tableau.RowExpression(exitVar);
 
                 if (Equals(expr, null))
                     continue;
@@ -1170,12 +1048,12 @@ namespace CassowaryNET
             // RemoveConstraint -- otherwise it should be a pivotable
             // variable -- enforced at call sites, hopefully
 
-            var expression = tableau.RemoveRow(exitVariable);
+            var expression = Tableau.RemoveRow(exitVariable);
 
             expression = expression.WithSubjectChangedTo(exitVariable, entryVariable);
 
-            tableau.SubstituteOut(entryVariable, expression);
-            tableau.AddRow(entryVariable, expression);
+            Tableau.SubstituteOut(entryVariable, expression);
+            Tableau.AddRow(entryVariable, expression);
         }
 
         /// <summary>
@@ -1196,32 +1074,30 @@ namespace CassowaryNET
         /// for that basic error variable. Reset the constant of this
         /// expression to 0.
         /// </remarks>
-        private void ResetStayConstants()
+        internal void ResetStayConstants()
         {
-            for (int i = 0; i < stayPlusErrorVariables.Count; i++)
+            foreach (var pair in stayErrorVariables)
             {
-                {
-                    var stayPlusErrorVar = stayPlusErrorVariables[i];
-                    var expression = tableau.Rows.GetOrDefault(stayPlusErrorVar);
-                    if (!Equals(expression, null))
-                    {
-                        expression = expression.WithConstantSetTo(0d);
-                        tableau.Rows[stayPlusErrorVar] = expression;
-                        continue;
-                    }
-                }
-
-                {
-                    var stayMinusErrorVar = stayMinusErrorVariables[i];
-                    var expression = tableau.Rows.GetOrDefault(stayMinusErrorVar);
-                    if (!Equals(expression, null))
-                    {
-                        expression = expression.WithConstantSetTo(0d);
-                        tableau.Rows[stayMinusErrorVar] = expression;
-                        continue;
-                    }
-                }
+                ResetErrorRowConstants(pair);
             }
+        }
+
+        private void ResetErrorRowConstants(ErrorVariablePair pair)
+        {
+            if (ResetErrorRowConstant(pair.Plus))
+                return;
+            ResetErrorRowConstant(pair.Minus);
+        }
+
+        private bool ResetErrorRowConstant(SlackVariable errorVariable)
+        {
+            var expression = Tableau.Rows.GetOrDefault(errorVariable);
+            if (Equals(expression, null)) 
+                return false;
+
+            expression = expression.WithConstantSetTo(0d);
+            Tableau.Rows[errorVariable] = expression;
+            return true;
         }
 
         /// <summary>
@@ -1238,9 +1114,9 @@ namespace CassowaryNET
         /// </remarks>
         private void SetExternalVariables()
         {
-            foreach (var variable in tableau.ExternalParametricVars)
+            foreach (var variable in Tableau.ExternalParametricVars)
             {
-                var rowExpression = tableau.RowExpression(variable);
+                var rowExpression = Tableau.RowExpression(variable);
 
                 if (!Equals(rowExpression, null))
                 {
@@ -1253,9 +1129,9 @@ namespace CassowaryNET
                 variable.Value = 0d;
             }
 
-            foreach (var variable in tableau.ExternalRows)
+            foreach (var variable in Tableau.ExternalRows)
             {
-                var rowExpression = tableau.RowExpression(variable);
+                var rowExpression = Tableau.RowExpression(variable);
                 variable.Value = rowExpression.Constant;
             }
 

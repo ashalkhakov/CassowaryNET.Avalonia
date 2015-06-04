@@ -46,7 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constraints\LinearConstraint.cs" />
     <Compile Include="EditInfo.cs" />
+    <Compile Include="EditSection.cs" />
     <Compile Include="LinearExpression.cs" />
     <Compile Include="CassowarySolver.cs" />
     <Compile Include="Strength.cs" />

@@ -186,7 +186,7 @@ namespace LayoutNET
             }
         }
 
-        private static Constraint GetClLinearEquation(
+        private static LinearConstraint GetClLinearEquation(
             Variable variable,
             LinearExpression expression,
             Strength strength,

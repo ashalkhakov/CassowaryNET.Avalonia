@@ -430,46 +430,41 @@ namespace CassowaryNET.Tests
             target.AddStay(w);
             target.AddStay(h);
 
-            // start an editing session
-            target.AddEditVariable(x);
-            target.AddEditVariable(y);
+            using (var editSection1 = target.CreateEditSection())
+            {
+                editSection1.Add(x);
+                editSection1.Add(y);
 
-            // ////////
-            target.BeginEdit();
+                editSection1.SuggestValue(x, 10);
+                editSection1.SuggestValue(y, 20);
 
-            target.SuggestValue(x, 10);
-            target.SuggestValue(y, 20);
+                // force the system to resolve
+                target.Resolve();
 
-            // force the system to resolve
-            target.Resolve();
+                Assert.That(x.Value, IsX.Approx(10d));
+                Assert.That(y.Value, IsX.Approx(20d));
+                Assert.That(w.Value, IsX.Approx(0d));
+                Assert.That(h.Value, IsX.Approx(0d));
 
-            Assert.That(x.Value, IsX.Approx(10d));
-            Assert.That(y.Value, IsX.Approx(20d));
-            Assert.That(w.Value, IsX.Approx(0d));
-            Assert.That(h.Value, IsX.Approx(0d));
+                using (var editSection2 = target.CreateEditSection())
+                {
+                    editSection2.Add(w);
+                    editSection2.Add(h);
 
-            // open a second set of variables for editing
-            target.AddEditVariable(w);
-            target.AddEditVariable(h);
+                    editSection2.SuggestValue(w, 30);
+                    editSection2.SuggestValue(h, 40);
+                }
 
-            // // ////////
-            target.BeginEdit();
-            target.SuggestValue(w, 30);
-            target.SuggestValue(h, 40);
-            target.EndEdit();
-            // // ////////
+                Assert.That(x.Value, IsX.Approx(10d));
+                Assert.That(y.Value, IsX.Approx(20d));
+                Assert.That(w.Value, IsX.Approx(30d));
+                Assert.That(h.Value, IsX.Approx(40d));
 
-            Assert.That(x.Value, IsX.Approx(10d));
-            Assert.That(y.Value, IsX.Approx(20d));
-            Assert.That(w.Value, IsX.Approx(30d));
-            Assert.That(h.Value, IsX.Approx(40d));
+                // make sure the first set can still be edited
+                editSection1.SuggestValue(x, 50);
+                editSection1.SuggestValue(y, 60);
 
-            // make sure the first set can still be edited
-            target.SuggestValue(x, 50);
-            target.SuggestValue(y, 60);
-
-            target.EndEdit();
-            // ////////
+            }
 
             Assert.That(x.Value, IsX.Approx(50d));
             Assert.That(y.Value, IsX.Approx(60d));
@@ -492,49 +487,42 @@ namespace CassowaryNET.Tests
             target.AddStay(w);
             target.AddStay(h);
 
-            target.AddEditVariable(x);
-            target.AddEditVariable(y);
+            using (var editSection = target.CreateEditSection())
+            {
+                editSection.Add(x);
+                editSection.Add(y);
 
-
-            // ////////
-            target.BeginEdit();
-            target.SuggestValue(x, 10);
-            target.SuggestValue(y, 20);
-            target.Resolve();
-            target.EndEdit();
-            // ////////
+                editSection.SuggestValue(x, 10d);
+                editSection.SuggestValue(y, 20d);
+            }
 
             Assert.That(x.Value, IsX.Approx(10d));
             Assert.That(y.Value, IsX.Approx(20d));
             Assert.That(w.Value, IsX.Approx(0d));
             Assert.That(h.Value, IsX.Approx(0d));
+            
+            using (var editSection = target.CreateEditSection())
+            {
+                editSection.Add(w);
+                editSection.Add(h);
 
-
-            target.AddEditVariable(w);
-            target.AddEditVariable(h);
-
-            // // ////////
-            target.BeginEdit();
-            target.SuggestValue(w, 30);
-            target.SuggestValue(h, 40);
-            target.EndEdit();
-            // // ////////
-
+                editSection.SuggestValue(w, 30d);
+                editSection.SuggestValue(h, 40d);
+            }
+            
             Assert.That(x.Value, IsX.Approx(10d));
             Assert.That(y.Value, IsX.Approx(20d));
             Assert.That(w.Value, IsX.Approx(30d));
             Assert.That(h.Value, IsX.Approx(40d));
 
+            using (var editSection = target.CreateEditSection())
+            {
+                editSection.Add(x);
+                editSection.Add(y);
 
-            target.AddEditVariable(x);
-            target.AddEditVariable(y);
-
-            // // // ////////
-            target.BeginEdit();
-            target.SuggestValue(x, 50);
-            target.SuggestValue(y, 60);
-            target.EndEdit();
-            // // // ////////
+                editSection.SuggestValue(x, 50d);
+                editSection.SuggestValue(y, 60d);
+            }
 
             Assert.That(x.Value, IsX.Approx(50d));
             Assert.That(y.Value, IsX.Approx(60d));
@@ -591,13 +579,14 @@ namespace CassowaryNET.Tests
                 var iwv = RandomIn(Min, Max);
                 var ihv = RandomIn(Min, Max);
 
-                target.AddEditVariable(iw);
-                target.AddEditVariable(ih);
+                using (var editSection = target.CreateEditSection())
+                {
+                    editSection.Add(iw);
+                    editSection.Add(ih);
 
-                target.BeginEdit();
-                target.SuggestValue(iw, iwv);
-                target.SuggestValue(ih, ihv);
-                target.EndEdit();
+                    editSection.SuggestValue(iw, iwv);
+                    editSection.SuggestValue(ih, ihv);
+                }
 
                 Assert.That(top.Value, IsX.Approx(0d));
                 Assert.That(left.Value, IsX.Approx(0d));
@@ -608,68 +597,7 @@ namespace CassowaryNET.Tests
                 Assert.That(right.Value, Is.GreaterThanOrEqualTo(Min));
             }
         }
-
-        [Test]
-        public void required_edit_vars()
-        {
-            var x = new Variable("x");
-            var y = new Variable("y");
-            var w = new Variable("w");
-            var h = new Variable("h");
-
-            var target = GetTarget();
-
-            target.AddStay(x);
-            target.AddStay(y);
-            target.AddStay(w);
-            target.AddStay(h);
-
-            target.AddEditVariable(x);
-            target.AddEditVariable(y);
-
-            target.BeginEdit();
-            target.SuggestValue(x, 10d);
-            target.SuggestValue(y, 20d);
-            target.EndEdit();
-
-            Assert.That(x.Value, IsX.Approx(10d));
-            Assert.That(y.Value, IsX.Approx(20d));
-            Assert.That(w.Value, IsX.Approx(0d));
-            Assert.That(h.Value, IsX.Approx(0d));
-
-            // Open a second set of variables for editing
-
-            target.AddEditVariable(w);
-            target.AddEditVariable(h);
-
-            target.BeginEdit();
-            target.SuggestValue(w, 30d);
-            target.SuggestValue(h, 40d);
-            target.EndEdit();
-
-            Assert.That(x.Value, IsX.Approx(10d));
-            Assert.That(y.Value, IsX.Approx(20d));
-            Assert.That(w.Value, IsX.Approx(30d));
-            Assert.That(h.Value, IsX.Approx(40d));
-
-            // Now make sure the first set can still be edited
-
-            target.AddEditVariable(x);
-            target.AddEditVariable(y);
-
-            target.BeginEdit();
-            target.SuggestValue(x, 50d);
-            target.SuggestValue(y, 60d);
-            target.EndEdit();
-
-            Assert.That(x.Value, IsX.Approx(50d));
-            Assert.That(y.Value, IsX.Approx(60d));
-            Assert.That(w.Value, IsX.Approx(30d));
-            Assert.That(h.Value, IsX.Approx(40d));
-
-
-        }
-
+        
         [Test]
         public void test_error_weights()
         {
@@ -807,14 +735,14 @@ namespace CassowaryNET.Tests
             Assert.That(allPoints[7].Y.Value, IsX.Approx(10d));
 
             // now move point 2 to  a new location
+            using (var editSection = target.CreateEditSection())
+            {
+                editSection.Add(points[2].X);
+                editSection.Add(points[2].Y);
 
-            target.AddEditVariable(points[2].X);
-            target.AddEditVariable(points[2].Y);
-
-            target.BeginEdit();
-            target.SuggestValue(points[2].X, 300d);
-            target.SuggestValue(points[2].Y, 400d);
-            target.EndEdit();
+                editSection.SuggestValue(points[2].X, 300d);
+                editSection.SuggestValue(points[2].Y, 400d);
+            }
 
             // check that the other points have been moved
             Assert.That(allPoints[0].X.Value, IsX.Approx(10d));

@@ -25,7 +25,7 @@ using CassowaryNET.Variables;
 
 namespace CassowaryNET.Constraints
 {
-    public sealed class InequalityConstraint : Constraint
+    public sealed class InequalityConstraint : LinearConstraint
     {
         #region Fields
 

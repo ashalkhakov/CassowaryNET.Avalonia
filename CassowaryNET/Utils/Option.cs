@@ -12,7 +12,7 @@ namespace CassowaryNET.Utils
             this Option<T> option,
             T otherwise)
         {
-            return option.Invoke(
+            return option.Match(
                 v => v,
                 () => otherwise);
         }
@@ -49,7 +49,7 @@ namespace CassowaryNET.Utils
 
         #region Methods
 
-        public void Invoke(
+        public void Match(
             Action<T> ifValue,
             Action ifNoValue)
         {
@@ -59,7 +59,7 @@ namespace CassowaryNET.Utils
                 ifNoValue();
         }
 
-        public TReturn Invoke<TReturn>(
+        public TReturn Match<TReturn>(
             Func<T, TReturn> ifValue,
             Func<TReturn> ifNoValue)
         {

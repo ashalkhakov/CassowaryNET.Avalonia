@@ -43,7 +43,7 @@ namespace CassowaryNET.Constraints
 
         #region Constructors
         
-        protected Constraint(
+        internal Constraint(
             LinearExpression expression,
             Strength strength, 
             double weight)

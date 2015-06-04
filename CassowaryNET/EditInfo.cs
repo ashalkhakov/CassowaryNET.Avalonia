@@ -40,8 +40,7 @@ namespace CassowaryNET
         private readonly EditConstraint constraint;
         private readonly SlackVariable plusError;
         private readonly SlackVariable minusError;
-        private double constraintExpressionConstant;
-        private readonly int index;
+        private double previousValue;
 
         #endregion
 
@@ -51,14 +50,12 @@ namespace CassowaryNET
             EditConstraint constraint,
             SlackVariable plusError,
             SlackVariable minusError,
-            double constraintExpressionConstant,
-            int index)
+            double previousValue)
         {
             this.constraint = constraint;
             this.plusError = plusError;
             this.minusError = minusError;
-            this.constraintExpressionConstant = constraintExpressionConstant;
-            this.index = index;
+            this.previousValue = previousValue;
         }
 
         #endregion
@@ -80,17 +77,12 @@ namespace CassowaryNET
             get { return minusError; }
         }
 
-        public double ConstraintExpressionConstant
+        public double PreviousValue
         {
-            get { return constraintExpressionConstant; }
-            set { constraintExpressionConstant = value; }
+            get { return previousValue; }
+            set { previousValue = value; }
         }
-
-        public int Index
-        {
-            get { return index; }
-        }
-
+        
         #endregion
 
         #region Methods

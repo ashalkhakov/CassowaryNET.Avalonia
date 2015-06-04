@@ -32,12 +32,7 @@ namespace CassowaryNET.Constraints
         #endregion
 
         #region Constructors
-
-        internal EditConstraint(Variable variable)
-            : this(variable, Strength.Required)
-        {
-        }
-
+        
         internal EditConstraint(
             Variable variable,
             Strength strength)
