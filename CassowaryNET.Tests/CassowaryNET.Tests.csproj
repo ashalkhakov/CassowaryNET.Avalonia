@@ -47,6 +47,8 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constraints\EqualityConstraintTests.cs" />
+    <Compile Include="Constraints\StayConstraintTests.cs" />
     <Compile Include="Constraints\EditConstraintTests.cs" />
     <Compile Include="ExpressionEx.cs" />
     <Compile Include="LinearExpressionTests.cs" />

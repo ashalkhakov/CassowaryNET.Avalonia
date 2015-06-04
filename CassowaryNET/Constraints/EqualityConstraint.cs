@@ -45,12 +45,12 @@ namespace CassowaryNET.Constraints
         public EqualityConstraint(
             LinearExpression expression,
             Strength strength)
-            : this(expression, strength, 1d)
+            : base(expression, strength)
         {
         }
 
         public EqualityConstraint(LinearExpression expression)
-            : this(expression, Strength.Required)
+            : base(expression)
         {
         }
 
@@ -63,7 +63,7 @@ namespace CassowaryNET.Constraints
             LinearExpression expression,
             Strength strength,
             double weight)
-            : base(expression - variable, strength, weight)
+            : base(GetExpression(variable, expression), strength, weight)
         {
         }
 
@@ -71,14 +71,42 @@ namespace CassowaryNET.Constraints
             AbstractVariable variable,
             LinearExpression expression,
             Strength strength)
-            : this(variable, expression, strength, 1d)
+            : base(GetExpression(variable, expression), strength)
         {
         }
 
         public EqualityConstraint(
             AbstractVariable variable,
             LinearExpression expression)
-            : this(variable, expression, Strength.Required, 1d)
+            : base(GetExpression(variable, expression))
+        {
+        }
+
+        #endregion
+
+        #region ctor(Variable,Variable)
+
+        public EqualityConstraint(
+            AbstractVariable variable1,
+            AbstractVariable variable2,
+            Strength strength,
+            double weight)
+            : base(GetExpression(variable1, variable2), strength, weight)
+        {
+        }
+
+        public EqualityConstraint(
+            AbstractVariable variable1,
+            AbstractVariable variable2,
+            Strength strength)
+            : base(GetExpression(variable1, variable2), strength)
+        {
+        }
+
+        public EqualityConstraint(
+            AbstractVariable variable1,
+            AbstractVariable variable2)
+            : base(GetExpression(variable1, variable2))
         {
         }
 
@@ -88,8 +116,10 @@ namespace CassowaryNET.Constraints
 
         public EqualityConstraint(
             AbstractVariable variable,
-            double value)
-            : this(variable, value, Strength.Required, 1d)
+            double value,
+            Strength strength,
+            double weight)
+            : base(GetExpression(variable, value), strength, weight)
         {
         }
 
@@ -97,19 +127,14 @@ namespace CassowaryNET.Constraints
             AbstractVariable variable,
             double value,
             Strength strength)
-            : this(variable, value, strength, 1d)
+            : base(GetExpression(variable, value), strength)
         {
         }
 
         public EqualityConstraint(
             AbstractVariable variable,
-            double value,
-            Strength strength,
-            double weight)
-            : this(
-                value - variable,
-                strength,
-                weight)
+            double value)
+            : base(GetExpression(variable, value))
         {
         }
 
@@ -122,10 +147,7 @@ namespace CassowaryNET.Constraints
             AbstractVariable variable,
             Strength strength,
             double weight)
-            : this(
-                expression- variable,
-                strength,
-                weight)
+            : base(GetExpression(expression, variable), strength, weight)
         {
         }
 
@@ -133,14 +155,14 @@ namespace CassowaryNET.Constraints
             LinearExpression expression,
             AbstractVariable variable,
             Strength strength)
-            : this(expression, variable, strength, 1d)
+            : base(GetExpression(expression, variable), strength)
         {
         }
 
         public EqualityConstraint(
             LinearExpression expression,
             AbstractVariable variable)
-            : this(expression, variable, Strength.Required, 1d)
+            : base(GetExpression(expression, variable))
         {
         }
 
@@ -150,8 +172,10 @@ namespace CassowaryNET.Constraints
 
         public EqualityConstraint(
             LinearExpression expression1,
-            LinearExpression expression2)
-            : this(expression1, expression2, Strength.Required, 1d)
+            LinearExpression expression2,
+            Strength strength,
+            double weight)
+            : base(GetExpression(expression1, expression2), strength, weight)
         {
         }
 
@@ -159,36 +183,78 @@ namespace CassowaryNET.Constraints
             LinearExpression expression1,
             LinearExpression expression2,
             Strength strength)
-            : this(expression1, expression2, strength, 1d)
+            : base(GetExpression(expression1, expression2), strength)
         {
         }
 
         public EqualityConstraint(
             LinearExpression expression1,
-            LinearExpression expression2,
-            Strength strength,
-            double weight)
-            : this(expression1 - expression2, strength, weight)
+            LinearExpression expression2)
+            : base(GetExpression(expression1, expression2))
         {
         }
 
         #endregion
-
 
         #endregion
 
         #region Properties
 
         #endregion
-        
+
         #region Methods
 
-        public EqualityConstraint WithStrength(Strength strength)
+        private static LinearExpression GetExpression(
+            AbstractVariable variable,
+            LinearExpression expression)
+        {
+            return expression - variable;
+        }
+
+        private static LinearExpression GetExpression(
+            LinearExpression expression,
+            AbstractVariable variable)
+        {
+            return expression - variable;
+        }
+
+        private static LinearExpression GetExpression(
+            AbstractVariable variable1,
+            AbstractVariable variable2)
+        {
+            return variable2 - variable1;
+        }
+
+        private static LinearExpression GetExpression(
+            AbstractVariable variable,
+            double value)
+        {
+            return value - variable;
+        }
+
+        private static LinearExpression GetExpression(
+            LinearExpression expression1,
+            LinearExpression expression2)
+        {
+            return expression1 - expression2;
+        }
+
+        protected override LinearConstraint WithStrengthCore(Strength strength)
+        {
+            return WithStrength(strength);
+        }
+
+        protected override LinearConstraint WithWeightCore(double weight)
+        {
+            return WithWeight(weight);
+        }
+
+        public new EqualityConstraint WithStrength(Strength strength)
         {
             return new EqualityConstraint(Expression, strength, Weight);
         }
 
-        public EqualityConstraint WithWeight(double weight)
+        public new EqualityConstraint WithWeight(double weight)
         {
             return new EqualityConstraint(Expression, Strength, weight);
         }

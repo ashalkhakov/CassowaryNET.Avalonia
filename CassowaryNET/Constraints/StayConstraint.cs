@@ -31,12 +31,7 @@ namespace CassowaryNET.Constraints
         #endregion
 
         #region Constructors
-
-        internal StayConstraint(Variable variable)
-            : this(variable, Strength.Weak)
-        {
-        }
-
+        
         internal StayConstraint(Variable variable, Strength strength)
             : this(variable, strength, 1d)
         {

@@ -606,27 +606,27 @@ namespace CassowaryNET.Tests
             target.AddConstraint(
                 new EqualityConstraint(
                     bottomRight_bottom,
-                    new LinearExpression(right_bottom),
+                    right_bottom,
                     Strength.Strong));
             target.AddConstraint(
                 new EqualityConstraint(
                     newpost_height,
-                    new LinearExpression(update_height),
+                    update_height,
                     Strength.Strong));
             target.AddConstraint(
                 new EqualityConstraint(
                     newpost_width,
-                    new LinearExpression(update_width),
+                    update_width,
                     Strength.Strong));
             target.AddConstraint(
                 new EqualityConstraint(
                     update_height,
-                    new LinearExpression(quit_height),
+                    quit_height,
                     Strength.Strong));
             target.AddConstraint(
                 new EqualityConstraint(
                     quit_width,
-                    new LinearExpression(update_width),
+                    update_width,
                     Strength.Strong));
 
             target.AddConstraint(

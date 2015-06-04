@@ -46,12 +46,12 @@ namespace CassowaryNET.Constraints
         public InequalityConstraint(
             LinearExpression expression,
             Strength strength)
-            : this(expression, strength, 1d)
+            : base(expression, strength)
         {
         }
 
         public InequalityConstraint(LinearExpression expression)
-            : this(expression, Strength.Required)
+            : base(expression)
         {
         }
 
@@ -65,7 +65,7 @@ namespace CassowaryNET.Constraints
             AbstractVariable variable2,
             Strength strength,
             double weight)
-            : this(Create(variable1, inequalityType, variable2), strength, weight)
+            : base(GetExpression(variable1, inequalityType, variable2), strength, weight)
         {
         }
 
@@ -74,7 +74,7 @@ namespace CassowaryNET.Constraints
             InequalityType inequalityType,
             AbstractVariable variable2,
             Strength strength)
-            : this(variable1, inequalityType, variable2, strength, 1d)
+            : base(GetExpression(variable1, inequalityType, variable2), strength)
         {
         }
 
@@ -82,7 +82,7 @@ namespace CassowaryNET.Constraints
             AbstractVariable variable1,
             InequalityType inequalityType,
             AbstractVariable variable2)
-            : this(variable1, inequalityType, variable2, Strength.Required, 1d)
+            : base(GetExpression(variable1, inequalityType, variable2))
         {
         }
 
@@ -96,7 +96,7 @@ namespace CassowaryNET.Constraints
             double value,
             Strength strength,
             double weight)
-            : this(Create(variable, inequalityType, value), strength, weight)
+            : base(GetExpression(variable, inequalityType, value), strength, weight)
         {
         }
 
@@ -105,7 +105,7 @@ namespace CassowaryNET.Constraints
             InequalityType inequalityType,
             double value,
             Strength strength)
-            : this(variable, inequalityType, value, strength, 1d)
+            : base(GetExpression(variable, inequalityType, value), strength)
         {
         }
 
@@ -113,7 +113,7 @@ namespace CassowaryNET.Constraints
             AbstractVariable variable,
             InequalityType inequalityType,
             double value)
-            : this(variable, inequalityType, value, Strength.Required, 1d)
+            : base(GetExpression(variable, inequalityType, value))
         {
         }
 
@@ -127,7 +127,7 @@ namespace CassowaryNET.Constraints
             LinearExpression expression2,
             Strength strength,
             double weight)
-            : base(Create(expression1, inequalityType, expression2), strength, weight)
+            : base(GetExpression(expression1, inequalityType, expression2), strength, weight)
         {
         }
 
@@ -136,7 +136,7 @@ namespace CassowaryNET.Constraints
             InequalityType inequalityType,
             LinearExpression expression2,
             Strength strength)
-            : this(expression1, inequalityType, expression2, strength, 1d)
+            : base(GetExpression(expression1, inequalityType, expression2), strength)
         {
         }
 
@@ -144,7 +144,7 @@ namespace CassowaryNET.Constraints
             LinearExpression expression1,
             InequalityType inequalityType,
             LinearExpression expression2)
-            : this(expression1, inequalityType, expression2, Strength.Required, 1d)
+            : base(GetExpression(expression1, inequalityType, expression2))
         {
         }
 
@@ -158,7 +158,7 @@ namespace CassowaryNET.Constraints
             LinearExpression expression,
             Strength strength,
             double weight)
-            : this(Create(variable, inequalityType, expression), strength, weight)
+            : base(GetExpression(variable, inequalityType, expression), strength, weight)
         {
         }
 
@@ -167,7 +167,7 @@ namespace CassowaryNET.Constraints
             InequalityType inequalityType,
             LinearExpression expression,
             Strength strength)
-            : this(variable, inequalityType, expression, strength, 1d)
+            : base(GetExpression(variable, inequalityType, expression), strength)
         {
         }
 
@@ -175,7 +175,7 @@ namespace CassowaryNET.Constraints
             AbstractVariable variable,
             InequalityType inequalityType,
             LinearExpression expression)
-            : this(variable, inequalityType, expression, Strength.Required, 1d)
+            : base(GetExpression(variable, inequalityType, expression))
         {
         }
 
@@ -189,7 +189,7 @@ namespace CassowaryNET.Constraints
             AbstractVariable variable,
             Strength strength,
             double weight)
-            : this(Create(expression, inequalityType, variable), strength, weight)
+            : base(GetExpression(expression, inequalityType, variable), strength, weight)
         {
         }
 
@@ -198,7 +198,7 @@ namespace CassowaryNET.Constraints
             InequalityType inequalityType,
             AbstractVariable variable,
             Strength strength)
-            : this(expression, inequalityType, variable, strength, 1d)
+            : base(GetExpression(expression, inequalityType, variable), strength)
         {
         }
 
@@ -206,7 +206,7 @@ namespace CassowaryNET.Constraints
             LinearExpression expression,
             InequalityType inequalityType,
             AbstractVariable variable)
-            : this(expression, inequalityType, variable, Strength.Required, 1d)
+            : base(GetExpression(expression, inequalityType, variable))
         {
         }
 
@@ -220,7 +220,7 @@ namespace CassowaryNET.Constraints
 
         #region Methods
 
-        private static LinearExpression Create(
+        private static LinearExpression GetExpression(
             AbstractVariable variable1,
             InequalityType inequalityType,
             AbstractVariable variable2)
@@ -237,7 +237,7 @@ namespace CassowaryNET.Constraints
             }
         }
 
-        private static LinearExpression Create(
+        private static LinearExpression GetExpression(
             AbstractVariable variable,
             InequalityType inequalityType,
             double value)
@@ -254,7 +254,7 @@ namespace CassowaryNET.Constraints
             }
         }
 
-        private static LinearExpression Create(
+        private static LinearExpression GetExpression(
             LinearExpression expression1,
             InequalityType inequalityType,
             LinearExpression expression2)
@@ -271,7 +271,7 @@ namespace CassowaryNET.Constraints
             }
         }
 
-        private static LinearExpression Create(
+        private static LinearExpression GetExpression(
             AbstractVariable variable,
             InequalityType inequalityType,
             LinearExpression expression)
@@ -288,7 +288,7 @@ namespace CassowaryNET.Constraints
             }
         }
 
-        private static LinearExpression Create(
+        private static LinearExpression GetExpression(
             LinearExpression expression,
             InequalityType inequalityType,
             AbstractVariable variable)
@@ -305,12 +305,22 @@ namespace CassowaryNET.Constraints
             }
         }
 
-        public InequalityConstraint WithStrength(Strength strength)
+        protected override LinearConstraint WithStrengthCore(Strength strength)
+        {
+            return WithStrength(strength);
+        }
+
+        protected override LinearConstraint WithWeightCore(double weight)
+        {
+            return WithWeight(weight);
+        }
+
+        public new InequalityConstraint WithStrength(Strength strength)
         {
             return new InequalityConstraint(Expression, strength, Weight);
         }
 
-        public InequalityConstraint WithWeight(double weight)
+        public new InequalityConstraint WithWeight(double weight)
         {
             return new InequalityConstraint(Expression, Strength, weight);
         }
