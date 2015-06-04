@@ -364,7 +364,7 @@ namespace CassowaryNET.Tests
 
             Assert.That(
                 () => target.AddConstraint(x == 5d),
-                Throws.TypeOf<CassowaryRequiredConstraintFailureException>());
+                Throws.TypeOf<RequiredConstraintFailureException>());
         }
 
         [Test]
@@ -377,7 +377,7 @@ namespace CassowaryNET.Tests
 
             Assert.That(
                 () => target.AddConstraint(x <= 5d),
-                Throws.TypeOf<CassowaryRequiredConstraintFailureException>());
+                Throws.TypeOf<RequiredConstraintFailureException>());
         }
 
         [Test]
@@ -397,7 +397,7 @@ namespace CassowaryNET.Tests
 
             Assert.That(
                 () => target.AddConstraint(z <= 4d),
-                Throws.TypeOf<CassowaryRequiredConstraintFailureException>());
+                Throws.TypeOf<RequiredConstraintFailureException>());
         }
 
         [Test]
@@ -412,7 +412,7 @@ namespace CassowaryNET.Tests
 
             Assert.That(
                 () => target.AddConstraint(y == 5d),
-                Throws.TypeOf<CassowaryRequiredConstraintFailureException>());
+                Throws.TypeOf<RequiredConstraintFailureException>());
         }
 
         [Test]

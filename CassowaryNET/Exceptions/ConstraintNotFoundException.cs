@@ -23,11 +23,15 @@ using System;
 
 namespace CassowaryNET.Exceptions
 {
-    public class CassowaryTooDifficultException : CassowaryException
+    public class ConstraintNotFoundException : CassowaryException
     {
         public override string Description
         {
-            get { return "(ExCLTooDifficult) The constraints are too difficult to solve"; }
+            get
+            {
+                return
+                    "(ExCLConstraintNotFound) Tried to remove a constraint never added to the tableau";
+            }
         }
     }
 }

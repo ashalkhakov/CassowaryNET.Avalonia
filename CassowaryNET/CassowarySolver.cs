@@ -247,38 +247,64 @@ namespace CassowaryNET
         {
             return new EditSection(this);
         }
-        
+
         /// <summary>
-        /// Add a stay of the given strength (default to ClStrength#Weak)
-        /// of a variable to the tableau..
-        /// <param name="v">
-        /// Variable to add the stay constraint to.
-        /// </param>
+        /// Adds a stay constraint for the specified variable with the given
+        /// strength and weight to the tableau.
         /// </summary>
-        public void AddStay(Variable v, Strength strength, double weight)
-            /* throws ExClRequiredFailure, ExClInternalError */
+        /// <param name="variable">
+        /// The variable for which to create a stay constraint.
+        /// </param>
+        /// <param name="strength">
+        /// The strength of the stay constraint to create.
+        /// </param>
+        /// <param name="weight">
+        /// The weight of the stay constraint to create.
+        /// </param>
+        /// <exception cref="RequiredConstraintFailureException">
+        /// The addition of the stay constraint causes a required constraint to 
+        /// be unsatisfiable.
+        /// </exception>
+        public void AddStay(Variable variable, Strength strength, double weight)
         {
-            var constraint = new StayConstraint(v, strength, weight);
+            var constraint = new StayConstraint(variable, strength, weight);
 
             AddConstraint(constraint);
         }
 
-        /// <remarks>
-        /// Default to weight 1.0.
-        /// </remarks>
-        public void AddStay(Variable v, Strength strength)
-            /* throws ExClRequiredFailure, ExClInternalError */
+        /// <summary>
+        /// Adds a stay constraint for the specified variable with the given
+        /// strength and a weight of 1d to the tableau.
+        /// </summary>
+        /// <param name="variable">
+        /// The variable for which to create a stay constraint.
+        /// </param>
+        /// <param name="strength">
+        /// The strength of the stay constraint to create.
+        /// </param>
+        /// <exception cref="RequiredConstraintFailureException">
+        /// The addition of the stay constraint causes a required constraint to 
+        /// be unsatisfiable.
+        /// </exception>
+        public void AddStay(Variable variable, Strength strength)
         {
-            AddStay(v, strength, 1.0);
+            AddStay(variable, strength, 1d);
         }
 
-        /// <remarks>
-        /// Default to strength ClStrength#Weak.
-        /// </remarks>
-        public void AddStay(Variable v)
-            /* throws ExClRequiredFailure, ExClInternalError */
+        /// <summary>
+        /// Adds a stay constraint for the specified variable with a strength of 
+        /// weak and weight of 1d to the tableau.
+        /// </summary>
+        /// <param name="variable">
+        /// The variable for which to create a stay constraint.
+        /// </param>
+        /// <exception cref="RequiredConstraintFailureException">
+        /// The addition of the stay constraint causes a required constraint to 
+        /// be unsatisfiable.
+        /// </exception>
+        public void AddStay(Variable variable)
         {
-            AddStay(v, Strength.Weak, 1.0);
+            AddStay(variable, Strength.Weak, 1d);
         }
 
         /// <summary>
@@ -290,7 +316,7 @@ namespace CassowaryNET
         {
             var marker = markerVariables.GetOrDefault(constraint);
             if (Equals(marker, null))
-                throw new CassowaryConstraintNotFoundException();
+                throw new ConstraintNotFoundException();
             markerVariables.Remove(constraint);
 
             needsSolving = true;
@@ -457,20 +483,7 @@ namespace CassowaryNET
             Optimize(objective);
             SetExternalVariables();
         }
-
-        /// <summary>
-        /// Re-initialize this solver from the original constraints, thus
-        /// getting rid of any accumulated numerical problems 
-        /// </summary>
-        /// <remarks>
-        /// Actually, we haven't definitely observed any such problems yet.
-        /// </remarks>
-        public void Reset()
-            /* throws ExClInternalError */
-        {
-            throw new CassowaryInternalException("Reset not implemented");
-        }
-
+        
         /// <summary>
         /// Re-solve the current collection of constraints, given the new
         /// values for the edit variables that have already been
@@ -531,7 +544,7 @@ namespace CassowaryNET
             {
                 AddStay(v);
             }
-            catch (CassowaryRequiredConstraintFailureException)
+            catch (RequiredConstraintFailureException)
             {
                 // cannot have a required failure, since we add w/ weak
                 throw new CassowaryInternalException(
@@ -600,7 +613,7 @@ namespace CassowaryNET
             {
                 Tableau.RemoveRow(az);
                 Tableau.RemoveColumn(av);
-                throw new CassowaryRequiredConstraintFailureException();
+                throw new RequiredConstraintFailureException();
             }
 
             // see if av is a basic variable
@@ -749,7 +762,7 @@ namespace CassowaryNET
 
             if (!MathHelper.Approx(expression.Constant, 0.0))
             {
-                throw new CassowaryRequiredConstraintFailureException();
+                throw new RequiredConstraintFailureException();
             }
             
             return subject;

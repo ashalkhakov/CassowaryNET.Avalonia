@@ -23,14 +23,13 @@ using System;
 
 namespace CassowaryNET.Exceptions
 {
-    public class CassowaryNotEnoughStaysException : CassowaryException
+    public class NonLinearExpressionException : CassowaryException
     {
         public override string Description
         {
             get
             {
-                return
-                    "(ExCLNotEnoughStays) There are not enough stays to give specific values to every variable";
+                return "(ExClNonlinearExpression) The resulting expression would be nonlinear";
             }
         }
     }

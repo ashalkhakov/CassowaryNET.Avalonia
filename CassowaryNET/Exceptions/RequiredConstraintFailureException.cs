@@ -23,7 +23,7 @@ using System;
 
 namespace CassowaryNET.Exceptions
 {
-    public class CassowaryRequiredConstraintFailureException : CassowaryException
+    public class RequiredConstraintFailureException : CassowaryException
     {
         public override string Description
         {

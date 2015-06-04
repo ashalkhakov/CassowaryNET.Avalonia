@@ -52,7 +52,7 @@ namespace CassowaryNET
                 editVariableInfo.Add(constraint.Variable, editInfo);
                 solver.EditVariableInfo.Add(constraint.Variable, editInfo);
             }
-            catch (CassowaryRequiredConstraintFailureException)
+            catch (RequiredConstraintFailureException)
             {
                 // should not get this
                 throw new CassowaryInternalException(

@@ -496,7 +496,7 @@ namespace CassowaryNET
             if (b.IsConstant)
                 return a*b.constant;
 
-            throw new CassowaryNonLinearExpressionException();
+            throw new NonLinearExpressionException();
         }
 
         public static LinearExpression operator *(
@@ -536,7 +536,7 @@ namespace CassowaryNET
             LinearExpression b)
         {
             if (!b.IsConstant) 
-                throw new CassowaryNonLinearExpressionException();
+                throw new NonLinearExpressionException();
 
             return a/b.constant;
         }
@@ -554,7 +554,7 @@ namespace CassowaryNET
         {
             // cannot divide by zero
             if (MathHelper.Approx(b, 0d))
-                throw new CassowaryNonLinearExpressionException();
+                throw new NonLinearExpressionException();
 
             return a*(1d/b);
         }
