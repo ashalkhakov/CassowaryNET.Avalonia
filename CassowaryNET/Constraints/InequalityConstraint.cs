@@ -35,7 +35,9 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Expression)
 
-        public InequalityConstraint(
+        // an expression to keep positive
+
+        internal InequalityConstraint(
             LinearExpression expression,
             Strength strength,
             double weight)
@@ -43,14 +45,14 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public InequalityConstraint(
+        internal InequalityConstraint(
             LinearExpression expression,
             Strength strength)
             : base(expression, strength)
         {
         }
 
-        public InequalityConstraint(LinearExpression expression)
+        internal InequalityConstraint(LinearExpression expression)
             : base(expression)
         {
         }
