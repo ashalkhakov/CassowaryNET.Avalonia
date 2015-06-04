@@ -20,6 +20,7 @@
 */
 
 using System;
+using CassowaryNET.Utils;
 using CassowaryNET.Variables;
 
 namespace CassowaryNET.Constraints
@@ -29,8 +30,6 @@ namespace CassowaryNET.Constraints
         #region Fields
 
         private readonly Variable variable;
-        // cache the expression
-        private readonly LinearExpression expression;
 
         #endregion
 
@@ -40,10 +39,12 @@ namespace CassowaryNET.Constraints
             Variable variable,
             Strength strength,
             double weight)
-            : base(strength, weight)
+            : base(GetExpression(variable), strength, weight)
         {
+            AssertThat.ArgumentNotNull(() => variable);
+            AssertThat.ArgumentNotNull(() => strength);
+
             this.variable = variable;
-            expression = new LinearExpression(this.variable, -1d, this.variable.Value);
         }
 
         #endregion
@@ -55,14 +56,16 @@ namespace CassowaryNET.Constraints
             get { return variable; }
         }
 
-        public override sealed LinearExpression Expression
-        {
-            get { return expression; }
-        }
-
         #endregion
 
         #region Methods
+
+        private static LinearExpression GetExpression(Variable variable)
+        {
+            AssertThat.ArgumentNotNull(() => variable);
+
+            return new LinearExpression(variable, -1d, variable.Value);
+        }
 
         public override string ToString()
         {

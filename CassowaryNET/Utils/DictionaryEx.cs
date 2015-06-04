@@ -23,6 +23,20 @@ namespace CassowaryNET.Utils
         //}
 
         [Pure]
+        internal static Option<TValue> GetOption<TKey, TValue>(
+            this IReadOnlyDictionary<TKey, TValue> dictionary,
+            TKey key)
+        {
+            TValue value;
+            if (dictionary.TryGetValue(key, out value))
+            {
+                return new Option<TValue>(value);
+            }
+
+            return new Option<TValue>();
+        }
+
+        [Pure]
         internal static TValue GetOrDefault<TKey, TValue>(
             this IReadOnlyDictionary<TKey, TValue> dictionary,
             TKey key,

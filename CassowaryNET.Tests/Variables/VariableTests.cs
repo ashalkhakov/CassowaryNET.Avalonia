@@ -105,13 +105,12 @@ namespace CassowaryNET.Tests.Variables
         }
 
         [TestFixture]
-        public class SetValueTests : TestBase
+        public class ValueTests : TestBase
         {
             [Test]
-            public void changes_value()
+            public void setting_value_changes_value()
             {
-                var target = GetTarget();
-
+                var target = new Variable(17.4d);
                 target.Value = 42.3d;
 
                 Assert.That(target.Value, Is.EqualTo(42.3d));

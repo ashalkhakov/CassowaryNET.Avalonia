@@ -38,9 +38,9 @@ namespace CassowaryNET
         #region Fields
 
         private readonly EditConstraint constraint;
-        private readonly SlackVariable clvEditPlus;
-        private readonly SlackVariable clvEditMinus;
-        private double prevEditConstant;
+        private readonly SlackVariable plusError;
+        private readonly SlackVariable minusError;
+        private double constraintExpressionConstant;
         private readonly int index;
 
         #endregion
@@ -49,15 +49,15 @@ namespace CassowaryNET
 
         public EditInfo(
             EditConstraint constraint,
-            SlackVariable eplus,
-            SlackVariable eminus,
-            double prevEditConstant,
+            SlackVariable plusError,
+            SlackVariable minusError,
+            double constraintExpressionConstant,
             int index)
         {
             this.constraint = constraint;
-            this.clvEditPlus = eplus;
-            this.clvEditMinus = eminus;
-            this.prevEditConstant = prevEditConstant;
+            this.plusError = plusError;
+            this.minusError = minusError;
+            this.constraintExpressionConstant = constraintExpressionConstant;
             this.index = index;
         }
 
@@ -65,30 +65,30 @@ namespace CassowaryNET
 
         #region Properties
 
-        public int Index
-        {
-            get { return index; }
-        }
-
         public EditConstraint Constraint
         {
             get { return constraint; }
         }
 
-        public SlackVariable ClvEditPlus
+        public SlackVariable PlusError
         {
-            get { return clvEditPlus; }
+            get { return plusError; }
         }
 
-        public SlackVariable ClvEditMinus
+        public SlackVariable MinusError
         {
-            get { return clvEditMinus; }
+            get { return minusError; }
         }
 
-        public double PrevEditConstant
+        public double ConstraintExpressionConstant
         {
-            get { return prevEditConstant; }
-            set { prevEditConstant = value; }
+            get { return constraintExpressionConstant; }
+            set { constraintExpressionConstant = value; }
+        }
+
+        public int Index
+        {
+            get { return index; }
         }
 
         #endregion

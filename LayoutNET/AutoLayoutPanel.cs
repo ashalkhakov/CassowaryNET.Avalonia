@@ -50,7 +50,7 @@ namespace LayoutNET
         #region Fields
 
         private readonly CassowarySolver solver;
-        private readonly Dictionary<Variable, LinearEquality> variableConstraints;
+        private readonly Dictionary<Variable, EqualityConstraint> variableConstraints;
         private readonly Dictionary<UIElement, LayoutVariableSet> elementVariables;
         private readonly List<UIElement> processedChildren;
 
@@ -62,7 +62,7 @@ namespace LayoutNET
         {
             solver = new CassowarySolver();
             solver.AutoSolve = false;
-            variableConstraints = new Dictionary<Variable, LinearEquality>();
+            variableConstraints = new Dictionary<Variable, EqualityConstraint>();
 
             elementVariables = new Dictionary<UIElement, LayoutVariableSet>();
             processedChildren = new List<UIElement>();
@@ -186,7 +186,7 @@ namespace LayoutNET
             }
         }
 
-        private static LinearConstraint GetClLinearEquation(
+        private static Constraint GetClLinearEquation(
             Variable variable,
             LinearExpression expression,
             Strength strength,
@@ -247,7 +247,7 @@ namespace LayoutNET
             // TODO: Find a better way then manually adding/removing constriants.
 
             // if it is already there, remove from the solver...
-            LinearEquality constraint;
+            EqualityConstraint constraint;
             if (variableConstraints.TryGetValue(variable, out constraint))
             {
                 if (constraint != null)

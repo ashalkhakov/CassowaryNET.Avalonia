@@ -25,7 +25,7 @@ using CassowaryNET.Variables;
 
 namespace CassowaryNET.Constraints
 {
-    public sealed class LinearInequality : LinearConstraint
+    public sealed class InequalityConstraint : Constraint
     {
         #region Fields
 
@@ -35,7 +35,7 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Expression)
 
-        public LinearInequality(
+        public InequalityConstraint(
             LinearExpression expression,
             Strength strength,
             double weight)
@@ -43,14 +43,14 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearInequality(
+        public InequalityConstraint(
             LinearExpression expression,
             Strength strength)
             : this(expression, strength, 1d)
         {
         }
 
-        public LinearInequality(LinearExpression expression)
+        public InequalityConstraint(LinearExpression expression)
             : this(expression, Strength.Required)
         {
         }
@@ -59,7 +59,7 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Variable,Variable)
 
-        private LinearInequality(
+        private InequalityConstraint(
             AbstractVariable variable1,
             InequalityType inequalityType,
             AbstractVariable variable2,
@@ -69,7 +69,7 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearInequality(
+        public InequalityConstraint(
             AbstractVariable variable1,
             InequalityType inequalityType,
             AbstractVariable variable2,
@@ -78,7 +78,7 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearInequality(
+        public InequalityConstraint(
             AbstractVariable variable1,
             InequalityType inequalityType,
             AbstractVariable variable2)
@@ -90,7 +90,7 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Variable,double)
 
-        public LinearInequality(
+        public InequalityConstraint(
             AbstractVariable variable,
             InequalityType inequalityType,
             double value,
@@ -100,7 +100,7 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearInequality(
+        public InequalityConstraint(
             AbstractVariable variable,
             InequalityType inequalityType,
             double value,
@@ -109,7 +109,7 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearInequality(
+        public InequalityConstraint(
             AbstractVariable variable,
             InequalityType inequalityType,
             double value)
@@ -121,7 +121,7 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Expression,Expression)
 
-        public LinearInequality(
+        public InequalityConstraint(
             LinearExpression expression1,
             InequalityType inequalityType,
             LinearExpression expression2,
@@ -131,7 +131,7 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearInequality(
+        public InequalityConstraint(
             LinearExpression expression1,
             InequalityType inequalityType,
             LinearExpression expression2,
@@ -140,7 +140,7 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearInequality(
+        public InequalityConstraint(
             LinearExpression expression1,
             InequalityType inequalityType,
             LinearExpression expression2)
@@ -152,7 +152,7 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Variable,Expression)
 
-        public LinearInequality(
+        public InequalityConstraint(
             AbstractVariable variable,
             InequalityType inequalityType,
             LinearExpression expression,
@@ -162,7 +162,7 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearInequality(
+        public InequalityConstraint(
             AbstractVariable variable,
             InequalityType inequalityType,
             LinearExpression expression,
@@ -171,7 +171,7 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearInequality(
+        public InequalityConstraint(
             AbstractVariable variable,
             InequalityType inequalityType,
             LinearExpression expression)
@@ -183,7 +183,7 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Expression,Variable)
 
-        public LinearInequality(
+        public InequalityConstraint(
             LinearExpression expression,
             InequalityType inequalityType,
             AbstractVariable variable,
@@ -193,7 +193,7 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearInequality(
+        public InequalityConstraint(
             LinearExpression expression,
             InequalityType inequalityType,
             AbstractVariable variable,
@@ -202,7 +202,7 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearInequality(
+        public InequalityConstraint(
             LinearExpression expression,
             InequalityType inequalityType,
             AbstractVariable variable)
@@ -215,12 +215,7 @@ namespace CassowaryNET.Constraints
         #endregion
 
         #region Properties
-
-        public override bool IsInequality
-        {
-            get { return true; }
-        }
-
+        
         #endregion
 
         #region Methods
@@ -310,14 +305,14 @@ namespace CassowaryNET.Constraints
             }
         }
 
-        public LinearInequality WithStrength(Strength strength)
+        public InequalityConstraint WithStrength(Strength strength)
         {
-            return new LinearInequality(Expression, strength, Weight);
+            return new InequalityConstraint(Expression, strength, Weight);
         }
 
-        public LinearInequality WithWeight(double weight)
+        public InequalityConstraint WithWeight(double weight)
         {
-            return new LinearInequality(Expression, Strength, weight);
+            return new InequalityConstraint(Expression, Strength, weight);
         }
 
         public override string ToString()

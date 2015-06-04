@@ -24,7 +24,7 @@ using CassowaryNET.Variables;
 
 namespace CassowaryNET.Constraints
 {
-    public sealed class LinearEquality : LinearConstraint
+    public sealed class EqualityConstraint : Constraint
     {
         #region Fields
 
@@ -34,7 +34,7 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Expression)
 
-        public LinearEquality(
+        public EqualityConstraint(
             LinearExpression expression,
             Strength strength,
             double weight)
@@ -42,14 +42,14 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearEquality(
+        public EqualityConstraint(
             LinearExpression expression,
             Strength strength)
             : this(expression, strength, 1d)
         {
         }
 
-        public LinearEquality(LinearExpression expression)
+        public EqualityConstraint(LinearExpression expression)
             : this(expression, Strength.Required)
         {
         }
@@ -58,7 +58,7 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Variable,Expression)
 
-        public LinearEquality(
+        public EqualityConstraint(
             AbstractVariable variable,
             LinearExpression expression,
             Strength strength,
@@ -67,7 +67,7 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearEquality(
+        public EqualityConstraint(
             AbstractVariable variable,
             LinearExpression expression,
             Strength strength)
@@ -75,7 +75,7 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearEquality(
+        public EqualityConstraint(
             AbstractVariable variable,
             LinearExpression expression)
             : this(variable, expression, Strength.Required, 1d)
@@ -86,14 +86,14 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Variable,double)
 
-        public LinearEquality(
+        public EqualityConstraint(
             AbstractVariable variable,
             double value)
             : this(variable, value, Strength.Required, 1d)
         {
         }
 
-        public LinearEquality(
+        public EqualityConstraint(
             AbstractVariable variable,
             double value,
             Strength strength)
@@ -101,7 +101,7 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearEquality(
+        public EqualityConstraint(
             AbstractVariable variable,
             double value,
             Strength strength,
@@ -117,7 +117,7 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Expression,Variable)
 
-        public LinearEquality(
+        public EqualityConstraint(
             LinearExpression expression,
             AbstractVariable variable,
             Strength strength,
@@ -129,7 +129,7 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearEquality(
+        public EqualityConstraint(
             LinearExpression expression,
             AbstractVariable variable,
             Strength strength)
@@ -137,7 +137,7 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearEquality(
+        public EqualityConstraint(
             LinearExpression expression,
             AbstractVariable variable)
             : this(expression, variable, Strength.Required, 1d)
@@ -148,14 +148,14 @@ namespace CassowaryNET.Constraints
 
         #region ctor(Expression,Expression)
 
-        public LinearEquality(
+        public EqualityConstraint(
             LinearExpression expression1,
             LinearExpression expression2)
             : this(expression1, expression2, Strength.Required, 1d)
         {
         }
 
-        public LinearEquality(
+        public EqualityConstraint(
             LinearExpression expression1,
             LinearExpression expression2,
             Strength strength)
@@ -163,7 +163,7 @@ namespace CassowaryNET.Constraints
         {
         }
 
-        public LinearEquality(
+        public EqualityConstraint(
             LinearExpression expression1,
             LinearExpression expression2,
             Strength strength,
@@ -183,14 +183,14 @@ namespace CassowaryNET.Constraints
         
         #region Methods
 
-        public LinearEquality WithStrength(Strength strength)
+        public EqualityConstraint WithStrength(Strength strength)
         {
-            return new LinearEquality(Expression, strength, Weight);
+            return new EqualityConstraint(Expression, strength, Weight);
         }
 
-        public LinearEquality WithWeight(double weight)
+        public EqualityConstraint WithWeight(double weight)
         {
-            return new LinearEquality(Expression, Strength, weight);
+            return new EqualityConstraint(Expression, Strength, weight);
         }
 
         public override string ToString()

@@ -20,6 +20,7 @@
 */
 
 using System;
+using CassowaryNET.Utils;
 
 namespace CassowaryNET.Constraints
 {
@@ -34,6 +35,7 @@ namespace CassowaryNET.Constraints
     {
         #region Fields
 
+        private readonly LinearExpression expression;
         private readonly Strength strength;
         private readonly double weight;
 
@@ -41,8 +43,15 @@ namespace CassowaryNET.Constraints
 
         #region Constructors
         
-        protected Constraint(Strength strength, double weight)
+        protected Constraint(
+            LinearExpression expression,
+            Strength strength, 
+            double weight)
         {
+            AssertThat.ArgumentNotNull(() => expression);
+            AssertThat.ArgumentNotNull(() => strength);
+
+            this.expression = expression;
             this.strength = strength;
             this.weight = weight;
         }
@@ -51,7 +60,10 @@ namespace CassowaryNET.Constraints
 
         #region Properties
 
-        public abstract LinearExpression Expression { get; }
+        public LinearExpression Expression
+        {
+            get { return expression; }
+        }
 
         public Strength Strength
         {
@@ -63,19 +75,19 @@ namespace CassowaryNET.Constraints
             get { return weight; }
         }
 
-        public virtual bool IsEditConstraint
+        public bool IsEditConstraint
         {
-            get { return false; }
+            get { return this is EditConstraint; }
         }
 
-        public virtual bool IsStayConstraint
+        public bool IsStayConstraint
         {
-            get { return false; }
+            get { return this is StayConstraint; }
         }
 
-        public virtual bool IsInequality
+        public bool IsInequality
         {
-            get { return false; }
+            get { return this is InequalityConstraint; }
         }
 
         #endregion

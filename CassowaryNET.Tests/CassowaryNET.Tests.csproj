@@ -47,6 +47,8 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constraints\EditConstraintTests.cs" />
+    <Compile Include="ExpressionEx.cs" />
     <Compile Include="LinearExpressionTests.cs" />
     <Compile Include="CassowarySolverTests.cs" />
     <Compile Include="EndToEndTests.cs" />
@@ -68,9 +70,7 @@
       <Name>CassowaryNET</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Constraints\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

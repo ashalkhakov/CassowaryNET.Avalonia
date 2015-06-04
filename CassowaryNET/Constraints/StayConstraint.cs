@@ -24,7 +24,7 @@ using CassowaryNET.Variables;
 
 namespace CassowaryNET.Constraints
 {
-    public sealed class StayConstraint : EditOrStayConstraint
+    internal sealed class StayConstraint : EditOrStayConstraint
     {
         #region Fields
 
@@ -32,17 +32,17 @@ namespace CassowaryNET.Constraints
 
         #region Constructors
 
-        public StayConstraint(Variable variable)
+        internal StayConstraint(Variable variable)
             : this(variable, Strength.Weak)
         {
         }
 
-        public StayConstraint(Variable variable, Strength strength)
+        internal StayConstraint(Variable variable, Strength strength)
             : this(variable, strength, 1d)
         {
         }
 
-        public StayConstraint(Variable variable, Strength strength, double weight)
+        internal StayConstraint(Variable variable, Strength strength, double weight)
             : base(variable, strength, weight)
         {
         }
@@ -50,12 +50,7 @@ namespace CassowaryNET.Constraints
         #endregion
 
         #region Properties
-
-        public override bool IsStayConstraint
-        {
-            get { return true; }
-        }
-
+        
         #endregion
 
         #region Methods

@@ -56,9 +56,8 @@
     <Compile Include="Constraints\Constraint.cs" />
     <Compile Include="Constraints\EditConstraint.cs" />
     <Compile Include="Constraints\EditOrStayConstraint.cs" />
-    <Compile Include="Constraints\LinearConstraint.cs" />
-    <Compile Include="Constraints\LinearEquality.cs" />
-    <Compile Include="Constraints\LinearInequality.cs" />
+    <Compile Include="Constraints\EqualityConstraint.cs" />
+    <Compile Include="Constraints\InequalityConstraint.cs" />
     <Compile Include="Constraints\StayConstraint.cs" />
     <Compile Include="Exceptions\CassowaryConstraintNotFoundException.cs" />
     <Compile Include="Exceptions\CassowaryException.cs" />
@@ -69,8 +68,10 @@
     <Compile Include="Exceptions\CassowaryTooDifficultException.cs" />
     <Compile Include="InequalityType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\AssertThat.cs" />
     <Compile Include="Utils\Cloneable.cs" />
     <Compile Include="Utils\DictionaryEx.cs" />
+    <Compile Include="Utils\Option.cs" />
     <Compile Include="Variables\AbstractVariable.cs" />
     <Compile Include="Variables\DummyVariable.cs" />
     <Compile Include="Variables\ObjectiveVariable.cs" />

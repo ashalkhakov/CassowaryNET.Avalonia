@@ -55,8 +55,7 @@ namespace CassowaryNET
             double multiplier = 1d,
             double constant = 0d)
         {
-            if (Equals(variable, null))
-                throw new ArgumentNullException();
+            AssertThat.ArgumentNotNull(() => variable);
 
             this.constant = constant;
             this.terms = new Dictionary<AbstractVariable, double>
@@ -337,6 +336,16 @@ namespace CassowaryNET
 
         #region Operators
 
+        public static implicit operator LinearExpression(AbstractVariable v)
+        {
+            return new LinearExpression(v);
+        }
+
+        public static implicit operator LinearExpression(double v)
+        {
+            return new LinearExpression(v);
+        }
+
         private static LinearExpression Add(
             LinearExpression a,
             LinearExpression b,
@@ -457,8 +466,7 @@ namespace CassowaryNET
         }
 
         #endregion
-
-
+        
         private static LinearExpression Multiply(LinearExpression a, double b)
         {
             var newConstant = a.constant*b;
@@ -562,72 +570,72 @@ namespace CassowaryNET
 
         #region ==
 
-        public static LinearEquality operator ==(
+        public static EqualityConstraint operator ==(
             LinearExpression a,
             LinearExpression b)
         {
-            return new LinearEquality(a, b);
+            return new EqualityConstraint(a, b);
         }
 
-        public static LinearEquality operator !=(
+        public static EqualityConstraint operator !=(
             LinearExpression a,
             LinearExpression b)
         {
             throw new NotImplementedException();
         }
 
-        public static LinearEquality operator ==(
+        public static EqualityConstraint operator ==(
             LinearExpression a,
             AbstractVariable b)
         {
-            return new LinearEquality(a, b);
+            return new EqualityConstraint(a, b);
         }
 
-        public static LinearEquality operator !=(
+        public static EqualityConstraint operator !=(
             LinearExpression a,
             AbstractVariable b)
         {
             throw new NotImplementedException();
         }
 
-        public static LinearEquality operator ==(
+        public static EqualityConstraint operator ==(
             AbstractVariable a,
             LinearExpression b)
         {
-            return new LinearEquality(a, b);
+            return new EqualityConstraint(a, b);
         }
 
-        public static LinearEquality operator !=(
+        public static EqualityConstraint operator !=(
             AbstractVariable a,
             LinearExpression b)
         {
             throw new NotImplementedException();
         }
 
-        public static LinearEquality operator ==(
+        public static EqualityConstraint operator ==(
             LinearExpression a,
             double b)
         {
             var bExpression = new LinearExpression(b);
-            return new LinearEquality(a, bExpression);
+            return new EqualityConstraint(a, bExpression);
         }
 
-        public static LinearEquality operator !=(
+        public static EqualityConstraint operator !=(
             LinearExpression a,
             double b)
         {
             throw new NotImplementedException();
         }
 
-        public static LinearEquality operator ==(
+        public static EqualityConstraint operator ==(
             double a,
             LinearExpression b)
         {
             var aExpression = new LinearExpression(a);
-            return new LinearEquality(aExpression, b);
+            return new EqualityConstraint(aExpression, b);
         }
 
-        public static LinearEquality operator !=(
+        public static EqualityConstraint operator !=(
             double a,
             LinearExpression b)
         {
@@ -638,78 +646,78 @@ namespace CassowaryNET
 
         #region <= and >=
 
-        public static LinearInequality operator <=(
+        public static InequalityConstraint operator <=(
             LinearExpression a,
             LinearExpression b)
         {
-            return new LinearInequality(a, InequalityType.LessThanOrEqual, b);
+            return new InequalityConstraint(a, InequalityType.LessThanOrEqual, b);
         }
 
-        public static LinearInequality operator >=(
+        public static InequalityConstraint operator >=(
             LinearExpression a,
             LinearExpression b)
         {
-            return new LinearInequality(a, InequalityType.GreaterThanOrEqual, b);
+            return new InequalityConstraint(a, InequalityType.GreaterThanOrEqual, b);
         }
 
-        public static LinearInequality operator <=(
-            LinearExpression a,
-            AbstractVariable b)
-        {
-            return new LinearInequality(a, InequalityType.LessThanOrEqual, b);
-        }
-
-        public static LinearInequality operator >=(
+        public static InequalityConstraint operator <=(
             LinearExpression a,
             AbstractVariable b)
         {
-            return new LinearInequality(a, InequalityType.GreaterThanOrEqual, b);
+            return new InequalityConstraint(a, InequalityType.LessThanOrEqual, b);
         }
 
-        public static LinearInequality operator <=(
+        public static InequalityConstraint operator >=(
+            LinearExpression a,
+            AbstractVariable b)
+        {
+            return new InequalityConstraint(a, InequalityType.GreaterThanOrEqual, b);
+        }
+
+        public static InequalityConstraint operator <=(
             AbstractVariable a,
             LinearExpression b)
         {
-            return new LinearInequality(a, InequalityType.LessThanOrEqual, b);
+            return new InequalityConstraint(a, InequalityType.LessThanOrEqual, b);
         }
 
-        public static LinearInequality operator >=(
+        public static InequalityConstraint operator >=(
             AbstractVariable a,
             LinearExpression b)
         {
-            return new LinearInequality(a, InequalityType.GreaterThanOrEqual, b);
+            return new InequalityConstraint(a, InequalityType.GreaterThanOrEqual, b);
         }
 
-        public static LinearInequality operator <=(
+        public static InequalityConstraint operator <=(
             LinearExpression a,
             double b)
         {
             var bExpression = new LinearExpression(b);
-            return new LinearInequality(a, InequalityType.LessThanOrEqual, bExpression);
+            return new InequalityConstraint(a, InequalityType.LessThanOrEqual, bExpression);
         }
 
-        public static LinearInequality operator >=(
+        public static InequalityConstraint operator >=(
             LinearExpression a,
             double b)
         {
             var bExpression = new LinearExpression(b);
-            return new LinearInequality(a, InequalityType.GreaterThanOrEqual, bExpression);
+            return new InequalityConstraint(a, InequalityType.GreaterThanOrEqual, bExpression);
         }
 
-        public static LinearInequality operator <=(
+        public static InequalityConstraint operator <=(
             double a,
             LinearExpression b)
         {
             var aExpression = new LinearExpression(a);
-            return new LinearInequality(aExpression, InequalityType.LessThanOrEqual, b);
+            return new InequalityConstraint(aExpression, InequalityType.LessThanOrEqual, b);
         }
 
-        public static LinearInequality operator >=(
+        public static InequalityConstraint operator >=(
             double a,
             LinearExpression b)
         {
             var aExpression = new LinearExpression(a);
-            return new LinearInequality(aExpression, InequalityType.GreaterThanOrEqual, b);
+            return new InequalityConstraint(aExpression, InequalityType.GreaterThanOrEqual, b);
         }
 
         #endregion

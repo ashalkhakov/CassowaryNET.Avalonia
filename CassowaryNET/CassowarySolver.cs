@@ -44,14 +44,14 @@ namespace CassowaryNET
         /// (need both positive and negative since they have only non-negative
         /// values).
         /// </summary>
-        private readonly List<SlackVariable> stayMinusErrorVars;
+        private readonly List<SlackVariable> stayMinusErrorVariables;
 
         /// <summary>
         /// The array of positive error vars for the stay constraints
         /// (need both positive and negative since they have only non-negative
         /// values).
         /// </summary>
-        private readonly List<SlackVariable> stayPlusErrorVars;
+        private readonly List<SlackVariable> stayPlusErrorVariables;
 
         /// <summary>
         /// Give error variables for a non-required constraints,
@@ -80,7 +80,7 @@ namespace CassowaryNET
         /// resolve(ArrayList...)] interface), and the previous value.
         /// (ClEditInfo replaces the parallel vectors from the Smalltalk impl.)
         /// </remarks>
-        private readonly Dictionary<Variable, EditInfo> editVarMap;
+        private readonly Dictionary<Variable, EditInfo> editVariableInfo;
 
         private readonly Stack<int> editVariablesCountStack;
 
@@ -100,11 +100,11 @@ namespace CassowaryNET
             objective = new ObjectiveVariable("Z");
             tableau.Rows.Add(objective, new LinearExpression(0d));
 
-            stayMinusErrorVars = new List<SlackVariable>();
-            stayPlusErrorVars = new List<SlackVariable>();
+            stayMinusErrorVariables = new List<SlackVariable>();
+            stayPlusErrorVariables = new List<SlackVariable>();
             errorVariables = new Dictionary<Constraint, HashSet<SlackVariable>>();
             markerVariables = new Dictionary<Constraint, AbstractVariable>();
-            editVarMap = new Dictionary<Variable, EditInfo>();
+            editVariableInfo = new Dictionary<Variable, EditInfo>();
 
             AutoSolve = true;
 
@@ -135,58 +135,22 @@ namespace CassowaryNET
 
         #region Methods
 
-        /// <summary>
-        /// Convenience function for creating a linear inequality constraint.
-        /// </summary>
-        public void AddLowerBound(AbstractVariable variable, double lower)
-            /* throws ExClRequiredFailure, ExClInternalError */
-        {
-            var constraint = new LinearInequality(
-                variable,
-                InequalityType.GreaterThanOrEqual,
-                new LinearExpression(lower));
-            AddConstraint(constraint);
-        }
-
-        /// <summary>
-        /// Convenience function for creating a linear inequality constraint.
-        /// </summary>
-        public void AddUpperBound(AbstractVariable variable, double upper)
-            /* throws ExClRequiredFailure, ExClInternalError */
-        {
-            var constraint = new LinearInequality(
-                variable,
-                InequalityType.LessThanOrEqual,
-                new LinearExpression(upper));
-            AddConstraint(constraint);
-        }
-
-        /// <summary>
-        /// Convenience function for creating a pair of linear inequality constraints.
-        /// </summary>
-        public void AddBounds(AbstractVariable variable, double lower, double upper)
-            /* throws ExClRequiredFailure, ExClInternalError */
-        {
-            AddLowerBound(variable, lower);
-            AddUpperBound(variable, upper);
-        }
-
-        public void AddConstraint(EditConstraint constraint)
+        internal void AddConstraint(EditConstraint constraint)
         {
             AddConstraintCore(constraint);
         }
 
-        public void AddConstraint(StayConstraint constraint)
+        internal void AddConstraint(StayConstraint constraint)
         {
             AddConstraintCore(constraint);
         }
 
-        public void AddConstraint(LinearEquality constraint)
+        public void AddConstraint(EqualityConstraint constraint)
         {
             AddConstraintCore(constraint);
         }
 
-        public void AddConstraint(LinearInequality constraint)
+        public void AddConstraint(InequalityConstraint constraint)
         {
             AddConstraintCore(constraint);
         }
@@ -200,24 +164,22 @@ namespace CassowaryNET
                 AddConstraint((EditConstraint)constraint);
             else if (constraint is StayConstraint)
                 AddConstraint((StayConstraint)constraint);
-            else if (constraint is LinearEquality)
-                AddConstraint((LinearEquality)constraint);
-            else if (constraint is LinearInequality)
-                AddConstraint((LinearInequality)constraint);
+            else if (constraint is EqualityConstraint)
+                AddConstraint((EqualityConstraint)constraint);
+            else if (constraint is InequalityConstraint)
+                AddConstraint((InequalityConstraint)constraint);
             else
                 throw new ArgumentException();
         }
 
         private void AddConstraintCore(Constraint constraint)
         {
-            SlackVariable eplus;
-            SlackVariable eminus;
-            double prevEConstant;
-            var expression = NewExpression(
+            SlackVariable plusError;
+            SlackVariable minusError;
+            var expression = GetExpressionForConstraint(
                 constraint,
-                out eplus,
-                out eminus,
-                out prevEConstant);
+                out plusError,
+                out minusError);
 
             var addedDirectly = TryAddingDirectly(expression);
             if (!addedDirectly)
@@ -227,19 +189,19 @@ namespace CassowaryNET
 
             needsSolving = true;
 
-            if (constraint.IsEditConstraint)
+            if (constraint is EditConstraint)
             {
-                int i = editVarMap.Count;
-                var cnEdit = (EditConstraint) constraint;
+                var editConstraint = (EditConstraint) constraint;
 
-                editVarMap.Add(
-                    cnEdit.Variable,
-                    new EditInfo(
-                        cnEdit,
-                        eplus,
-                        eminus,
-                        prevEConstant,
-                        i));
+                var index = editVariableInfo.Count;
+                var editInfo = new EditInfo(
+                    editConstraint,
+                    plusError,
+                    minusError,
+                    constraint.Expression.Constant,
+                    index);
+
+                editVariableInfo.Add(editConstraint.Variable, editInfo);
             }
 
             MaybeAutoSolve();
@@ -247,18 +209,20 @@ namespace CassowaryNET
 
         /// <summary>
         /// Add an edit constraint for a variable with a given strength.
-        /// <param name="v">Variable to add an edit constraint to.</param>
+        /// <param name="variable">Variable to add an edit constraint to.</param>
         /// <param name="strength">Strength of the edit constraint.</param>
         /// </summary>
-        public void AddEditVar(Variable v, Strength strength)
+        public void AddEditVariable(Variable variable, Strength strength)
             /* throws ExClInternalError */
         {
             // we get problems here is strength == Required
+            if (strength == Strength.Required)
+                throw new ArgumentException("Strength cannot be Strength.Required");
 
             try
             {
-                var cnEdit = new EditConstraint(v, strength);
-                AddConstraint(cnEdit);
+                var editConstraint = new EditConstraint(variable, strength);
+                AddConstraint(editConstraint);
             }
             catch (CassowaryRequiredConstraintFailureException)
             {
@@ -271,10 +235,10 @@ namespace CassowaryNET
         /// <remarks>
         /// Add an edit constraint with strength ClStrength#Strong.
         /// </remarks>
-        public void AddEditVar(Variable v)
+        public void AddEditVariable(Variable variable)
         {
             /* throws ExClInternalError */
-            AddEditVar(v, Strength.Strong);
+            AddEditVariable(variable, Strength.Strong);
         }
 
         /// <summary>
@@ -289,11 +253,11 @@ namespace CassowaryNET
         {
             // TODO: Make this return some form of IDisposable
 
-            Debug.Assert(editVarMap.Count > 0, "_editVarMap.Count > 0");
+            Debug.Assert(editVariableInfo.Count > 0, "_editVarMap.Count > 0");
             // may later want to do more in here
             tableau.InfeasibleRows.Clear();
             ResetStayConstants();
-            editVariablesCountStack.Push(editVarMap.Count);
+            editVariablesCountStack.Push(editVariableInfo.Count);
         }
 
         /// <summary>
@@ -306,7 +270,7 @@ namespace CassowaryNET
         public void EndEdit()
             /* throws ExClInternalError */
         {
-            Debug.Assert(editVarMap.Count > 0, "_editVarMap.Count > 0");
+            Debug.Assert(editVariableInfo.Count > 0, "_editVarMap.Count > 0");
             Resolve();
 
             editVariablesCountStack.Pop();
@@ -329,9 +293,9 @@ namespace CassowaryNET
             var toRemove = new List<Variable>();
             try
             {
-                foreach (var v in editVarMap.Keys)
+                foreach (var v in editVariableInfo.Keys)
                 {
-                    var cei = editVarMap[v];
+                    var cei = editVariableInfo[v];
                     if (cei.Index >= n)
                     {
                         toRemove.Add(v);
@@ -343,7 +307,7 @@ namespace CassowaryNET
                     RemoveEditVar(v);
                 }
 
-                Debug.Assert(editVarMap.Count == n, "_editVarMap.Count == n");
+                Debug.Assert(editVariableInfo.Count == n, "_editVarMap.Count == n");
             }
             catch (CassowaryConstraintNotFoundException)
             {
@@ -360,7 +324,7 @@ namespace CassowaryNET
         private void RemoveEditVar(Variable v)
             /* throws ExClInternalError, ExClConstraintNotFound */
         {
-            var editInfo = editVarMap[v];
+            var editInfo = editVariableInfo[v];
             var constraint = editInfo.Constraint;
             RemoveConstraint(constraint);
         }
@@ -546,10 +510,10 @@ namespace CassowaryNET
             {
                 if (slackVariables != null)
                 {
-                    for (int i = 0; i < stayPlusErrorVars.Count; i++)
+                    for (int i = 0; i < stayPlusErrorVariables.Count; i++)
                     {
-                        slackVariables.Remove(stayPlusErrorVars[i]);
-                        slackVariables.Remove(stayMinusErrorVars[i]);
+                        slackVariables.Remove(stayPlusErrorVariables[i]);
+                        slackVariables.Remove(stayMinusErrorVariables[i]);
                     }
                 }
             }
@@ -558,10 +522,10 @@ namespace CassowaryNET
                 Debug.Assert(slackVariables != null, "eVars != null");
                 var editConstraint = (EditConstraint) constraint;
                 var variable = editConstraint.Variable;
-                var editInfo = editVarMap[variable];
-                var clvEditMinus = editInfo.ClvEditMinus;
+                var editInfo = editVariableInfo[variable];
+                var clvEditMinus = editInfo.MinusError;
                 tableau.RemoveColumn(clvEditMinus);
-                editVarMap.Remove(variable);
+                editVariableInfo.Remove(variable);
             }
 
             MaybeAutoSolve();
@@ -612,24 +576,24 @@ namespace CassowaryNET
         /// The tableau will not be solved completely until after Resolve()
         /// has been called.
         /// </remarks>
-        public void SuggestValue(Variable v, double x)
+        public void SuggestValue(Variable variable, double value)
             /* throws ExClError */
         {
-            var cei = editVarMap[v];
-            if (cei == null)
+            var editInfo = editVariableInfo[variable];
+            if (editInfo == null)
             {
                 Console.Error.WriteLine(
-                    "SuggestValue for variable " + v +
-                    ", but var is not an edit variable\n");
+                    "SuggestValue for variable {0}, but var is not an edit variable\n",
+                    variable);
 
                 throw new CassowaryException();
             }
 
-            SlackVariable clvEditPlus = cei.ClvEditPlus;
-            SlackVariable clvEditMinus = cei.ClvEditMinus;
-            double delta = x - cei.PrevEditConstant;
-            cei.PrevEditConstant = x;
-            DeltaEditConstant(delta, clvEditPlus, clvEditMinus);
+            var plusError = editInfo.PlusError;
+            var minusError = editInfo.MinusError;
+            var delta = value - editInfo.ConstraintExpressionConstant;
+            editInfo.ConstraintExpressionConstant = value;
+            DeltaEditConstant(delta, plusError, minusError);
         }
 
         public void Solve()
@@ -655,7 +619,7 @@ namespace CassowaryNET
             if (MathHelper.Approx(value, variable.Value))
                 return;
 
-            AddEditVar(variable);
+            AddEditVariable(variable);
             BeginEdit();
             try
             {
@@ -708,10 +672,10 @@ namespace CassowaryNET
 
             result += "\nSolver info:\n";
             result += "Stay Error Variables: ";
-            result += stayPlusErrorVars.Count + stayMinusErrorVars.Count;
-            result += " (" + stayPlusErrorVars.Count + " +, ";
-            result += stayMinusErrorVars.Count + " -)\n";
-            result += "Edit Variables: " + editVarMap.Count;
+            result += stayPlusErrorVariables.Count + stayMinusErrorVariables.Count;
+            result += " (" + stayPlusErrorVariables.Count + " +, ";
+            result += stayMinusErrorVariables.Count + " -)\n";
+            result += "Edit Variables: " + editVariableInfo.Count;
             result += "\n";
 
             return result;
@@ -722,9 +686,9 @@ namespace CassowaryNET
             string result = tableau.ToString();
 
             result += "\n_stayPlusErrorVars: ";
-            result += stayPlusErrorVars;
+            result += stayPlusErrorVariables;
             result += "\n_stayMinusErrorVars: ";
-            result += stayMinusErrorVars;
+            result += stayMinusErrorVariables;
             result += "\n";
 
             return result;
@@ -913,104 +877,81 @@ namespace CassowaryNET
             return subject;
         }
 
-        private LinearExpression NewExpression(
-            Constraint cn,
-            out SlackVariable eplus_,
-            out SlackVariable eminus_,
-            out double prevEConstant)
+        private LinearExpression GetExpressionForConstraint(
+            Constraint constraint,
+            out SlackVariable plusError,
+            out SlackVariable minusError)
         {
-            eplus_ = null;
-            eminus_ = null;
-            prevEConstant = 0d;
+            plusError = null;
+            minusError = null;
 
-            var cnExpr = cn.Expression;
-            var expr = new LinearExpression(cnExpr.Constant);
+            var expression = new LinearExpression(constraint.Expression.Constant);
 
-            foreach (AbstractVariable v in cnExpr.Terms.Keys)
+            foreach (var variable in constraint.Expression.Variables)
             {
-                double c = cnExpr.Terms[v];
-                LinearExpression e = tableau.RowExpression(v);
-                if (Equals(e, null))
-                {
-                    expr = expr + (v*c);
-                }
-                else
-                {
-                    expr = expr + (c*e);
-                }
+                var coefficient = constraint.Expression.Terms[variable];
+                var addition = tableau.Rows.GetOption(variable).ValueOr(variable);
+                expression += coefficient*addition;
             }
 
-            if (cn.IsInequality)
+            if (constraint.IsInequality)
             {
-                var slackVar = new SlackVariable("s");
-                expr = expr.WithVariableSetTo(slackVar, -1);
-                markerVariables.Add(cn, slackVar);
+                var slackVariable = new SlackVariable("s");
+                expression -= slackVariable;
+                markerVariables.Add(constraint, slackVariable);
 
-                if (cn.Strength != Strength.Required)
+                if (constraint.Strength != Strength.Required)
                 {
-                    var eminus = new SlackVariable("em");
-                    expr = expr.WithVariableSetTo(eminus, 1.0);
-                    var sw = cn.Strength.Weight.Value * cn.Weight;
+                    minusError = new SlackVariable("em");
+                    expression += minusError;
 
-                    var zRow = tableau.Rows[objective];
-                    zRow = zRow.WithVariableSetTo(eminus, sw);
-                    tableau.Rows[objective] = zRow;
+                    var weightCoefficient = constraint.Strength.Weight.Value*
+                                            constraint.Weight;
+                    tableau.Rows[objective] += weightCoefficient*minusError;
 
-                    InsertErrorVar(cn, eminus);
-                    tableau.NoteAddedVariable(eminus, objective);
+                    tableau.NoteAddedVariable(minusError, objective);
+                    InsertErrorVariable(constraint, minusError);
                 }
             }
             else
             {
-                // cn is an equality
-                if (cn.Strength == Strength.Required)
+                if (constraint.Strength == Strength.Required)
                 {
                     var dummyVar = new DummyVariable("d");
-                    expr = expr.WithVariableSetTo(dummyVar, 1.0);
-                    markerVariables.Add(cn, dummyVar);
+                    expression += dummyVar;
+                    markerVariables.Add(constraint, dummyVar);
                 }
                 else
                 {
-                    var eplus = new SlackVariable("ep");
-                    var eminus = new SlackVariable("em");
+                    plusError = new SlackVariable("ep");
+                    minusError = new SlackVariable("em");
 
-                    expr = expr.WithVariableSetTo(eplus, -1.0);
-                    expr = expr.WithVariableSetTo(eminus, 1.0);
-                    markerVariables.Add(cn, eplus);
-                    double swCoeff = cn.Strength.Weight.Value * cn.Weight;
+                    expression -= plusError;
+                    expression += minusError;
+                    markerVariables.Add(constraint, plusError);
 
-                    var zRow = tableau.Rows[objective];
-                    zRow = zRow.WithVariableSetTo(eplus, swCoeff);
-                    zRow = zRow.WithVariableSetTo(eminus, swCoeff);
-                    tableau.Rows[objective] = zRow;
+                    var weightCoefficient = constraint.Strength.Weight.Value*
+                                            constraint.Weight;
+                    tableau.Rows[objective] += weightCoefficient*(plusError + minusError);
 
-                    tableau.NoteAddedVariable(eplus, objective);
-                    tableau.NoteAddedVariable(eminus, objective);
+                    // minus error must be handled first (for some reason)
+                    tableau.NoteAddedVariable(minusError, objective);
+                    InsertErrorVariable(constraint, minusError);
 
-                    InsertErrorVar(cn, eminus);
-                    InsertErrorVar(cn, eplus);
+                    tableau.NoteAddedVariable(plusError, objective);
+                    InsertErrorVariable(constraint, plusError);
 
-                    if (cn.IsStayConstraint)
+                    if (constraint.IsStayConstraint)
                     {
-                        stayPlusErrorVars.Add(eplus);
-                        stayMinusErrorVars.Add(eminus);
-                    }
-                    else if (cn.IsEditConstraint)
-                    {
-                        eplus_ = eplus;
-                        eminus_ = eminus;
-
-                        prevEConstant = cnExpr.Constant;
+                        stayPlusErrorVariables.Add(plusError);
+                        stayMinusErrorVariables.Add(minusError);
                     }
                 }
             }
 
-            if (expr.Constant < 0)
-            {
-                expr = -expr;
-            }
-
-            return expr;
+            return expression.Constant >= 0d
+                ? expression
+                : -expression;
         }
 
         /// <summary>
@@ -1257,10 +1198,10 @@ namespace CassowaryNET
         /// </remarks>
         private void ResetStayConstants()
         {
-            for (int i = 0; i < stayPlusErrorVars.Count; i++)
+            for (int i = 0; i < stayPlusErrorVariables.Count; i++)
             {
                 {
-                    var stayPlusErrorVar = stayPlusErrorVars[i];
+                    var stayPlusErrorVar = stayPlusErrorVariables[i];
                     var expression = tableau.Rows.GetOrDefault(stayPlusErrorVar);
                     if (!Equals(expression, null))
                     {
@@ -1271,7 +1212,7 @@ namespace CassowaryNET
                 }
 
                 {
-                    var stayMinusErrorVar = stayMinusErrorVars[i];
+                    var stayMinusErrorVar = stayMinusErrorVariables[i];
                     var expression = tableau.Rows.GetOrDefault(stayMinusErrorVar);
                     if (!Equals(expression, null))
                     {
@@ -1322,17 +1263,14 @@ namespace CassowaryNET
         }
 
         /// <summary>
-        /// Protected convenience function to insert an error variable
+        /// Cconvenience function to insert an error variable
         /// into the _errorVars set, creating the mapping with Add as necessary.
         /// </summary>
-        private void InsertErrorVar(Constraint constraint, SlackVariable variable)
+        private void InsertErrorVariable(Constraint constraint, SlackVariable variable)
         {
-            HashSet<SlackVariable> constraintVariables;
-            if (!errorVariables.TryGetValue(constraint, out constraintVariables))
-            {
-                constraintVariables = new HashSet<SlackVariable>();
-                errorVariables.Add(constraint, constraintVariables);
-            }
+            var constraintVariables = errorVariables.GetOrAdd(
+                constraint,
+                _ => new HashSet<SlackVariable>());
 
             constraintVariables.Add(variable);
         }

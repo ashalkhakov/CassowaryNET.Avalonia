@@ -20,11 +20,12 @@
 */
 
 using System;
+using CassowaryNET.Utils;
 using CassowaryNET.Variables;
 
 namespace CassowaryNET.Constraints
 {
-    public sealed class EditConstraint : EditOrStayConstraint
+    internal sealed class EditConstraint : EditOrStayConstraint
     {
         #region Fields
         
@@ -32,34 +33,31 @@ namespace CassowaryNET.Constraints
 
         #region Constructors
 
-        public EditConstraint(Variable variable)
+        internal EditConstraint(Variable variable)
             : this(variable, Strength.Required)
         {
         }
 
-        public EditConstraint(
+        internal EditConstraint(
             Variable variable,
             Strength strength)
             : this(variable, strength, 1d)
         {
         }
 
-        public EditConstraint(
+        internal EditConstraint(
             Variable variable,
             Strength strength,
             double weight)
             : base(variable, strength, weight)
         {
+            AssertThat.ArgumentNotNull(() => variable);
+            AssertThat.ArgumentNotNull(() => strength);
         }
 
         #endregion
 
         #region Properties
-
-        public override bool IsEditConstraint
-        {
-            get { return true; }
-        }
 
         #endregion
 

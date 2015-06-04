@@ -431,8 +431,8 @@ namespace CassowaryNET.Tests
             target.AddStay(h);
 
             // start an editing session
-            target.AddEditVar(x);
-            target.AddEditVar(y);
+            target.AddEditVariable(x);
+            target.AddEditVariable(y);
 
             // ////////
             target.BeginEdit();
@@ -449,8 +449,8 @@ namespace CassowaryNET.Tests
             Assert.That(h.Value, IsX.Approx(0d));
 
             // open a second set of variables for editing
-            target.AddEditVar(w);
-            target.AddEditVar(h);
+            target.AddEditVariable(w);
+            target.AddEditVariable(h);
 
             // // ////////
             target.BeginEdit();
@@ -492,8 +492,8 @@ namespace CassowaryNET.Tests
             target.AddStay(w);
             target.AddStay(h);
 
-            target.AddEditVar(x);
-            target.AddEditVar(y);
+            target.AddEditVariable(x);
+            target.AddEditVariable(y);
 
 
             // ////////
@@ -510,8 +510,8 @@ namespace CassowaryNET.Tests
             Assert.That(h.Value, IsX.Approx(0d));
 
 
-            target.AddEditVar(w);
-            target.AddEditVar(h);
+            target.AddEditVariable(w);
+            target.AddEditVariable(h);
 
             // // ////////
             target.BeginEdit();
@@ -526,8 +526,8 @@ namespace CassowaryNET.Tests
             Assert.That(h.Value, IsX.Approx(40d));
 
 
-            target.AddEditVar(x);
-            target.AddEditVar(y);
+            target.AddEditVariable(x);
+            target.AddEditVariable(y);
 
             // // // ////////
             target.BeginEdit();
@@ -591,8 +591,8 @@ namespace CassowaryNET.Tests
                 var iwv = RandomIn(Min, Max);
                 var ihv = RandomIn(Min, Max);
 
-                target.AddEditVar(iw);
-                target.AddEditVar(ih);
+                target.AddEditVariable(iw);
+                target.AddEditVariable(ih);
 
                 target.BeginEdit();
                 target.SuggestValue(iw, iwv);
@@ -624,8 +624,8 @@ namespace CassowaryNET.Tests
             target.AddStay(w);
             target.AddStay(h);
 
-            target.AddEditVar(x);
-            target.AddEditVar(y);
+            target.AddEditVariable(x);
+            target.AddEditVariable(y);
 
             target.BeginEdit();
             target.SuggestValue(x, 10d);
@@ -639,8 +639,8 @@ namespace CassowaryNET.Tests
 
             // Open a second set of variables for editing
 
-            target.AddEditVar(w);
-            target.AddEditVar(h);
+            target.AddEditVariable(w);
+            target.AddEditVariable(h);
 
             target.BeginEdit();
             target.SuggestValue(w, 30d);
@@ -654,8 +654,8 @@ namespace CassowaryNET.Tests
 
             // Now make sure the first set can still be edited
 
-            target.AddEditVar(x);
-            target.AddEditVar(y);
+            target.AddEditVariable(x);
+            target.AddEditVariable(y);
 
             target.BeginEdit();
             target.SuggestValue(x, 50d);
@@ -808,8 +808,8 @@ namespace CassowaryNET.Tests
 
             // now move point 2 to  a new location
 
-            target.AddEditVar(points[2].X);
-            target.AddEditVar(points[2].Y);
+            target.AddEditVariable(points[2].X);
+            target.AddEditVariable(points[2].Y);
 
             target.BeginEdit();
             target.SuggestValue(points[2].X, 300d);

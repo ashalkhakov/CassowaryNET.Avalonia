@@ -176,427 +176,427 @@ namespace CassowaryNET.Tests
             #region Required Constraints
 
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(bottomRight_height) + bottomRight_top,
                     new LinearExpression(bottomRight_bottom),
                     Strength.Required));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(bottomRight_width) + bottomRight_left,
                     new LinearExpression(bottomRight_right),
                     Strength.Required));
             InequalityType geq = InequalityType.GreaterThanOrEqual;
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     bottomRight_top,
                     geq,
                     0,
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     bottomRight_bottom,
                     geq,
                     0,
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     bottomRight_left,
                     geq,
                     0,
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     bottomRight_right,
                     geq,
                     0,
                     Strength.Required));
 
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(update_height) + update_top,
                     new LinearExpression(update_bottom),
                     Strength.Required));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(update_width) + update_left,
                     new LinearExpression(update_right),
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(update_top, geq, 0, Strength.Required));
+                new InequalityConstraint(update_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(update_bottom, geq, 0, Strength.Required));
+                new InequalityConstraint(update_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(update_left, geq, 0, Strength.Required));
+                new InequalityConstraint(update_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(update_right, geq, 0, Strength.Required));
+                new InequalityConstraint(update_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(update_right, geq, 0, Strength.Required));
+                new InequalityConstraint(update_right, geq, 0, Strength.Required));
             InequalityType leq = InequalityType.LessThanOrEqual;
             target.AddConstraint(
-                new LinearInequality(update_bottom, leq, bottomRight_height));
+                new InequalityConstraint(update_bottom, leq, bottomRight_height));
             target.AddConstraint(
-                new LinearInequality(update_right, leq, bottomRight_width));
+                new InequalityConstraint(update_right, leq, bottomRight_width));
 
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(newpost_height) + newpost_top,
                     new LinearExpression(newpost_bottom),
                     Strength.Required));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(newpost_width) + newpost_left,
                     new LinearExpression(newpost_right),
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(newpost_top, geq, 0, Strength.Required));
+                new InequalityConstraint(newpost_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(newpost_bottom, geq, 0, Strength.Required));
+                new InequalityConstraint(newpost_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(newpost_left, geq, 0, Strength.Required));
+                new InequalityConstraint(newpost_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(newpost_right, geq, 0, Strength.Required));
+                new InequalityConstraint(newpost_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(newpost_right, geq, 0, Strength.Required));
+                new InequalityConstraint(newpost_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(newpost_bottom, leq, bottomRight_height));
+                new InequalityConstraint(newpost_bottom, leq, bottomRight_height));
             target.AddConstraint(
-                new LinearInequality(newpost_right, leq, bottomRight_width));
+                new InequalityConstraint(newpost_right, leq, bottomRight_width));
 
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(quit_height) + quit_top,
                     new LinearExpression(quit_bottom),
                     Strength.Required));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(quit_width) + quit_left,
                     new LinearExpression(quit_right),
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(quit_top, geq, 0, Strength.Required));
+                new InequalityConstraint(quit_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(quit_bottom, geq, 0, Strength.Required));
+                new InequalityConstraint(quit_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(quit_left, geq, 0, Strength.Required));
+                new InequalityConstraint(quit_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(quit_right, geq, 0, Strength.Required));
+                new InequalityConstraint(quit_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(quit_right, geq, 0, Strength.Required));
+                new InequalityConstraint(quit_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(quit_bottom, leq, bottomRight_height));
+                new InequalityConstraint(quit_bottom, leq, bottomRight_height));
             target.AddConstraint(
-                new LinearInequality(quit_right, leq, bottomRight_width));
+                new InequalityConstraint(quit_right, leq, bottomRight_width));
 
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(topRight_height) + topRight_top,
                     new LinearExpression(topRight_bottom),
                     Strength.Required));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(topRight_width) + topRight_left,
                     new LinearExpression(topRight_right),
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(topRight_top, geq, 0, Strength.Required));
+                new InequalityConstraint(topRight_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     topRight_bottom,
                     geq,
                     0,
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(topRight_left, geq, 0, Strength.Required));
+                new InequalityConstraint(topRight_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(topRight_right, geq, 0, Strength.Required));
+                new InequalityConstraint(topRight_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(topRight_right, geq, 0, Strength.Required));
+                new InequalityConstraint(topRight_right, geq, 0, Strength.Required));
 
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(l_title_height) + l_title_top,
                     new LinearExpression(l_title_bottom),
                     Strength.Required));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(l_title_width) + l_title_left,
                     new LinearExpression(l_title_right),
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(l_title_top, geq, 0, Strength.Required));
+                new InequalityConstraint(l_title_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(l_title_bottom, geq, 0, Strength.Required));
+                new InequalityConstraint(l_title_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(l_title_left, geq, 0, Strength.Required));
+                new InequalityConstraint(l_title_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(l_title_right, geq, 0, Strength.Required));
+                new InequalityConstraint(l_title_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(l_title_right, geq, 0, Strength.Required));
+                new InequalityConstraint(l_title_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(l_title_bottom, leq, topRight_height));
+                new InequalityConstraint(l_title_bottom, leq, topRight_height));
             target.AddConstraint(
-                new LinearInequality(l_title_right, leq, topRight_width));
+                new InequalityConstraint(l_title_right, leq, topRight_width));
 
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(title_height) + title_top,
                     new LinearExpression(title_bottom),
                     Strength.Required));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(title_width) + title_left,
                     new LinearExpression(title_right),
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(title_top, geq, 0, Strength.Required));
+                new InequalityConstraint(title_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(title_bottom, geq, 0, Strength.Required));
+                new InequalityConstraint(title_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(title_left, geq, 0, Strength.Required));
+                new InequalityConstraint(title_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(title_right, geq, 0, Strength.Required));
+                new InequalityConstraint(title_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(title_right, geq, 0, Strength.Required));
+                new InequalityConstraint(title_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(title_bottom, leq, topRight_height));
+                new InequalityConstraint(title_bottom, leq, topRight_height));
             target.AddConstraint(
-                new LinearInequality(title_right, leq, topRight_width));
+                new InequalityConstraint(title_right, leq, topRight_width));
 
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(l_body_height) + l_body_top,
                     new LinearExpression(l_body_bottom),
                     Strength.Required));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(l_body_width) + l_body_left,
                     new LinearExpression(l_body_right),
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(l_body_top, geq, 0, Strength.Required));
+                new InequalityConstraint(l_body_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(l_body_bottom, geq, 0, Strength.Required));
+                new InequalityConstraint(l_body_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(l_body_left, geq, 0, Strength.Required));
+                new InequalityConstraint(l_body_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(l_body_right, geq, 0, Strength.Required));
+                new InequalityConstraint(l_body_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(l_body_right, geq, 0, Strength.Required));
+                new InequalityConstraint(l_body_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(l_body_bottom, leq, topRight_height));
+                new InequalityConstraint(l_body_bottom, leq, topRight_height));
             target.AddConstraint(
-                new LinearInequality(l_body_right, leq, topRight_width));
+                new InequalityConstraint(l_body_right, leq, topRight_width));
 
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(blogentry_height) + blogentry_top,
                     new LinearExpression(blogentry_bottom),
                     Strength.Required));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(blogentry_width) + blogentry_left,
                     new LinearExpression(blogentry_right),
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(blogentry_top, geq, 0, Strength.Required));
+                new InequalityConstraint(blogentry_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     blogentry_bottom,
                     geq,
                     0,
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(blogentry_left, geq, 0, Strength.Required));
+                new InequalityConstraint(blogentry_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     blogentry_right,
                     geq,
                     0,
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     blogentry_right,
                     geq,
                     0,
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(blogentry_bottom, leq, topRight_height));
+                new InequalityConstraint(blogentry_bottom, leq, topRight_height));
             target.AddConstraint(
-                new LinearInequality(blogentry_right, leq, topRight_width));
+                new InequalityConstraint(blogentry_right, leq, topRight_width));
 
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(left_height) + left_top,
                     new LinearExpression(left_bottom),
                     Strength.Required));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(left_width) + left_left,
                     new LinearExpression(left_right),
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(left_top, geq, 0, Strength.Required));
+                new InequalityConstraint(left_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(left_bottom, geq, 0, Strength.Required));
+                new InequalityConstraint(left_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(left_left, geq, 0, Strength.Required));
+                new InequalityConstraint(left_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(left_right, geq, 0, Strength.Required));
+                new InequalityConstraint(left_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(left_right, geq, 0, Strength.Required));
+                new InequalityConstraint(left_right, geq, 0, Strength.Required));
 
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(l_recent_height) + l_recent_top,
                     new LinearExpression(l_recent_bottom),
                     Strength.Required));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(l_recent_width) + l_recent_left,
                     new LinearExpression(l_recent_right),
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(l_recent_top, geq, 0, Strength.Required));
+                new InequalityConstraint(l_recent_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     l_recent_bottom,
                     geq,
                     0,
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(l_recent_left, geq, 0, Strength.Required));
+                new InequalityConstraint(l_recent_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(l_recent_right, geq, 0, Strength.Required));
+                new InequalityConstraint(l_recent_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(l_recent_right, geq, 0, Strength.Required));
+                new InequalityConstraint(l_recent_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(l_recent_bottom, leq, left_height));
+                new InequalityConstraint(l_recent_bottom, leq, left_height));
             target.AddConstraint(
-                new LinearInequality(l_recent_right, leq, left_width));
+                new InequalityConstraint(l_recent_right, leq, left_width));
 
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(articles_height) + articles_top,
                     new LinearExpression(articles_bottom),
                     Strength.Required));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(articles_width) + articles_left,
                     new LinearExpression(articles_right),
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(articles_top, geq, 0, Strength.Required));
+                new InequalityConstraint(articles_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     articles_bottom,
                     geq,
                     0,
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(articles_left, geq, 0, Strength.Required));
+                new InequalityConstraint(articles_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(articles_right, geq, 0, Strength.Required));
+                new InequalityConstraint(articles_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(articles_right, geq, 0, Strength.Required));
+                new InequalityConstraint(articles_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(articles_bottom, leq, left_height));
+                new InequalityConstraint(articles_bottom, leq, left_height));
             target.AddConstraint(
-                new LinearInequality(articles_right, leq, left_width));
+                new InequalityConstraint(articles_right, leq, left_width));
 
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(left_height) + left_top,
                     new LinearExpression(left_bottom),
                     Strength.Required));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(left_width) + left_left,
                     new LinearExpression(left_right),
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(left_top, geq, 0, Strength.Required));
+                new InequalityConstraint(left_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(left_bottom, geq, 0, Strength.Required));
+                new InequalityConstraint(left_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(left_left, geq, 0, Strength.Required));
+                new InequalityConstraint(left_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(left_right, geq, 0, Strength.Required));
+                new InequalityConstraint(left_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(left_right, geq, 0, Strength.Required));
+                new InequalityConstraint(left_right, geq, 0, Strength.Required));
 
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(right_height) + right_top,
                     new LinearExpression(right_bottom),
                     Strength.Required));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(right_width) + right_left,
                     new LinearExpression(right_right),
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(right_top, geq, 0, Strength.Required));
+                new InequalityConstraint(right_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(right_bottom, geq, 0, Strength.Required));
+                new InequalityConstraint(right_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(right_left, geq, 0, Strength.Required));
+                new InequalityConstraint(right_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(right_right, geq, 0, Strength.Required));
+                new InequalityConstraint(right_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(right_right, geq, 0, Strength.Required));
+                new InequalityConstraint(right_right, geq, 0, Strength.Required));
 
             target.AddConstraint(
-                new LinearInequality(topRight_bottom, leq, right_height));
+                new InequalityConstraint(topRight_bottom, leq, right_height));
             target.AddConstraint(
-                new LinearInequality(topRight_right, leq, right_width));
+                new InequalityConstraint(topRight_right, leq, right_width));
 
             target.AddConstraint(
-                new LinearInequality(bottomRight_bottom, leq, right_height));
+                new InequalityConstraint(bottomRight_bottom, leq, right_height));
             target.AddConstraint(
-                new LinearInequality(bottomRight_right, leq, right_width));
+                new InequalityConstraint(bottomRight_right, leq, right_width));
 
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(fr_height) + fr_top,
                     new LinearExpression(fr_bottom),
                     Strength.Required));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     new LinearExpression(fr_width) + fr_left,
                     new LinearExpression(fr_right),
                     Strength.Required));
             target.AddConstraint(
-                new LinearInequality(fr_top, geq, 0, Strength.Required));
+                new InequalityConstraint(fr_top, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(fr_bottom, geq, 0, Strength.Required));
+                new InequalityConstraint(fr_bottom, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(fr_left, geq, 0, Strength.Required));
+                new InequalityConstraint(fr_left, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(fr_right, geq, 0, Strength.Required));
+                new InequalityConstraint(fr_right, geq, 0, Strength.Required));
             target.AddConstraint(
-                new LinearInequality(fr_right, geq, 0, Strength.Required));
+                new InequalityConstraint(fr_right, geq, 0, Strength.Required));
 
             target.AddConstraint(
-                new LinearInequality(left_bottom, leq, fr_height));
+                new InequalityConstraint(left_bottom, leq, fr_height));
             target.AddConstraint(
-                new LinearInequality(left_right, leq, fr_width));
+                new InequalityConstraint(left_right, leq, fr_width));
             target.AddConstraint(
-                new LinearInequality(right_bottom, leq, fr_height));
+                new InequalityConstraint(right_bottom, leq, fr_height));
             target.AddConstraint(
-                new LinearInequality(right_right, leq, fr_width));
+                new InequalityConstraint(right_right, leq, fr_width));
 
             #endregion
 
             #region Strong Constraints
 
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     update_right,
                     leq,
                     newpost_left,
                     Strength.Strong));
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     newpost_right,
                     leq,
                     quit_left,
@@ -604,71 +604,71 @@ namespace CassowaryNET.Tests
             //_solver.AddConstraint(new ClLinearEquation(bottomRight_width, new ClLinearExpression(topRight_width), ClStrength.Strong));
             //_solver.AddConstraint(new ClLinearEquation(right_width, new ClLinearExpression(topRight_width), ClStrength.Strong));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     bottomRight_bottom,
                     new LinearExpression(right_bottom),
                     Strength.Strong));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     newpost_height,
                     new LinearExpression(update_height),
                     Strength.Strong));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     newpost_width,
                     new LinearExpression(update_width),
                     Strength.Strong));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     update_height,
                     new LinearExpression(quit_height),
                     Strength.Strong));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     quit_width,
                     new LinearExpression(update_width),
                     Strength.Strong));
 
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     l_title_bottom,
                     leq,
                     title_top,
                     Strength.Strong));
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     title_bottom,
                     leq,
                     l_body_top,
                     Strength.Strong));
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     l_body_bottom,
                     leq,
                     blogentry_top,
                     Strength.Strong));
 
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     title_width,
                     new LinearExpression(blogentry_width),
                     Strength.Strong));
 
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     l_recent_bottom,
                     leq,
                     articles_top,
                     Strength.Strong));
 
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     topRight_bottom,
                     leq,
                     bottomRight_top,
                     Strength.Strong));
             target.AddConstraint(
-                new LinearInequality(
+                new InequalityConstraint(
                     left_right,
                     leq,
                     right_left,
@@ -678,22 +678,22 @@ namespace CassowaryNET.Tests
 
             // alignment
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     l_title_left,
                     new LinearExpression(title_left),
                     Strength.Strong));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     title_left,
                     new LinearExpression(blogentry_left),
                     Strength.Strong));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     l_body_left,
                     new LinearExpression(blogentry_left),
                     Strength.Strong));
             target.AddConstraint(
-                new LinearEquality(
+                new EqualityConstraint(
                     l_recent_left,
                     new LinearExpression(articles_left),
                     Strength.Strong));
