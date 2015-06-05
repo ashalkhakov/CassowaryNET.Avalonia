@@ -60,6 +60,7 @@
                 [Left] equalto [MainPanel.Left + 10];
                 [Width] lessthan(strong) [300];
                 [Width] greaterthan(weak) [100];
+                [Width] equalto [2*Button2.Width];
                 [VCenter] equalto [MainPanel.VCenter];"/>
 
         <Button 
@@ -68,8 +69,16 @@
             layoutNet:AutoLayoutPanel.Constraints="
                 [Left] equalto [Button1.Right + 10];
                 [Width] greaterthan(weak) [200];
-                [Right] equalto [MainPanel.Right - 10];
+                [Right] equalto [MainPanel.Right + -10];
                 [VCenter] equalto [Button1.VCenter];"/>
+
+        <Button 
+            x:Name="Button3"
+            Content="Button3"
+            layoutNet:AutoLayoutPanel.Constraints="
+                [Top] equalto [Button1.Bottom + 10];
+                [Left] equalto [Button1.Left];
+                [Right] equalto [Button2.Right];"/>
 
     </layoutNet:AutoLayoutPanel>
 </Window>

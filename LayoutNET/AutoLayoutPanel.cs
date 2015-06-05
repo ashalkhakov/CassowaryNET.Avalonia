@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,9 +12,29 @@ namespace LayoutNET
 {
     public class AutoLayoutPanel : Panel
     {
+        // TODO: Add a dependency property for declaring constraints on the panel
+        // e.g. Constraint="[Button1.Left] equalto [Button2.Right]"
+
         #region Dependency Properties
 
-        // long-hand
+        // Short-hand constraints of any form
+        //public static readonly DependencyProperty ChildConstraintsProperty =
+        //    DependencyProperty.Register(
+        //        "ChildConstraints",
+        //        typeof(ChildConstraints),
+        //        typeof(AutoLayoutPanel));
+
+        //public static void SetChildConstraints(UIElement element, ChildConstraints value)
+        //{
+        //    element.SetValue(ChildConstraintsProperty, value);
+        //}
+        //public static ChildConstraints GetChildConstraints(UIElement element)
+        //{
+        //    return (ChildConstraints)element.GetValue(ChildConstraintsProperty);
+        //}
+
+
+        // Long-hand attached child constraints
         public static readonly DependencyProperty LayoutConstraintsProperty =
             DependencyProperty.RegisterAttached(
                 "LayoutConstraints",
@@ -29,7 +50,7 @@ namespace LayoutNET
             return (LayoutConstraints)element.GetValue(LayoutConstraintsProperty);
         }
 
-        // short-hand
+        // Short-hand attached child constraints
         public static readonly DependencyProperty ConstraintsProperty =
             DependencyProperty.RegisterAttached(
                 "Constraints",
