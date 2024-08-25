@@ -10,6 +10,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LayoutNET", "LayoutNET\Layo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9879AC9B-7FDD-4CE5-A3A2-3BF53C70DBAA}"
 	ProjectSection(SolutionItems) = preProject
+		.github\workflows\github-actions-publish-nuget.yml = .github\workflows\github-actions-publish-nuget.yml
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -96,5 +97,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BA36F1BA-9E9C-43D7-A057-B54128D39208}
 	EndGlobalSection
 EndGlobal

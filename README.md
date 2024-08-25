@@ -34,11 +34,11 @@ solver.Solve();
 
 # LayoutNET
 
-A WPF control (AutoLayoutPanel) that allows you to add child controls and define 
+An [Avalonia](https://github.com/AvaloniaUI/Avalonia) control (`AutoLayoutPanel`) that allows you to add child controls and define 
 their layout in terms of linear relationships and constraints with other controls.
 
-Constraints can be created between Left, HCenter, Right, Top, VCenter, Bottom, 
-Width and Height properties of controls.
+Constraints can be created between `Left`, `HCenter`, `Right`, `Top`, `VCenter`, `Bottom`, 
+`Width` and `Height` properties of controls.
 
 
 ## Example
@@ -52,18 +52,18 @@ Width and Height properties of controls.
         x:Name="Button1"
         Content="Button1"
         layoutNet:AutoLayoutPanel.Constraints="
-            [VCenter] equalto [MainPanel.VCenter];
-            [HCenter] equalto [MainPanel.HCenter];
-            [Width] greaterthan [100];
-            [Width] lessthan [300];"/>
+            [VCenter] eq [MainPanel.VCenter];
+            [HCenter] eq [MainPanel.HCenter];
+            [Width] ge [100];
+            [Width] le [300];"/>
 
     <!-- Horizontally centred with Button1. Top is 10 below the bottom of Button1. -->
     <Button 
         x:Name="Button2"
         Content="Button2"
         layoutNet:AutoLayoutPanel.Constraints="
-            [Top] equalto [Button1.Bottom + 10];
-            [HCenter] equalto [Button1.HCenter];"/>
+            [Top] eq [Button1.Bottom + 10];
+            [HCenter] eq [Button1.HCenter];"/>
 
 </layout:AutoLayoutPanel>
 ```

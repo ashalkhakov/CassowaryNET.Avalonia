@@ -1,0 +1,38 @@
+name: Build and Publish
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+env:
+  NUGET_REPO_URL: https://nuget.pkg.github.com/ashalkhakov/index.json
+
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '8.0.x' ]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: | 
+            8.0.x
+
+      - name: Build Project
+        run: dotnet build --configuration Release AutoLayoutPanel.sln
+
+      - name: Test with dotnet
+        run: dotnet test AutoLayoutPanel.sln
+
+      - name: Create the package
+        run: dotnet pack --no-restore --no-build --configuration Release -p:PackageVersion=${{ github.ref_name }} --output .
+
+      - name: Publish the package to Rository
+        run: dotnet nuget push LayoutNET.{{ github.ref_name }}.nupkg -k ${{ secrets.NUGET_PUBLICATION_KEY }} -s $NUGET_REPO_URL
