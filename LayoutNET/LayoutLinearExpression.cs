@@ -1,8 +1,8 @@
-using System.Windows;
+using Avalonia;
 
 namespace LayoutNET
 {
-    public class LayoutLinearExpression : DependencyObject
+    public class LayoutLinearExpression : AvaloniaObject
     {
         //public static readonly DependencyProperty SourceProperty =
         //    DependencyProperty.Register(

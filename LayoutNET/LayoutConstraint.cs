@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Windows.Markup;
 
 namespace LayoutNET
 {
-    [ContentProperty("Expressions")]
     public class LayoutConstraint
     {
         #region Fields

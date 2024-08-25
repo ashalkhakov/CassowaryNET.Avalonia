@@ -342,7 +342,7 @@ namespace CassowaryNET.Tests
             target.AddConstraint((x == 10d).WithStrength(Strength.Weak));
             target.AddConstraint((y == 10d).WithStrength(Strength.Weak));
 
-            if (IsX.Approx(10d).Matches(x.Value))
+            if (IsX.Approx(10d).ApplyTo(x.Value).IsSuccess)
             {
                 Assert.That(x.Value, IsX.Approx(10d));
                 Assert.That(y.Value, IsX.Approx(13d));

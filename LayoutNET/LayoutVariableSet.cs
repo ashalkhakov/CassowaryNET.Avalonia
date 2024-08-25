@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
+using Avalonia.Controls;
 using CassowaryNET.Variables;
 
 namespace LayoutNET
@@ -10,7 +10,7 @@ namespace LayoutNET
     {
         #region Fields
 
-        private readonly UIElement uiElement;
+        private readonly Control uiElement;
         private readonly IReadOnlyDictionary<LayoutProperty, LayoutVariable>
             variables;
 
@@ -18,7 +18,7 @@ namespace LayoutNET
 
         #region Constructors
 
-        public LayoutVariableSet(UIElement uiElement)
+        public LayoutVariableSet(Control uiElement)
         {
             this.uiElement = uiElement;
             this.variables = Enum
@@ -33,7 +33,7 @@ namespace LayoutNET
 
         #region Properties
 
-        public UIElement UiElement
+        public Control UiElement
         {
             get { return uiElement; }
         }

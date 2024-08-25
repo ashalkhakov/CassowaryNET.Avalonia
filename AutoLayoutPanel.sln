@@ -1,22 +1,23 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassowaryNET", "CassowaryNET\CassowaryNET.csproj", "{081D5457-6212-451C-A9DE-D035AAEFC94A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CassowaryNET", "CassowaryNET\CassowaryNET.csproj", "{081D5457-6212-451C-A9DE-D035AAEFC94A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassowaryNET.Tests", "CassowaryNET.Tests\CassowaryNET.Tests.csproj", "{B5A96E5C-7F21-4183-8643-61FD55291BB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CassowaryNET.Tests", "CassowaryNET.Tests\CassowaryNET.Tests.csproj", "{B5A96E5C-7F21-4183-8643-61FD55291BB5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LayoutNET", "LayoutNET\LayoutNET.csproj", "{6D0D98A1-7686-4DC4-AC2A-6206AD488144}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LayoutNET.Example", "LayoutNET.Example\LayoutNET.Example.csproj", "{4B2FB9BB-660C-45B2-9A74-ECC3A8206778}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LayoutNET", "LayoutNET\LayoutNET.csproj", "{6D0D98A1-7686-4DC4-AC2A-6206AD488144}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9879AC9B-7FDD-4CE5-A3A2-3BF53C70DBAA}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LayoutNET.Tests", "LayoutNET.Tests\LayoutNET.Tests.csproj", "{280D7732-8C43-49EF-9DF0-1F4D25365845}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LayoutNET.Tests", "LayoutNET.Tests\LayoutNET.Tests.csproj", "{280D7732-8C43-49EF-9DF0-1F4D25365845}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LayoutNET.Example", "LayoutNET.Example\LayoutNET.Example.csproj", "{C9F196F9-121C-4A5C-ADA6-819EB49900FB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LayoutNET.Example.Desktop", "LayoutNET.Example.Desktop\LayoutNET.Example.Desktop.csproj", "{5EBA617B-67D5-419B-A9CF-FFFCC33AF8D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,16 +59,6 @@ Global
 		{6D0D98A1-7686-4DC4-AC2A-6206AD488144}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{6D0D98A1-7686-4DC4-AC2A-6206AD488144}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{6D0D98A1-7686-4DC4-AC2A-6206AD488144}.Release|x86.ActiveCfg = Release|Any CPU
-		{4B2FB9BB-660C-45B2-9A74-ECC3A8206778}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4B2FB9BB-660C-45B2-9A74-ECC3A8206778}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4B2FB9BB-660C-45B2-9A74-ECC3A8206778}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{4B2FB9BB-660C-45B2-9A74-ECC3A8206778}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{4B2FB9BB-660C-45B2-9A74-ECC3A8206778}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4B2FB9BB-660C-45B2-9A74-ECC3A8206778}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4B2FB9BB-660C-45B2-9A74-ECC3A8206778}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4B2FB9BB-660C-45B2-9A74-ECC3A8206778}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{4B2FB9BB-660C-45B2-9A74-ECC3A8206778}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{4B2FB9BB-660C-45B2-9A74-ECC3A8206778}.Release|x86.ActiveCfg = Release|Any CPU
 		{280D7732-8C43-49EF-9DF0-1F4D25365845}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{280D7732-8C43-49EF-9DF0-1F4D25365845}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{280D7732-8C43-49EF-9DF0-1F4D25365845}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -78,6 +69,30 @@ Global
 		{280D7732-8C43-49EF-9DF0-1F4D25365845}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{280D7732-8C43-49EF-9DF0-1F4D25365845}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{280D7732-8C43-49EF-9DF0-1F4D25365845}.Release|x86.ActiveCfg = Release|Any CPU
+		{C9F196F9-121C-4A5C-ADA6-819EB49900FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9F196F9-121C-4A5C-ADA6-819EB49900FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9F196F9-121C-4A5C-ADA6-819EB49900FB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C9F196F9-121C-4A5C-ADA6-819EB49900FB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C9F196F9-121C-4A5C-ADA6-819EB49900FB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C9F196F9-121C-4A5C-ADA6-819EB49900FB}.Debug|x86.Build.0 = Debug|Any CPU
+		{C9F196F9-121C-4A5C-ADA6-819EB49900FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9F196F9-121C-4A5C-ADA6-819EB49900FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9F196F9-121C-4A5C-ADA6-819EB49900FB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C9F196F9-121C-4A5C-ADA6-819EB49900FB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C9F196F9-121C-4A5C-ADA6-819EB49900FB}.Release|x86.ActiveCfg = Release|Any CPU
+		{C9F196F9-121C-4A5C-ADA6-819EB49900FB}.Release|x86.Build.0 = Release|Any CPU
+		{5EBA617B-67D5-419B-A9CF-FFFCC33AF8D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EBA617B-67D5-419B-A9CF-FFFCC33AF8D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EBA617B-67D5-419B-A9CF-FFFCC33AF8D8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5EBA617B-67D5-419B-A9CF-FFFCC33AF8D8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5EBA617B-67D5-419B-A9CF-FFFCC33AF8D8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5EBA617B-67D5-419B-A9CF-FFFCC33AF8D8}.Debug|x86.Build.0 = Debug|Any CPU
+		{5EBA617B-67D5-419B-A9CF-FFFCC33AF8D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EBA617B-67D5-419B-A9CF-FFFCC33AF8D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EBA617B-67D5-419B-A9CF-FFFCC33AF8D8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5EBA617B-67D5-419B-A9CF-FFFCC33AF8D8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{5EBA617B-67D5-419B-A9CF-FFFCC33AF8D8}.Release|x86.ActiveCfg = Release|Any CPU
+		{5EBA617B-67D5-419B-A9CF-FFFCC33AF8D8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

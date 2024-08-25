@@ -1,18 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Markup;
+﻿using Avalonia;
+using Avalonia.Metadata;
+using System.Collections.Generic;
 
 namespace LayoutNET
 {
-    [ContentProperty("Constraints")]
-    public class LayoutConstraints : DependencyObject
+    public class LayoutConstraints : AvaloniaObject
     {
-        public static readonly DependencyProperty ConstraintsProperty =
-            DependencyProperty.Register(
-                "Constraints",
-                typeof(List<LayoutConstraint>),
-                typeof(LayoutConstraints));
+        public static readonly StyledProperty<List<LayoutConstraint>> ConstraintsProperty =
+            AvaloniaProperty.Register<LayoutConstraints, List<LayoutConstraint>>(
+                "Constraints");
 
+        [Content]
         public List<LayoutConstraint> Constraints
         {
             get

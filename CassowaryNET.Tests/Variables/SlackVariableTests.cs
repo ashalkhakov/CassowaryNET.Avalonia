@@ -57,7 +57,7 @@ namespace CassowaryNET.Tests.Variables
             {
                 var target = new SlackVariable("foo");
 
-                Assert.That(target.Name, Is.StringStarting("foo"));
+                Assert.That(target.Name, Does.StartWith("foo"));
 
                 Assert.That(target.IsDummy, Is.False);
                 Assert.That(target.IsExternal, Is.False);

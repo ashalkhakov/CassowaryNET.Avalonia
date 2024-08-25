@@ -1,0 +1,95 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LayoutNET.Example.ViewModels"
+             xmlns:layoutNet="clr-namespace:LayoutNET;assembly=LayoutNET"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="LayoutNET.Example.Views.MainView"
+             x:DataType="vm:MainViewModel">
+  <Design.DataContext>
+    <!-- This only sets the DataContext for the previewer in an IDE,
+         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+    <vm:MainViewModel />
+  </Design.DataContext>
+
+	<layoutNet:AutoLayoutPanel
+        x:Name="MainPanel">
+
+		<!--
+        TODO: Find a way to ease adding multiple constraints?
+        For example, it is common to want Top & Height, Left & Width, Width & Height, &c
+        equal to that of another control.
+        -->
+
+		<Label
+            x:Name="NameLabel"
+            Content="Name:"
+            layoutNet:AutoLayoutPanel.Constraints="
+                [Left] eq [10];"/>
+		<Label
+            x:Name="AgeLabel"
+            Content="Age:"
+            layoutNet:AutoLayoutPanel.Constraints="
+                [Left] eq [NameLabel.Left];
+                [Width] eq [NameLabel.Width];
+                [Top] eq [NameLabel.Bottom + 10];"/>
+		<Label
+            x:Name="HeightLabel"
+            Content="Height:"
+            layoutNet:AutoLayoutPanel.Constraints="
+                [Left] eq [NameLabel.Left];
+                [Width] eq [NameLabel.Width];
+                [Top] eq [AgeLabel.Bottom + 10];"/>
+
+		<TextBox
+            x:Name="NameValue"
+            layoutNet:AutoLayoutPanel.Constraints="
+                [Width] ge [50];
+                [Left] eq [NameLabel.Right + 10];
+                [VCenter] eq [NameLabel.VCenter];"/>
+		<TextBox
+            x:Name="AgeValue"
+            layoutNet:AutoLayoutPanel.Constraints="
+                [Left] eq [NameValue.Left];
+                [Width] eq [NameValue.Width];
+                [VCenter] eq [AgeLabel.VCenter];"/>
+		<TextBox
+            x:Name="HeightValue"
+            layoutNet:AutoLayoutPanel.Constraints="
+                [Left] eq [NameValue.Left];
+                [Width] eq [NameValue.Width];
+                [VCenter] eq [HeightLabel.VCenter];"/>
+
+
+
+		<Button
+            x:Name="Button1"
+            Content="Button1"
+            layoutNet:AutoLayoutPanel.Constraints="
+                [Left] eq [MainPanel.Left + 10];
+                [Width] le(strong) [300];
+                [Width] ge(weak) [100];
+                [Width] eq [2*Button2.Width];
+                [VCenter] eq [MainPanel.VCenter];"/>
+
+		<Button
+            x:Name="Button2"
+            Content="Button2"
+            layoutNet:AutoLayoutPanel.Constraints="
+                [Left] eq [Button1.Right + 10];
+                [Width] ge(weak) [200];
+                [Right] eq [MainPanel.Right + -10];
+                [VCenter] eq [Button1.VCenter];"/>
+
+		<Button
+            x:Name="Button3"
+            Content="Button3"
+            layoutNet:AutoLayoutPanel.Constraints="
+                [Top] eq [Button1.Bottom + 10];
+                [Left] eq [Button1.Left];
+                [Right] eq [Button2.Right];"/>
+
+	</layoutNet:AutoLayoutPanel>
+
+</UserControl>

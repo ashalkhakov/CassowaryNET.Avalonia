@@ -57,7 +57,7 @@ namespace CassowaryNET.Tests.Variables
             {
                 var target = new DummyVariable("foo");
 
-                Assert.That(target.Name, Is.StringStarting("foo"));
+                Assert.That(target.Name, Does.StartWith("foo"));
 
                 Assert.That(target.IsDummy, Is.True);
                 Assert.That(target.IsExternal, Is.False);

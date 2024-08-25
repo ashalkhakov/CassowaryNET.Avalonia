@@ -1,94 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{081D5457-6212-451C-A9DE-D035AAEFC94A}</ProjectGuid>
+    <TargetFramework>net8.0</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CassowaryNET</RootNamespace>
-    <AssemblyName>CassowaryNET</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
     <RestorePackages>true</RestorePackages>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AssemblyTitle>CassowaryNET</AssemblyTitle>
+    <Product>CassowaryNET</Product>
+    <Copyright>Copyright © Simon Cowen 2015</Copyright>
+    <AssemblyVersion>1.0.%2a</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="JetBrains.Annotations, Version=9.1.1.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\packages\JetBrains.Annotations.9.1.1\lib\net20\JetBrains.Annotations.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="JetBrains.Annotations" Version="2024.2.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Constraints\LinearConstraint.cs" />
-    <Compile Include="EditInfo.cs" />
-    <Compile Include="EditSection.cs" />
-    <Compile Include="Exceptions\VariableNotFoundException.cs" />
-    <Compile Include="LinearExpression.cs" />
-    <Compile Include="CassowarySolver.cs" />
-    <Compile Include="Strength.cs" />
-    <Compile Include="SymbolicWeight.cs" />
-    <Compile Include="Tableau.cs" />
-    <Compile Include="MathHelper.cs" />
-    <Compile Include="Constraints\Constraint.cs" />
-    <Compile Include="Constraints\EditConstraint.cs" />
-    <Compile Include="Constraints\EditOrStayConstraint.cs" />
-    <Compile Include="Constraints\EqualityConstraint.cs" />
-    <Compile Include="Constraints\InequalityConstraint.cs" />
-    <Compile Include="Constraints\StayConstraint.cs" />
-    <Compile Include="Exceptions\ConstraintNotFoundException.cs" />
-    <Compile Include="Exceptions\CassowaryException.cs" />
-    <Compile Include="Exceptions\CassowaryInternalException.cs" />
-    <Compile Include="Exceptions\NonLinearExpressionException.cs" />
-    <Compile Include="Exceptions\RequiredConstraintFailureException.cs" />
-    <Compile Include="InequalityType.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\AssertThat.cs" />
-    <Compile Include="Utils\Cloneable.cs" />
-    <Compile Include="Utils\DictionaryEx.cs" />
-    <Compile Include="Utils\Option.cs" />
-    <Compile Include="Variables\AbstractVariable.cs" />
-    <Compile Include="Variables\DummyVariable.cs" />
-    <Compile Include="Variables\ObjectiveVariable.cs" />
-    <Compile Include="Variables\SlackVariable.cs" />
-    <Compile Include="Variables\Variable.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="todo.md" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

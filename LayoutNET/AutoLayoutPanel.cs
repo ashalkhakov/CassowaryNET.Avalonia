@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
+using System.Xml.Linq;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Metadata;
 using CassowaryNET;
 using CassowaryNET.Constraints;
 using CassowaryNET.Variables;
@@ -13,7 +15,7 @@ namespace LayoutNET
     public class AutoLayoutPanel : Panel
     {
         // TODO: Add a dependency property for declaring constraints on the panel
-        // e.g. Constraint="[Button1.Left] equalto [Button2.Right]"
+        // e.g. Constraint="[Button1.Left] eq [Button2.Right]"
 
         #region Dependency Properties
 
@@ -35,36 +37,35 @@ namespace LayoutNET
 
 
         // Long-hand attached child constraints
-        public static readonly DependencyProperty LayoutConstraintsProperty =
-            DependencyProperty.RegisterAttached(
-                "LayoutConstraints",
-                typeof(LayoutConstraints),
-                typeof(AutoLayoutPanel));
+        public static readonly AttachedProperty<LayoutConstraints> LayoutConstraintsProperty =
+            AvaloniaProperty.RegisterAttached<AutoLayoutPanel, LayoutConstraints>(
+                "LayoutConstraints", typeof(AutoLayoutPanel));
 
-        public static void SetLayoutConstraints(UIElement element, LayoutConstraints value)
+        public static void SetLayoutConstraints(Control element, LayoutConstraints value)
         {
             element.SetValue(LayoutConstraintsProperty, value);
         }
-        public static LayoutConstraints GetLayoutConstraints(UIElement element)
+        public static LayoutConstraints GetLayoutConstraints(Control element)
         {
             return (LayoutConstraints)element.GetValue(LayoutConstraintsProperty);
         }
 
+
         // Short-hand attached child constraints
-        public static readonly DependencyProperty ConstraintsProperty =
-            DependencyProperty.RegisterAttached(
+        public static readonly AttachedProperty<string> ConstraintsProperty =
+            AvaloniaProperty.RegisterAttached<AutoLayoutPanel, string>(
                 "Constraints",
-                typeof(string),
                 typeof(AutoLayoutPanel));
 
-        public static void SetConstraints(UIElement element, string value)
+        public static void SetConstraints(Control element, string value)
         {
             element.SetValue(ConstraintsProperty, value);
         }
-        public static string GetConstraints(UIElement element)
+        public static string GetConstraints(Control element)
         {
             return (string)element.GetValue(ConstraintsProperty);
         }
+
 
         #endregion
 
@@ -72,8 +73,8 @@ namespace LayoutNET
 
         private readonly CassowarySolver solver;
         private readonly Dictionary<Variable, EqualityConstraint> variableConstraints;
-        private readonly Dictionary<UIElement, LayoutVariableSet> elementVariables;
-        private readonly List<UIElement> processedChildren;
+        private readonly Dictionary<Control, LayoutVariableSet> elementVariables;
+        private readonly List<Control> processedChildren;
 
         #endregion
 
@@ -85,26 +86,26 @@ namespace LayoutNET
             solver.AutoSolve = false;
             variableConstraints = new Dictionary<Variable, EqualityConstraint>();
 
-            elementVariables = new Dictionary<UIElement, LayoutVariableSet>();
-            processedChildren = new List<UIElement>();
+            elementVariables = new Dictionary<Control, LayoutVariableSet>();
+            processedChildren = new List<Control>();
         }
 
         #endregion
 
         #region Properties
 
-        private IEnumerable<UIElement> ChildElements
+        private IEnumerable<Control> ChildElements
         {
-            get { return InternalChildren.Cast<UIElement>(); }
+            get { return Children; }
         }
 
         #endregion
 
         #region Methods
 
-        protected override void OnInitialized(EventArgs e)
+        protected override void OnInitialized()
         {
-            base.OnInitialized(e);
+            base.OnInitialized();
 
             InitialiseElementVariables(this);
 
@@ -120,7 +121,7 @@ namespace LayoutNET
             HandleChangedChildren();
         }
 
-        private void InitialiseElementVariables(UIElement uiElement)
+        private void InitialiseElementVariables(Control uiElement)
         {
             var variables = elementVariables.GetOrAdd(
                 uiElement,
@@ -159,7 +160,7 @@ namespace LayoutNET
                     .WithStrength(Strength.Required));
         }
 
-        private void InitialiseElementConstraints(UIElement uiElement)
+        private void InitialiseElementConstraints(Control uiElement)
         {
             processedChildren.Add(uiElement);
 
@@ -249,12 +250,12 @@ namespace LayoutNET
             LayoutLinearExpression layoutLinearExpression)
         {
             //var uiElement = layoutLinearExpression.Source;
-            var uiElement = (UIElement) FindName(layoutLinearExpression.ElementName);
+            var uiElement = this.GetControl<Control>(layoutLinearExpression.ElementName);
             return elementVariables[uiElement];
         }
 
         private Variable FindClVariable(
-            UIElement uiElement,
+            Control uiElement,
             LayoutProperty property)
         {
             return elementVariables[uiElement].GetVariable(property);

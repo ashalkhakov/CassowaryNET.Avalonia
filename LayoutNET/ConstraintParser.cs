@@ -21,7 +21,7 @@ namespace LayoutNET
                 @"
 \[(?<property>\w+)\]
 \s
-(?<relationship>(equalto|lessthan|greaterthan))
+(?<relationship>(eq|le|ge))
 (\((?<strength>(weak|medium|strong|required))\))?
 \s
 \[(?<equation>.+)\]",
@@ -96,11 +96,11 @@ namespace LayoutNET
         {
             switch (relationshipString)
             {
-                case "equalto":
+                case "eq":
                     return LayoutRelationship.EqualTo;
-                case "lessthan":
+                case "le":
                     return LayoutRelationship.LessThanOrEqualTo;
-                case "greaterthan":
+                case "ge":
                     return LayoutRelationship.GreaterThanOrEqualTo;
                 default:
                     throw new Exception("Unknown relationship " + relationshipString);

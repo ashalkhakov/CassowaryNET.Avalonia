@@ -1,4 +1,4 @@
-using System.Windows;
+using Avalonia.Controls;
 using CassowaryNET.Variables;
 
 namespace LayoutNET
@@ -7,7 +7,7 @@ namespace LayoutNET
     {
         #region Fields
 
-        private readonly UIElement uiElement;
+        private readonly Control uiElement;
         private readonly LayoutProperty property;
         private readonly Variable variable;
 
@@ -15,12 +15,12 @@ namespace LayoutNET
 
         #region Constructors
 
-        public LayoutVariable(UIElement uiElement, LayoutProperty property)
+        public LayoutVariable(Control uiElement, LayoutProperty property)
         {
             this.uiElement = uiElement;
             this.property = property;
 
-            var elementName = ((FrameworkElement) uiElement).Name ?? "???";
+            var elementName = uiElement.Name ?? "???";
             variable = new Variable(elementName + property);
         }
 
@@ -28,7 +28,7 @@ namespace LayoutNET
 
         #region Properties
 
-        public UIElement UiElement
+        public Control UiElement
         {
             get { return uiElement; }
         }
