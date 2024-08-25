@@ -4,7 +4,7 @@
     <OutputType>Library</OutputType>
     <RestorePackages>true</RestorePackages>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <PackageReadmeFile>../README.md</PackageReadmeFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\CassowaryNET\CassowaryNET.csproj" />
@@ -13,5 +13,8 @@
     <PackageReference Include="Avalonia" Version="11.0.10" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+	<None Include="../README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 </Project>
