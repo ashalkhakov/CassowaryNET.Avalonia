@@ -41,6 +41,8 @@ Constraints can be created between `Left`, `HCenter`, `Right`, `Top`, `VCenter`,
 `Width` and `Height` properties of controls.
 
 
+![Example](images/LayoutNET.Example.png)
+
 ## Example
 
 ```xml

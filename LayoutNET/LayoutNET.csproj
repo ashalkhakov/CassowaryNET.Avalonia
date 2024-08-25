@@ -4,6 +4,7 @@
     <OutputType>Library</OutputType>
     <RestorePackages>true</RestorePackages>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <PackageReadmeFile>../README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\CassowaryNET\CassowaryNET.csproj" />
